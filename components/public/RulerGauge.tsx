@@ -25,26 +25,25 @@ export function RulerGauge({
     <div className="w-full" role="img" aria-label={label ?? `Gauge showing ${v}`}>
       {/* Value display */}
       {showValue && (
-        <div className="mb-3 flex items-baseline justify-end gap-1">
-          <span className="text-4xl font-semibold tracking-tight text-[color:var(--nsi-green)]">
+        <div className="mb-4 flex items-baseline justify-end gap-1">
+          <span className="text-[2.75rem] font-bold tracking-tight text-[color:var(--nsi-green)]">
             {v.toFixed(1)}
           </span>
-          <span className="text-lg text-black/50">/10</span>
         </div>
       )}
 
       {/* Ruler container */}
       <div className="relative">
         {/* Background ruler */}
-        <div className="nsi-ruler relative h-10 w-full overflow-hidden">
+        <div className="nsi-ruler relative h-11 w-full overflow-hidden rounded-md">
           {/* Tick marks */}
-          <div className="absolute inset-0 flex items-end justify-between px-2">
-            {ticks.map((tick, idx) => {
+          <div className="absolute inset-0 flex items-end justify-between px-3">
+            {ticks.map((tick) => {
               const isMajor = tick === min || tick === max || tick === 5;
               return (
                 <div key={tick} className="flex flex-col items-center">
                   <div
-                    className={`w-px ${isMajor ? "h-5 bg-black/40" : "h-3 bg-black/25"}`}
+                    className={`w-px ${isMajor ? "h-6 bg-black/35" : "h-4 bg-black/20"}`}
                   />
                 </div>
               );
@@ -53,26 +52,34 @@ export function RulerGauge({
 
           {/* Filled portion */}
           <div
-            className="absolute bottom-0 left-0 h-2 rounded-sm bg-[color:var(--nsi-green)]"
-            style={{ width: `${percentage}%` }}
+            className="absolute bottom-0 left-0 h-2.5 bg-[color:var(--nsi-green)]"
+            style={{ 
+              width: `${percentage}%`,
+              boxShadow: "0 -2px 8px -2px oklch(0.3 0.06 164 / 0.4)"
+            }}
           />
         </div>
 
         {/* Marker/needle */}
         <div
-          className="absolute -top-1 h-12 w-0.5 bg-[color:var(--nsi-green-ink)] transition-all duration-300"
-          style={{ left: `${percentage}%`, transform: "translateX(-50%)" }}
+          className="absolute -top-1.5 h-14 w-1 rounded-full bg-[color:var(--nsi-green-ink)] transition-all duration-300"
+          style={{ 
+            left: `${percentage}%`, 
+            transform: "translateX(-50%)",
+            boxShadow: "0 2px 6px -1px oklch(0.2 0.05 164 / 0.4)"
+          }}
         >
           {/* Triangle marker at top */}
-          <div className="absolute -top-2 left-1/2 -translate-x-1/2">
+          <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
             <div
-              className="h-0 w-0 border-x-[6px] border-t-[8px] border-x-transparent border-t-[color:var(--nsi-green-ink)]"
+              className="h-0 w-0 border-x-[7px] border-t-[10px] border-x-transparent border-t-[color:var(--nsi-green-ink)]"
+              style={{ filter: "drop-shadow(0 1px 2px oklch(0.2 0.05 164 / 0.3))" }}
             />
           </div>
         </div>
 
         {/* Number labels */}
-        <div className="mt-2 flex justify-between px-1 text-[10px] text-black/50">
+        <div className="mt-3 flex justify-between px-2 text-[0.6875rem] font-medium text-black/45">
           {ticks.map((tick) => (
             <span key={tick} className="w-4 text-center">
               {tick}

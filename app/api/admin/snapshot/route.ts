@@ -16,6 +16,8 @@ const upsertSchema = z.object({
   overallNarrative: z.string().min(1).max(2000),
   pillarScores: z.unknown(),
   stateSpotlightContent: z.unknown(),
+  institutionSpotlightContent: z.unknown().optional(),
+  sourcesReferences: z.unknown().optional(),
   publicSentimentSummary: z.unknown(),
 });
 
@@ -79,6 +81,12 @@ export async function POST(req: Request) {
         overallNarrative: data.overallNarrative,
         pillarScores: data.pillarScores as Prisma.InputJsonValue,
         stateSpotlightContent: data.stateSpotlightContent as Prisma.InputJsonValue,
+        ...(data.institutionSpotlightContent !== undefined
+          ? { institutionSpotlightContent: data.institutionSpotlightContent as Prisma.InputJsonValue }
+          : {}),
+        ...(data.sourcesReferences !== undefined
+          ? { sourcesReferences: data.sourcesReferences as Prisma.InputJsonValue }
+          : {}),
         publicSentimentSummary: data.publicSentimentSummary as Prisma.InputJsonValue,
         ...cycleLink,
       },
@@ -105,6 +113,12 @@ export async function POST(req: Request) {
       overallNarrative: data.overallNarrative,
       pillarScores: data.pillarScores as Prisma.InputJsonValue,
       stateSpotlightContent: data.stateSpotlightContent as Prisma.InputJsonValue,
+      ...(data.institutionSpotlightContent !== undefined
+        ? { institutionSpotlightContent: data.institutionSpotlightContent as Prisma.InputJsonValue }
+        : {}),
+      ...(data.sourcesReferences !== undefined
+        ? { sourcesReferences: data.sourcesReferences as Prisma.InputJsonValue }
+        : {}),
       publicSentimentSummary: data.publicSentimentSummary as Prisma.InputJsonValue,
       ...createCycleLink,
     },

@@ -58,9 +58,11 @@ model Snapshot {
   overallScore     Float
   overallNarrative String
 
-  pillarScores           Json
-  stateSpotlightContent  Json
-  publicSentimentSummary Json
+  pillarScores            Json
+  stateSpotlightContent   Json
+  institutionSpotlightContent Json?
+  sourcesReferences       Json?
+  publicSentimentSummary  Json
 
   publishedAt DateTime?
   isLocked    Boolean @default(false)

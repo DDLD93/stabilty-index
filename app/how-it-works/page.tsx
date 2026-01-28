@@ -1,3 +1,23 @@
+import type { Metadata } from "next";
+import { defaultMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = {
+  ...defaultMetadata,
+  title: "How It Works",
+  description:
+    "Learn how the Nigeria Stability Index works. NSI runs in monthly cycles: collect anonymous public sentiment, process inputs, then publish stable snapshots tracking Nigeria's stability.",
+  openGraph: {
+    ...defaultMetadata.openGraph,
+    title: "How Nigeria Stability Index Works",
+    description:
+      "Learn how NSI runs in monthly cycles: collect anonymous public sentiment, process inputs, then publish stable snapshots.",
+    url: `${defaultMetadata.metadataBase}how-it-works`,
+  },
+  alternates: {
+    canonical: "/how-it-works",
+  },
+};
+
 export default function HowItWorksPage() {
   return (
     <main className="mx-auto w-full max-w-7xl px-6 pb-14 pt-10">

@@ -2,7 +2,9 @@ import { db } from "@/lib/db";
 import { PublicationPoster } from "@/components/publication/PublicationPoster";
 
 type Pillar = { title: string; score: number; summary?: string };
-type Spotlight = { state?: string; score?: number; bullets?: string[] };
+type StateSpotlight = { state?: string; score?: number; bullets?: string[] };
+type InstitutionSpotlight = { institution?: string; summary?: string; bullets?: string[] };
+type SourceRef = { label?: string; url?: string };
 type Sentiment = { topWords?: string[]; averagePublicScore?: number; topMood?: string };
 
 function safeArray<T>(v: unknown): T[] {
@@ -34,6 +36,8 @@ export async function PublicationDashboard({ snapshotId }: { snapshotId: string 
       overallNarrative: true,
       pillarScores: true,
       stateSpotlightContent: true,
+      institutionSpotlightContent: true,
+      sourcesReferences: true,
       publicSentimentSummary: true,
     },
   });
@@ -47,7 +51,14 @@ export async function PublicationDashboard({ snapshotId }: { snapshotId: string 
   }
 
   const pillars = safeArray<Pillar>((snapshot.pillarScores as { pillars?: unknown })?.pillars ?? snapshot.pillarScores);
-  const spotlight = (snapshot.stateSpotlightContent ?? {}) as Spotlight;
+  const stateSpot = (snapshot.stateSpotlightContent ?? {}) as StateSpotlight;
+  const instSpot = (snapshot.institutionSpotlightContent ?? {}) as InstitutionSpotlight;
+  const sourcesRaw = snapshot.sourcesReferences as unknown;
+  const sources = Array.isArray(sourcesRaw)
+    ? (sourcesRaw as { label?: string; url?: string }[])
+        .filter((x) => x && typeof x === "object" && x.label && x.url)
+        .map((x) => ({ label: String(x.label), url: String(x.url) }))
+    : [];
   const sentiment = (snapshot.publicSentimentSummary ?? {}) as Sentiment;
   const avgPublic = safeNumber(sentiment.averagePublicScore) ?? undefined;
   const topWords = safeArray<string>(sentiment.topWords);
@@ -70,10 +81,16 @@ export async function PublicationDashboard({ snapshotId }: { snapshotId: string 
             ]
       }
       spotlight={{
-        state: spotlight.state,
-        score: safeNumber(spotlight.score) ?? undefined,
-        bullets: safeArray<string>(spotlight.bullets),
+        state: stateSpot.state,
+        score: safeNumber(stateSpot.score) ?? undefined,
+        bullets: safeArray<string>(stateSpot.bullets),
       }}
+      institutionSpotlight={{
+        institution: instSpot.institution,
+        summary: instSpot.summary,
+        bullets: safeArray<string>(instSpot.bullets),
+      }}
+      sourcesReferences={sources}
       sentiment={{
         topWords,
         averagePublicScore: avgPublic,

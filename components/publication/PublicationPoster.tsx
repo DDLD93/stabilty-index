@@ -7,10 +7,9 @@ import {
   PillarInvestorIcon,
   PillarSecurityIcon,
   PillarSocialIcon,
-  SocialFacebookIcon,
-  SocialLinkedInIcon,
+  SocialInstagramIcon,
+  SocialTikTokIcon,
   SocialXIcon,
-  SocialYouTubeIcon,
 } from "@/components/public/icons";
 import { SemiGauge } from "@/components/public/SemiGauge";
 
@@ -20,11 +19,27 @@ export type PosterSpotlight = {
   score?: number;
   bullets?: string[];
 };
+export type PosterInstitutionSpotlight = {
+  institution?: string;
+  summary?: string;
+  bullets?: string[];
+};
 export type PosterSentiment = {
   topWords?: string[];
   averagePublicScore?: number;
   topMood?: string;
 };
+export type SourceRef = { label: string; url: string };
+
+const SOCIAL = [
+  { href: "https://x.com/Nigeria_NSI", label: "X", Icon: SocialXIcon },
+  {
+    href: "https://www.instagram.com/nigeriastabilityindex",
+    label: "Instagram",
+    Icon: SocialInstagramIcon,
+  },
+  { href: "https://www.tiktok.com/@nigeria_nsi", label: "TikTok", Icon: SocialTikTokIcon },
+] as const;
 
 export function PublicationPoster({
   snapshotId,
@@ -33,6 +48,8 @@ export function PublicationPoster({
   overallNarrative,
   pillars,
   spotlight,
+  institutionSpotlight,
+  sourcesReferences,
   sentiment,
 }: {
   snapshotId: string;
@@ -41,6 +58,8 @@ export function PublicationPoster({
   overallNarrative: string | null;
   pillars: PosterPillar[];
   spotlight: PosterSpotlight;
+  institutionSpotlight?: PosterInstitutionSpotlight;
+  sourcesReferences?: SourceRef[];
   sentiment: PosterSentiment;
 }) {
   const IconFor = (title: string) => {
@@ -54,6 +73,9 @@ export function PublicationPoster({
 
   const avg = sentiment.averagePublicScore ?? null;
   const topWords = sentiment.topWords ?? [];
+  const inst = institutionSpotlight ?? {};
+  const sources = sourcesReferences ?? [];
+  const hasSentiment = topWords.length > 0 || avg != null;
 
   // Extract edition number from period if possible
   const editionMatch = period.match(/(\d+)/);
@@ -163,18 +185,28 @@ export function PublicationPoster({
           })}
         </div>
 
-        {/* State Highlight and Sentiment Section */}
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
+        <div className="mt-8">
+          <p className="text-center text-sm italic text-black/55">
+            Evidence-based spotlight. Not an endorsement.
+          </p>
+        </div>
+        <div
+          className={`mt-4 grid gap-6 ${hasSentiment ? "md:grid-cols-3" : ""}`}
+        >
           {/* Monthly State Highlight */}
-          <div className="overflow-hidden rounded-2xl border border-black/8 bg-white md:col-span-2">
+          <div
+            id="state-spotlight"
+            className={`scroll-mt-24 overflow-hidden rounded-2xl border border-black/8 bg-white ${
+              hasSentiment ? "md:col-span-2" : ""
+            }`}
+          >
             <div className="bg-[color:var(--nsi-green)] px-6 py-3 text-center text-sm font-semibold text-white">
               Monthly State Highlight
             </div>
             <div className="grid gap-6 p-6 md:grid-cols-2">
-              {/* State Info */}
               <div>
                 <h4 className="font-serif text-2xl font-bold text-[color:var(--nsi-ink)]">
-                  {spotlight.state ?? "Lagos State"}
+                  {spotlight.state ? `${spotlight.state} State` : "Lagos State"}
                 </h4>
                 <p className="mt-1 text-sm italic text-black/60">
                   Infrastructure Leading the Nation
@@ -217,52 +249,127 @@ export function PublicationPoster({
                 </ul>
               </div>
 
-              {/* Nigeria Map */}
               <div className="flex items-center justify-center">
                 <NigeriaMapSilhouette className="h-48 w-48 opacity-90" />
               </div>
             </div>
           </div>
 
-          {/* What Nigerians Said */}
-          <div className="overflow-hidden rounded-2xl border border-black/8 bg-white">
-            <div className="bg-[color:var(--nsi-paper)] px-5 py-4 text-center">
-              <h4 className="font-semibold text-[color:var(--nsi-ink)]">
-                What Nigerians Said This Month
-              </h4>
-              <div className="mt-3 flex flex-wrap justify-center gap-x-2 gap-y-1 text-sm">
-                {(topWords.length
-                  ? topWords
-                  : ["Hopeful", "Steady", "Progressing", "Demanding"]
-                )
-                  .slice(0, 4)
-                  .map((w, i) => (
-                    <span key={w} className="font-semibold text-black/70">
-                      {w}
-                      {i < 3 && <span className="mx-1 text-black/30">•</span>}
-                    </span>
-                  ))}
-              </div>
+          {hasSentiment && (
+            <div className="overflow-hidden rounded-2xl border border-black/8 bg-white">
+              <div className="bg-[color:var(--nsi-paper)] px-5 py-4 text-center">
+                <h4 className="font-semibold text-[color:var(--nsi-ink)]">
+                  What Nigerians Said This Month
+                </h4>
+                {topWords.length > 0 && (
+                  <div className="mt-3 flex flex-wrap justify-center gap-x-2 gap-y-1 text-sm">
+                    {topWords.slice(0, 4).map((w, i) => (
+                      <span key={w} className="font-semibold text-black/70">
+                        {w}
+                        {i < Math.min(3, topWords.length - 1) && (
+                          <span className="mx-1 text-black/30">•</span>
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                )}
 
-              <div className="mt-4 text-xs text-black/55">Average Public Score</div>
-              <div className="mt-1 flex items-baseline justify-center gap-1">
-                <span className="text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-                  {avg !== null ? avg.toFixed(1) : "6.5"}
-                </span>
-                <span className="text-lg text-black/50">/10</span>
+                {avg != null && (
+                  <>
+                    <div className="mt-4 text-xs text-black/55">Average Public Score</div>
+                    <div className="mt-1 flex items-baseline justify-center gap-1">
+                      <span className="text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
+                        {avg.toFixed(1)}
+                      </span>
+                      <span className="text-lg text-black/50">/10</span>
+                    </div>
+                  </>
+                )}
               </div>
+              {avg != null && (
+                <div className="px-5 pb-5 pt-2">
+                  <SemiGauge
+                    value={avg}
+                    label="Average public sentiment gauge"
+                    size={160}
+                  />
+                </div>
+              )}
             </div>
+          )}
+        </div>
 
-            {/* Semi Gauge */}
-            <div className="px-5 pb-5 pt-2">
-              <SemiGauge
-                value={avg ?? 6.5}
-                label="Average public sentiment gauge"
-                size={160}
-              />
+        {/* Institution Spotlight */}
+        {(inst.institution || (inst.bullets ?? []).length > 0) ? (
+          <div
+            id="institution-spotlight"
+            className="scroll-mt-24 mt-8 overflow-hidden rounded-2xl border border-black/8 bg-white"
+          >
+            <div className="bg-[color:var(--nsi-green)] px-6 py-3 text-center text-sm font-semibold text-white">
+              Institution Highlight
+            </div>
+            <div className="p-6">
+              <h4 className="font-serif text-xl font-bold text-[color:var(--nsi-ink)]">
+                {inst.institution || "Institution Spotlight"}
+              </h4>
+              {inst.summary && (
+                <p className="mt-2 text-sm text-black/70">{inst.summary}</p>
+              )}
+              {(inst.bullets ?? []).length > 0 && (
+                <ul className="mt-4 space-y-2">
+                  {inst.bullets!.slice(0, 3).map((b, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-black/70">
+                      <svg
+                        className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--nsi-green)]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
-        </div>
+        ) : (
+          <div id="institution-spotlight" className="scroll-mt-24" aria-hidden />
+        )}
+
+        {/* Sources / References */}
+        {sources.length > 0 ? (
+          <div className="mt-8 overflow-hidden rounded-2xl border border-black/8 bg-white">
+            <div className="border-b border-black/8 bg-[color:var(--nsi-paper)] px-6 py-3 text-center text-sm font-semibold text-[color:var(--nsi-ink)]">
+              Sources / References
+            </div>
+            <ul className="list-none space-y-0 divide-y divide-black/6 px-6 py-4">
+              {sources.map((s, idx) => (
+                <li key={idx} className="py-2.5">
+                  <a
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium text-[color:var(--nsi-green)] hover:underline"
+                  >
+                    {s.label}
+                  </a>
+                  <span className="ml-2 text-xs text-black/50 break-all">{s.url}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div className="mt-8 rounded-2xl border border-dashed border-black/15 bg-[color:var(--nsi-paper)] px-6 py-6 text-center text-sm text-black/55">
+            Sources / References — to be added.
+          </div>
+        )}
       </div>
 
       {/* Footer */}
@@ -281,38 +388,22 @@ export function PublicationPoster({
           </div>
 
           <div className="text-center text-sm opacity-80">
-            www.NigeriaStabilityIndex.org
+            www.NigeriaStabilityIndex.com
           </div>
 
           <div className="flex items-center gap-4">
-            <Link
-              className="opacity-80 transition-opacity hover:opacity-100"
-              href="#"
-              aria-label="Facebook"
-            >
-              <SocialFacebookIcon className="h-5 w-5" />
-            </Link>
-            <Link
-              className="opacity-80 transition-opacity hover:opacity-100"
-              href="#"
-              aria-label="Twitter/X"
-            >
-              <SocialXIcon className="h-5 w-5" />
-            </Link>
-            <Link
-              className="opacity-80 transition-opacity hover:opacity-100"
-              href="#"
-              aria-label="YouTube"
-            >
-              <SocialYouTubeIcon className="h-5 w-5" />
-            </Link>
-            <Link
-              className="opacity-80 transition-opacity hover:opacity-100"
-              href="#"
-              aria-label="LinkedIn"
-            >
-              <SocialLinkedInIcon className="h-5 w-5" />
-            </Link>
+            {SOCIAL.map(({ href, label, Icon }) => (
+              <Link
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="opacity-80 transition-opacity hover:opacity-100"
+                aria-label={label}
+              >
+                <Icon className="h-5 w-5" />
+              </Link>
+            ))}
           </div>
         </div>
       </div>

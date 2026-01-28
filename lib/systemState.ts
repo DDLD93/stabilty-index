@@ -17,6 +17,8 @@ export type PublicSystemState = {
         overallNarrative?: string | null;
         pillarScores?: unknown;
         publicSentimentSummary?: unknown;
+        stateSpotlightContent?: unknown;
+        institutionSpotlightContent?: unknown;
       }
     | null;
 };
@@ -57,6 +59,8 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
         overallNarrative: true,
         pillarScores: true,
         publicSentimentSummary: true,
+        stateSpotlightContent: true,
+        institutionSpotlightContent: true,
       },
     });
   } catch (error) {
@@ -90,6 +94,8 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
             overallNarrative: latestPublishedSnapshot.overallNarrative,
             pillarScores: latestPublishedSnapshot.pillarScores,
             publicSentimentSummary: latestPublishedSnapshot.publicSentimentSummary,
+            stateSpotlightContent: latestPublishedSnapshot.stateSpotlightContent,
+            institutionSpotlightContent: latestPublishedSnapshot.institutionSpotlightContent,
           }
         : null,
     };
@@ -107,6 +113,8 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
             overallNarrative: latestPublishedSnapshot.overallNarrative,
             pillarScores: latestPublishedSnapshot.pillarScores,
             publicSentimentSummary: latestPublishedSnapshot.publicSentimentSummary,
+            stateSpotlightContent: latestPublishedSnapshot.stateSpotlightContent,
+            institutionSpotlightContent: latestPublishedSnapshot.institutionSpotlightContent,
           }
         : null,
     };
@@ -123,6 +131,8 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
         overallNarrative: latestPublishedSnapshot.overallNarrative,
         pillarScores: latestPublishedSnapshot.pillarScores,
         publicSentimentSummary: latestPublishedSnapshot.publicSentimentSummary,
+        stateSpotlightContent: latestPublishedSnapshot.stateSpotlightContent,
+        institutionSpotlightContent: latestPublishedSnapshot.institutionSpotlightContent,
       },
     };
   }

@@ -1,64 +1,109 @@
+import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { NSIShieldMark } from "@/components/public/icons";
 import Link from "next/link";
+import { defaultMetadata } from "@/lib/metadata";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  ...defaultMetadata,
+  title: "Reports Archive",
+  description:
+    "Browse monthly stability reports from the Nigeria Stability Index. View detailed snapshots of Nigeria's stability across security, economy, governance, investor confidence, and social stability.",
+  openGraph: {
+    ...defaultMetadata.openGraph,
+    title: "Reports Archive | Nigeria Stability Index",
+    description:
+      "Browse monthly stability reports from the Nigeria Stability Index. View detailed snapshots of Nigeria's stability.",
+    url: `${defaultMetadata.metadataBase}reports`,
+  },
+  alternates: {
+    canonical: "/reports",
+  },
+};
 
 export default async function ReportsPage() {
   const reports = await db.snapshot.findMany({
     where: { publishedAt: { not: null } },
     orderBy: { publishedAt: "desc" },
-    select: { id: true, period: true, overallScore: true, overallNarrative: true, publishedAt: true },
+    select: {
+      id: true,
+      period: true,
+      overallScore: true,
+      overallNarrative: true,
+      publishedAt: true,
+    },
   });
 
   return (
     <main className="mx-auto w-full max-w-7xl px-6 pb-14 pt-10">
-      <section className="nsi-card rounded-[30px] px-8 py-9">
+      <section className="nsi-section-card rounded-[30px] px-8 py-9">
         <div className="flex items-center gap-3">
-          <NSIShieldMark />
-          <h1 className="text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">Reports</h1>
+          <NSIShieldMark className="h-10 w-10" />
+          <h1 className="font-serif text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
+            Reports Archive
+          </h1>
         </div>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-black/70">
-          Published monthly snapshots of Nigeria’s stability — overall score, pillar summaries, and a highlighted state.
+        <p className="mt-4 max-w-2xl text-base leading-7 text-[color:var(--nsi-ink-soft)]">
+          Published monthly snapshots of Nigeria&apos;s stability — overall
+          score, pillar summaries, and highlighted state and institution
+          spotlights.
         </p>
       </section>
 
       {reports.length ? (
         <div className="mt-10 grid gap-6 md:grid-cols-2">
           {reports.map((r) => (
-            <Link
+            <article
               key={r.id}
-              href={`/reports/${r.id}`}
-              className="group overflow-hidden rounded-[28px] border-2 border-black/15 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+              className="overflow-hidden rounded-[28px] border border-[color:var(--nsi-card-border)] bg-white shadow-md transition-all hover:shadow-lg"
             >
               <div className="bg-[color:var(--nsi-green)] px-7 py-3 text-sm font-semibold text-white">
                 {r.period}
               </div>
-              <div className="flex items-end justify-between gap-6 px-7 py-7">
-                <div>
-                  <div className="mt-2 font-serif text-2xl font-semibold tracking-tight text-black group-hover:underline">
-                    Nigeria Stability Snapshot
+              <div className="flex flex-col gap-6 px-7 py-7">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <h2 className="font-serif text-xl font-semibold tracking-tight text-[color:var(--nsi-ink)] md:text-2xl">
+                      Nigeria Stability Snapshot
+                    </h2>
+                    <p className="mt-3 line-clamp-2 text-sm leading-6 text-[color:var(--nsi-ink-soft)]">
+                      {r.overallNarrative}
+                    </p>
                   </div>
-                  <div className="mt-3 text-sm leading-6 text-black/70 line-clamp-2">
-                    {r.overallNarrative}
+                  <div className="shrink-0 rounded-2xl border border-black/10 bg-[color:var(--nsi-paper)] px-5 py-4 text-center">
+                    <div className="text-xs font-medium text-[color:var(--nsi-ink-soft)]">
+                      Score
+                    </div>
+                    <div className="mt-1 text-3xl font-semibold text-[color:var(--nsi-green)]">
+                      {r.overallScore.toFixed(1)}
+                    </div>
                   </div>
                 </div>
-                <div className="rounded-2xl border border-black/10 bg-[color:var(--nsi-paper)] px-5 py-4 text-center">
-                  <div className="text-xs font-medium text-black/60">Score</div>
-                  <div className="mt-1 text-3xl font-semibold text-[color:var(--nsi-green)]">
-                    {r.overallScore.toFixed(1)}
-                  </div>
-                </div>
+                <Link
+                  href={`/reports/${r.id}`}
+                  className="inline-flex w-full items-center justify-center rounded-lg bg-[color:var(--nsi-green)] px-5 py-3 text-sm font-semibold text-white transition-all hover:brightness-[1.08]"
+                >
+                  View Snapshot
+                </Link>
               </div>
-            </Link>
+            </article>
           ))}
         </div>
       ) : (
-        <div className="mt-10 rounded-[28px] border-2 border-black/15 bg-white p-8">
-          <p className="text-black/70">No published reports yet.</p>
+        <div className="mt-10 rounded-[28px] border border-[color:var(--nsi-card-border)] bg-white p-8 shadow-sm">
+          <p className="text-[color:var(--nsi-ink-soft)]">
+            No published reports yet.
+          </p>
+          <Link
+            href="/"
+            className="mt-4 inline-block text-sm font-medium text-[color:var(--nsi-green)] hover:underline"
+          >
+            Back to Home
+          </Link>
         </div>
       )}
     </main>
   );
 }
-

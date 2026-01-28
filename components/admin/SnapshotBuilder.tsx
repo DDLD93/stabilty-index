@@ -21,6 +21,14 @@ type SnapshotApiResponse =
 
 type Pillar = { title: string; score: number; summary: string };
 
+type InstitutionSpotlight = {
+  institution: string;
+  summary: string;
+  bullets: string[];
+};
+
+type SourceRef = { label: string; url: string };
+
 type SnapshotModel = {
   id?: string;
   cycleId: string | null;
@@ -29,6 +37,8 @@ type SnapshotModel = {
   overallNarrative: string;
   pillarScores: { pillars: Pillar[] };
   stateSpotlightContent: { state: string; score: number; bullets: string[] };
+  institutionSpotlightContent: InstitutionSpotlight;
+  sourcesReferences: SourceRef[];
   publicSentimentSummary: { topWords: string[]; averagePublicScore: number; topMood: string };
   publishedAt?: string | null;
   isLocked?: boolean;
@@ -53,6 +63,12 @@ const defaultSnapshot: SnapshotModel = {
     score: 7.1,
     bullets: ["Strongest in transportation", "Top in public services delivery", "Rising regional influence"],
   },
+  institutionSpotlightContent: {
+    institution: "",
+    summary: "",
+    bullets: [],
+  },
+  sourcesReferences: [],
   publicSentimentSummary: {
     topWords: ["Hopeful", "Steady", "Progressing", "Demanding"],
     averagePublicScore: 6.5,
@@ -123,7 +139,27 @@ export function SnapshotBuilder() {
     }
     const snap = data.snapshot;
 
-    // Ensure shapes
+    const inst = (snap.institutionSpotlightContent as unknown as InstitutionSpotlight | null) ?? {
+      institution: "",
+      summary: "",
+      bullets: [],
+    };
+    const instNorm =
+      typeof inst === "object" && inst !== null && "institution" in inst
+        ? {
+            institution: String(inst.institution ?? ""),
+            summary: String(inst.summary ?? ""),
+            bullets: Array.isArray(inst.bullets) ? inst.bullets.map(String) : [],
+          }
+        : { institution: "", summary: "", bullets: [] };
+
+    const sr = (snap.sourcesReferences as unknown as SourceRef[] | null) ?? [];
+    const srNorm = Array.isArray(sr)
+      ? sr
+          .filter((x) => x && typeof x === "object" && "label" in x && "url" in x)
+          .map((x) => ({ label: String(x.label), url: String(x.url) }))
+      : [];
+
     setModel({
       id: snap.id,
       cycleId: snap.cycleId ?? null,
@@ -137,6 +173,8 @@ export function SnapshotBuilder() {
           score: 0,
           bullets: [],
         },
+      institutionSpotlightContent: instNorm,
+      sourcesReferences: srNorm,
       publicSentimentSummary:
         (snap.publicSentimentSummary as unknown as SnapshotModel["publicSentimentSummary"]) ?? {
           topWords: [],
@@ -175,6 +213,8 @@ export function SnapshotBuilder() {
         overallNarrative: model.overallNarrative,
         pillarScores: model.pillarScores,
         stateSpotlightContent: model.stateSpotlightContent,
+        institutionSpotlightContent: model.institutionSpotlightContent,
+        sourcesReferences: model.sourcesReferences,
         publicSentimentSummary: model.publicSentimentSummary,
       }),
     });
@@ -406,7 +446,7 @@ export function SnapshotBuilder() {
           </div>
         </div>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
           <div className="rounded-3xl border border-black/10 bg-white p-5">
             <div className="font-serif text-xl font-semibold tracking-tight text-[color:var(--nsi-green)]">
               State highlight
@@ -458,6 +498,72 @@ export function SnapshotBuilder() {
                         const bullets = [...m.stateSpotlightContent.bullets];
                         bullets[idx] = e.target.value;
                         return { ...m, stateSpotlightContent: { ...m.stateSpotlightContent, bullets } };
+                      })
+                    }
+                    disabled={locked}
+                  />
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-black/10 bg-white p-5">
+            <div className="font-serif text-xl font-semibold tracking-tight text-[color:var(--nsi-green)]">
+              Institution highlight
+            </div>
+            <label className="mt-4 block">
+              <div className="text-xs font-medium text-black/60">Institution name</div>
+              <input
+                className="mt-1 w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none disabled:opacity-60"
+                value={model.institutionSpotlightContent.institution}
+                onChange={(e) =>
+                  setModel((m) => ({
+                    ...m,
+                    institutionSpotlightContent: {
+                      ...m.institutionSpotlightContent,
+                      institution: e.target.value,
+                    },
+                  }))
+                }
+                disabled={locked}
+              />
+            </label>
+            <label className="mt-4 block">
+              <div className="text-xs font-medium text-black/60">Summary</div>
+              <input
+                className="mt-1 w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none disabled:opacity-60"
+                value={model.institutionSpotlightContent.summary}
+                onChange={(e) =>
+                  setModel((m) => ({
+                    ...m,
+                    institutionSpotlightContent: {
+                      ...m.institutionSpotlightContent,
+                      summary: e.target.value,
+                    },
+                  }))
+                }
+                disabled={locked}
+              />
+            </label>
+            <div className="mt-4 space-y-3">
+              {[0, 1, 2].map((idx) => (
+                <label key={idx} className="block">
+                  <div className="text-xs font-medium text-black/60">Bullet {idx + 1}</div>
+                  <input
+                    className="mt-1 w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none disabled:opacity-60"
+                    value={model.institutionSpotlightContent.bullets[idx] ?? ""}
+                    onChange={(e) =>
+                      setModel((m) => {
+                        const bullets = [...m.institutionSpotlightContent.bullets];
+                        while (bullets.length <= idx) bullets.push("");
+                        bullets[idx] = e.target.value;
+                        return {
+                          ...m,
+                          institutionSpotlightContent: {
+                            ...m.institutionSpotlightContent,
+                            bullets,
+                          },
+                        };
                       })
                     }
                     disabled={locked}
@@ -523,6 +629,72 @@ export function SnapshotBuilder() {
                 disabled={locked}
               />
             </label>
+          </div>
+        </div>
+
+        <div className="mt-10 rounded-3xl border border-black/10 bg-white p-5">
+          <div className="font-serif text-xl font-semibold tracking-tight text-[color:var(--nsi-green)]">
+            Sources / References
+          </div>
+          <p className="mt-1 text-xs text-black/60">Verifiable links (label, URL).</p>
+          <div className="mt-4 space-y-4">
+            {model.sourcesReferences.map((s, idx) => (
+              <div key={idx} className="flex flex-wrap gap-3 rounded-xl border border-black/10 bg-[color:var(--nsi-paper)] p-3">
+                <input
+                  className="min-w-[120px] flex-1 rounded-lg border border-black/10 bg-white px-3 py-2 text-sm outline-none disabled:opacity-60"
+                  placeholder="Label"
+                  value={s.label}
+                  onChange={(e) =>
+                    setModel((m) => {
+                      const list = [...m.sourcesReferences];
+                      list[idx] = { ...list[idx]!, label: e.target.value };
+                      return { ...m, sourcesReferences: list };
+                    })
+                  }
+                  disabled={locked}
+                />
+                <input
+                  className="min-w-[180px] flex-[2] rounded-lg border border-black/10 bg-white px-3 py-2 text-sm outline-none disabled:opacity-60"
+                  placeholder="URL"
+                  type="url"
+                  value={s.url}
+                  onChange={(e) =>
+                    setModel((m) => {
+                      const list = [...m.sourcesReferences];
+                      list[idx] = { ...list[idx]!, url: e.target.value };
+                      return { ...m, sourcesReferences: list };
+                    })
+                  }
+                  disabled={locked}
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setModel((m) => ({
+                      ...m,
+                      sourcesReferences: m.sourcesReferences.filter((_, i) => i !== idx),
+                    }))
+                  }
+                  disabled={locked}
+                  className="rounded-lg border border-black/15 px-3 py-2 text-sm hover:bg-black/5 disabled:opacity-60"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() =>
+                setModel((m) => ({
+                  ...m,
+                  sourcesReferences: [...m.sourcesReferences, { label: "", url: "" }],
+                }))
+              }
+              disabled={locked}
+              className="rounded-xl border border-dashed border-black/20 bg-white px-4 py-2 text-sm font-medium text-black/70 hover:bg-black/[.03] disabled:opacity-60"
+            >
+              + Add source
+            </button>
           </div>
         </div>
       </div>

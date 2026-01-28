@@ -10,6 +10,8 @@ const updateSchema = z.object({
   overallNarrative: z.string().min(1).max(2000).optional(),
   pillarScores: z.unknown().optional(),
   stateSpotlightContent: z.unknown().optional(),
+  institutionSpotlightContent: z.unknown().optional(),
+  sourcesReferences: z.unknown().optional(),
   publicSentimentSummary: z.unknown().optional(),
   cycleId: z.string().nullable().optional(),
 });
@@ -66,6 +68,12 @@ export async function PATCH(
       : {}),
     ...(parsed.data.stateSpotlightContent !== undefined
       ? { stateSpotlightContent: parsed.data.stateSpotlightContent as Prisma.InputJsonValue }
+      : {}),
+    ...(parsed.data.institutionSpotlightContent !== undefined
+      ? { institutionSpotlightContent: parsed.data.institutionSpotlightContent as Prisma.InputJsonValue }
+      : {}),
+    ...(parsed.data.sourcesReferences !== undefined
+      ? { sourcesReferences: parsed.data.sourcesReferences as Prisma.InputJsonValue }
       : {}),
     ...(parsed.data.publicSentimentSummary !== undefined
       ? { publicSentimentSummary: parsed.data.publicSentimentSummary as Prisma.InputJsonValue }
