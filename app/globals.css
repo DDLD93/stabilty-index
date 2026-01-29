@@ -162,162 +162,38 @@
 @layer utilities {
   /* Premium header/footer band with enhanced gradient */
   .nsi-band {
-    background-image:
-      /* Top highlight line */
-      linear-gradient(180deg, oklch(1 0 0 / 0.12) 0%, transparent 2px),
-      /* Subtle texture overlay */
-      radial-gradient(ellipse 100% 100% at 50% 0%, oklch(0.38 0.07 164 / 0.4), transparent 60%),
-      /* Inner glow spots */
-      radial-gradient(900px 120px at 20% 30%, oklch(0.34 0.07 168 / 0.5), transparent 70%),
-      radial-gradient(700px 120px at 80% 50%, oklch(0.32 0.06 164 / 0.5), transparent 70%),
-      /* Base premium gradient */
-      linear-gradient(180deg, oklch(0.28 0.07 166) 0%, oklch(0.22 0.06 164) 100%);
-    border-top: 1px solid oklch(1 0 0 / 0.15);
-    border-bottom: 3px solid var(--nsi-gold);
-    box-shadow: 
-      0 4px 20px -4px oklch(0.12 0.04 164 / 0.4),
-      inset 0 1px 0 oklch(1 0 0 / 0.08);
+    background: linear-gradient(180deg, 
+      rgba(15, 45, 35, 0.85) 0%, 
+      rgba(10, 30, 25, 0.95) 100%
+    );
+    backdrop-filter: blur(16px);
+    border-bottom: 2px solid var(--nsi-gold);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
   }
 
   /* Semi-transparent glass card */
   .nsi-card {
-    background: var(--nsi-card);
-    border: 1.5px solid oklch(0.3 0.02 164 / 0.15);
-    box-shadow: 
-      var(--nsi-shadow),
-      0 0 0 1px oklch(1 0 0 / 0.5) inset;
-    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 24px;
   }
 
-  /* Solid white card */
+  /* Solid white card - updated for dark theme */
   .nsi-card-solid {
-    background: oklch(1 0 0);
-    border: 1.5px solid oklch(0.3 0.02 164 / 0.15);
-    box-shadow: var(--nsi-shadow);
-  }
-
-  /* Pill button base */
-  .nsi-pill {
-    border: 1px solid oklch(0.3 0.01 260 / 0.2);
-    background: oklch(1 0 0 / 75%);
-    box-shadow: 0 6px 16px -12px oklch(0.14 0.02 160 / 0.3);
-  }
-
-  /* Hero section background with subtle glow */
-  .nsi-hero-bg {
-    background-image:
-      radial-gradient(ellipse 80% 50% at 85% 15%, oklch(0.42 0.05 164 / 0.4), transparent 50%),
-      radial-gradient(ellipse 60% 40% at 15% 80%, oklch(0.35 0.05 164 / 0.25), transparent 50%),
-      linear-gradient(135deg, oklch(0.32 0.06 164) 0%, oklch(0.26 0.05 164) 100%);
-    background-size: 100% 100%, 100% 100%, 100% 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-
-  /* Pillar card styling - matches screenshot */
-  .nsi-pillar-card {
-    background: white;
-    border: 1.5px solid oklch(0.3 0.02 164 / 0.18);
-    box-shadow: 
-      0 8px 24px -10px oklch(0.12 0.03 160 / 0.3),
-      0 2px 6px -2px oklch(0.12 0.02 160 / 0.15);
-    border-radius: 16px;
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .nsi-pillar-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 
-      0 12px 32px -10px oklch(0.12 0.03 160 / 0.35),
-      0 4px 8px -2px oklch(0.12 0.02 160 / 0.18);
-  }
-
-  /* Pillar card header with green background */
-  .nsi-pillar-header {
-    background: linear-gradient(180deg, var(--nsi-green) 0%, var(--nsi-green-deep) 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.25rem 0;
-    border-bottom: 1px solid oklch(0.2 0.04 164 / 0.3);
-  }
-
-  /* Main section cards with glass effect */
-  .nsi-section-card {
-    background: oklch(1 0 0 / 94%);
-    border: 1.5px solid oklch(0.3 0.02 164 / 0.15);
-    box-shadow: 
-      0 12px 32px -16px oklch(0.10 0.03 160 / 0.35),
-      0 4px 12px -4px oklch(0.12 0.02 160 / 0.15),
-      0 0 0 1px oklch(1 0 0 / 0.6) inset;
-    backdrop-filter: blur(10px);
-  }
-
-  /* Ruler gauge background */
-  .nsi-ruler {
-    background: linear-gradient(90deg, oklch(0.96 0.015 88), oklch(0.93 0.025 86));
-    border: 1px solid oklch(0.3 0.02 164 / 0.12);
-    border-radius: 4px;
-    box-shadow: inset 0 1px 3px oklch(0.3 0.01 260 / 0.08);
-  }
-
-  /* Mood selection pills */
-  .nsi-mood-pill {
-    border: 1px solid oklch(0.3 0.02 164 / 0.18);
-    background: oklch(1 0 0 / 90%);
-    border-radius: 8px;
-    padding: 0.625rem 1.25rem;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: oklch(0.3 0.01 260 / 0.85);
-    transition: all 0.15s ease;
-    cursor: pointer;
-  }
-
-  .nsi-mood-pill:hover {
-    background: white;
-    border-color: oklch(0.3 0.02 164 / 0.28);
-    box-shadow: 0 4px 12px -6px oklch(0.14 0.02 160 / 0.2);
-  }
-
-  .nsi-mood-pill.active {
-    background: var(--nsi-gold);
-    border-color: var(--nsi-gold-deep);
-    color: oklch(0.15 0.02 260);
-    font-weight: 600;
-    box-shadow: 0 4px 12px -4px oklch(0.6 0.12 86 / 0.4);
-  }
-
-  /* Report header bar */
-  .nsi-report-header {
-    background: linear-gradient(180deg, var(--nsi-green) 0%, var(--nsi-green-deep) 100%);
-    color: white;
-    padding: 0.875rem 1.5rem;
-    font-weight: 600;
-    font-size: 0.9375rem;
-    text-align: center;
-    letter-spacing: 0.01em;
-    border-bottom: 2px solid var(--nsi-gold);
-  }
-
-  /* Newsletter section styling */
-  .nsi-newsletter-section {
-    background: linear-gradient(180deg, var(--nsi-green) 0%, oklch(0.22 0.06 164) 100%);
-    border: 1.5px solid oklch(1 0 0 / 0.12);
-    box-shadow: 
-      0 16px 40px -20px oklch(0.10 0.04 164 / 0.5),
-      inset 0 1px 0 oklch(1 0 0 / 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
   }
 
   /* Score display styling */
   .nsi-score-display {
-    background: oklch(1 0 0 / 85%);
-    border: 2px solid oklch(0.3 0.02 164 / 0.12);
-    box-shadow: 
-      0 8px 24px -12px oklch(0.12 0.03 160 / 0.25),
-      0 0 0 1px oklch(1 0 0 / 0.7) inset;
-    backdrop-filter: blur(8px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(20px);
   }
 
   /* Gold accent text */
@@ -328,5 +204,25 @@
   /* Green accent text */
   .nsi-green-text {
     color: var(--nsi-green);
+  }
+
+  .nsi-page {
+    @apply mx-auto w-full max-w-7xl px-6 pb-20 pt-10;
+  }
+
+  .nsi-section-card {
+    @apply relative overflow-hidden rounded-[3rem] border border-black/10 bg-white/60 shadow-sm backdrop-blur-sm;
+  }
+
+  .nsi-card-soft {
+    @apply rounded-2xl border border-black/10 bg-white/80 shadow-md;
+  }
+
+  .nsi-pill {
+    @apply rounded-full border border-black/10 bg-white/70 px-4 py-2 text-sm font-medium text-[color:var(--nsi-ink)] backdrop-blur-sm transition-all hover:bg-white;
+  }
+
+  .nsi-newsletter-section {
+    @apply relative overflow-hidden rounded-[3rem] border border-black/10;
   }
 }

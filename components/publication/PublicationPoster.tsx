@@ -79,104 +79,75 @@ export function PublicationPoster({
 
   // Extract edition number from period if possible
   const editionMatch = period.match(/(\d+)/);
-  const editionNum = editionMatch ? editionMatch[1].padStart(3, "0") : "001";
+  const editionNum = editionMatch ? editionMatch[1].padStart(3, "0") : "002";
 
   return (
-    <div className="overflow-hidden rounded-[30px] border border-black/10 bg-white shadow-lg">
-      {/* Header with NSI Badge */}
-      <div className="nsi-band relative px-8 py-8 text-white">
-        {/* Decorative background */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            backgroundImage:
-              "radial-gradient(ellipse 50% 80% at 85% 30%, oklch(0.4 0.05 164 / 0.4), transparent 50%)",
-          }}
-        />
-
-        <div className="relative flex flex-col items-center gap-4 md:flex-row md:justify-between">
-          {/* Badge Logo and Title */}
-          <div className="flex items-center gap-4">
-            <NSIBadgeLogo className="h-20 w-16 md:h-24 md:w-20" />
-            <div>
-              <h1 className="font-serif text-2xl font-bold tracking-tight md:text-3xl">
-                Nigeria Stability Index
-              </h1>
-              <div className="mt-1 inline-block rounded-full border border-white/30 bg-white/10 px-4 py-1 text-sm">
-                {period} • Edition {editionNum}
-              </div>
+    <div className="overflow-hidden rounded-[30px] border border-black/10 shadow-2xl">
+      {/* Centered Header */}
+      <div className="nsi-band relative flex flex-col items-center py-10 text-white">
+        <div className="flex items-center gap-6">
+          <NSIBadgeLogo className="h-28 w-24" />
+          <div className="text-left">
+            <h1 className="font-serif text-4xl font-bold tracking-tight lg:text-5xl">
+              Nigeria Stability Index
+            </h1>
+            <div className="mt-2 text-xl font-medium opacity-90">
+              {period} • Edition {editionNum}
             </div>
           </div>
-
-          {/* View report link */}
-          <Link
-            className="text-sm opacity-90 underline hover:opacity-100"
-            href={`/reports/${snapshotId}`}
-          >
-            View full report
-          </Link>
         </div>
+        <div className="mt-8 h-0.5 w-64 bg-white/20" />
       </div>
 
-      {/* Main Content Area */}
-      <div
-        className="relative px-8 pb-8 pt-6"
-        style={{
-          background:
-            "linear-gradient(180deg, oklch(0.97 0.02 88) 0%, oklch(0.93 0.02 160 / 0.3) 100%)",
-        }}
-      >
+      {/* Main Content Area - Parchment Textured */}
+      <div className="nsi-parchment relative px-10 pb-12 pt-10">
         {/* Tagline */}
         <div className="text-center">
-          <p className="font-serif text-base italic text-black/70">
+          <p className="font-serif text-xl italic text-black/60">
             A calm snapshot of how Nigeria is holding together
           </p>
         </div>
 
-        {/* Overall Score */}
-        <div className="mt-6 flex flex-col items-center">
-          <div className="flex items-baseline gap-1">
-            <span className="text-8xl font-semibold tracking-tight text-[color:var(--nsi-green)] md:text-9xl">
+        {/* Overall Score - Huge Display */}
+        <div className="mt-12 flex flex-col items-center">
+          <div className="flex items-baseline gap-2">
+            <span className="text-[10rem] font-bold tracking-tighter text-[color:var(--nsi-green)] lg:text-[12rem]">
               {overallScore.toFixed(1)}
             </span>
-            <span className="text-4xl text-black/50">/10</span>
+            <span className="text-5xl font-semibold text-black/25 lg:text-6xl">/10</span>
           </div>
-          <div className="mt-3 text-center">
-            <div className="text-lg font-semibold text-[color:var(--nsi-green-ink)]">
-              Nigeria's Stability Today
+          <div className="mt-4 text-center">
+            <div className="text-2xl font-bold tracking-tight text-[color:var(--nsi-ink)]">
+              Nigeria&apos;s Stability Today
             </div>
-            <div className="mt-1 font-serif text-lg italic text-black/70">
+            <div className="mt-1 font-serif text-2xl italic text-black/50">
               {overallNarrative ?? "Cautiously improving"}
             </div>
           </div>
         </div>
 
-        {/* Pillar Cards Row */}
-        <div className="mt-8 grid gap-3 sm:grid-cols-2 md:grid-cols-5">
+        {/* Pillar Cards Row - Compact with Green Headers */}
+        <div className="mt-16 grid gap-4 sm:grid-cols-2 md:grid-cols-5">
           {pillars.slice(0, 5).map((p) => {
             const Icon = IconFor(p.title);
             return (
               <div
                 key={p.title}
-                className="overflow-hidden rounded-xl border border-black/8 bg-white shadow-sm"
+                className="overflow-hidden rounded-xl border border-black/10 bg-white shadow-sm"
               >
-                {/* Icon header */}
-                <div className="flex items-center justify-center bg-[color:var(--nsi-green)] py-3">
-                  <Icon className="h-10 w-10" />
+                <div className="flex items-center justify-center bg-[color:var(--nsi-green)] py-4">
+                  <Icon className="h-12 w-12 text-white" />
                 </div>
-                {/* Content */}
-                <div className="px-3 pb-3 pt-2">
+                <div className="p-4">
                   <div className="flex items-baseline justify-between gap-1">
-                    <div className="text-xs font-semibold text-[color:var(--nsi-ink)]">
+                    <div className="text-[0.8rem] font-bold uppercase tracking-wider text-[color:var(--nsi-ink)]">
                       {p.title}
                     </div>
-                    <div className="text-xs font-bold text-[color:var(--nsi-green)]">
-                      {Number.isFinite(p.score)
-                        ? Number(p.score).toFixed(1)
-                        : "—"}
+                    <div className="text-sm font-bold text-[color:var(--nsi-green)]">
+                      {p.score.toFixed(1)}
                     </div>
                   </div>
-                  <div className="mt-1.5 text-[10px] italic leading-4 text-black/60">
+                  <div className="mt-2 text-[0.75rem] italic leading-relaxed text-black/60">
                     {p.summary ?? ""}
                   </div>
                 </div>
@@ -185,40 +156,29 @@ export function PublicationPoster({
           })}
         </div>
 
-        <div className="mt-8">
-          <p className="text-center text-sm italic text-black/55">
-            Evidence-based spotlight. Not an endorsement.
-          </p>
-        </div>
-        <div
-          className={`mt-4 grid gap-6 ${hasSentiment ? "md:grid-cols-3" : ""}`}
-        >
+        {/* Bottom Section: Highlights & Sentiment */}
+        <div className="mt-16 grid gap-8 lg:grid-cols-3">
           {/* Monthly State Highlight */}
-          <div
-            id="state-spotlight"
-            className={`scroll-mt-24 overflow-hidden rounded-2xl border border-black/8 bg-white ${
-              hasSentiment ? "md:col-span-2" : ""
-            }`}
-          >
-            <div className="bg-[color:var(--nsi-green)] px-6 py-3 text-center text-sm font-semibold text-white">
+          <div className="overflow-hidden rounded-2xl border border-black/10 bg-white lg:col-span-2">
+            <div className="nsi-band py-3 text-center text-sm font-bold text-white">
               Monthly State Highlight
             </div>
-            <div className="grid gap-6 p-6 md:grid-cols-2">
-              <div>
-                <h4 className="font-serif text-2xl font-bold text-[color:var(--nsi-ink)]">
+            <div className="grid gap-10 p-8 md:grid-cols-2">
+              <div className="flex flex-col justify-center">
+                <h4 className="font-serif text-3xl font-bold text-[color:var(--nsi-ink)]">
                   {spotlight.state ? `${spotlight.state} State` : "Lagos State"}
                 </h4>
-                <p className="mt-1 text-sm italic text-black/60">
+                <p className="mt-2 text-lg italic text-black/50">
                   Infrastructure Leading the Nation
                 </p>
-                <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-5xl font-semibold tracking-tight text-[color:var(--nsi-green)]">
+                <div className="mt-6 flex items-baseline gap-2">
+                  <span className="text-6xl font-bold text-[color:var(--nsi-green)]">
                     {(spotlight.score ?? 7.1).toFixed(1)}
                   </span>
-                  <span className="text-xl text-black/50">/10</span>
+                  <span className="text-2xl font-semibold text-black/25">/10</span>
                 </div>
 
-                <ul className="mt-5 space-y-2">
+                <ul className="mt-8 space-y-3">
                   {(spotlight.bullets?.length
                     ? spotlight.bullets
                     : [
@@ -229,9 +189,9 @@ export function PublicationPoster({
                   )
                     .slice(0, 3)
                     .map((b, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-sm text-black/70">
+                      <li key={idx} className="flex items-start gap-3 text-[1rem] font-medium text-black/70">
                         <svg
-                          className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--nsi-green)]"
+                          className="mt-1 h-5 w-5 shrink-0 text-[color:var(--nsi-green)]"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -249,89 +209,109 @@ export function PublicationPoster({
                 </ul>
               </div>
 
-              <div className="flex items-center justify-center">
-                <NigeriaMapSilhouette className="h-48 w-48 opacity-90" />
+              <div className="flex items-center justify-center p-4">
+                <div className="relative">
+                  <div className="absolute inset-0 scale-110 blur-2xl opacity-10 bg-[color:var(--nsi-gold)] rounded-full" />
+                  <NigeriaMapSilhouette className="h-64 w-64 relative opacity-95" />
+                </div>
               </div>
             </div>
           </div>
 
-          {hasSentiment && (
-            <div className="overflow-hidden rounded-2xl border border-black/8 bg-white">
-              <div className="bg-[color:var(--nsi-paper)] px-5 py-4 text-center">
-                <h4 className="font-semibold text-[color:var(--nsi-ink)]">
+          {/* Sentiment Section */}
+          <div className="flex flex-col gap-8">
+            <div className="overflow-hidden rounded-2xl border border-black/10 bg-white">
+              <div className="bg-black/5 px-6 py-5 text-center border-b border-black/[0.08]">
+                <h4 className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
                   What Nigerians Said This Month
                 </h4>
                 {topWords.length > 0 && (
-                  <div className="mt-3 flex flex-wrap justify-center gap-x-2 gap-y-1 text-sm">
+                  <div className="mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1 text-[1rem]">
                     {topWords.slice(0, 4).map((w, i) => (
-                      <span key={w} className="font-semibold text-black/70">
+                      <span key={w} className="font-bold text-black/70">
                         {w}
                         {i < Math.min(3, topWords.length - 1) && (
-                          <span className="mx-1 text-black/30">•</span>
+                          <span className="ml-2 text-black/20">•</span>
                         )}
                       </span>
                     ))}
                   </div>
                 )}
-
+              </div>
+              <div className="p-8">
                 {avg != null && (
                   <>
-                    <div className="mt-4 text-xs text-black/55">Average Public Score</div>
-                    <div className="mt-1 flex items-baseline justify-center gap-1">
-                      <span className="text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-                        {avg.toFixed(1)}
-                      </span>
-                      <span className="text-lg text-black/50">/10</span>
+                    <div className="mb-6 text-center">
+                      <div className="text-xs font-bold uppercase tracking-widest text-black/40">Average Public Score</div>
+                      <div className="mt-2 flex items-baseline justify-center gap-1">
+                        <span className="text-5xl font-bold text-[color:var(--nsi-ink)]">
+                          {avg.toFixed(1)}
+                        </span>
+                        <span className="text-xl font-semibold text-black/25">/10</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-center">
+                      <SemiGauge
+                        value={avg}
+                        label="Average public sentiment gauge"
+                        size={200}
+                      />
                     </div>
                   </>
                 )}
               </div>
-              {avg != null && (
-                <div className="px-5 pb-5 pt-2">
-                  <SemiGauge
-                    value={avg}
-                    label="Average public sentiment gauge"
-                    size={160}
-                  />
-                </div>
-              )}
             </div>
-          )}
+
+            {/* Sources / References */}
+            <div className="flex-1 overflow-hidden rounded-2xl border border-black/10 bg-white">
+              <div className="bg-black/5 px-6 py-4 text-center border-b border-black/[0.08]">
+                <h4 className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
+                  Sources / References
+                </h4>
+              </div>
+              <div className="p-6">
+                {sources.length > 0 ? (
+                  <ul className="space-y-4">
+                    {sources.map((s, idx) => (
+                      <li key={idx} className="flex flex-col">
+                        <a
+                          href={s.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm font-bold text-[color:var(--nsi-green)] hover:underline"
+                        >
+                          {s.label}
+                        </a>
+                        <span className="mt-0.5 text-[0.7rem] text-black/40 break-all">{s.url}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-center text-xs italic text-black/40 py-4">Sources pending.</p>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Institution Spotlight */}
-        {(inst.institution || (inst.bullets ?? []).length > 0) ? (
-          <div
-            id="institution-spotlight"
-            className="scroll-mt-24 mt-8 overflow-hidden rounded-2xl border border-black/8 bg-white"
-          >
-            <div className="bg-[color:var(--nsi-green)] px-6 py-3 text-center text-sm font-semibold text-white">
+        {/* Institution Highlight */}
+        {inst.institution && (
+          <div className="mt-8 overflow-hidden rounded-2xl border border-black/10 bg-white">
+            <div className="nsi-band py-3 text-center text-sm font-bold text-white">
               Institution Highlight
             </div>
-            <div className="p-6">
-              <h4 className="font-serif text-xl font-bold text-[color:var(--nsi-ink)]">
-                {inst.institution || "Institution Spotlight"}
+            <div className="p-8">
+              <h4 className="font-serif text-2xl font-bold text-[color:var(--nsi-ink)]">
+                {inst.institution}
               </h4>
               {inst.summary && (
-                <p className="mt-2 text-sm text-black/70">{inst.summary}</p>
+                <p className="mt-3 text-[1.1rem] leading-relaxed text-black/70">{inst.summary}</p>
               )}
               {(inst.bullets ?? []).length > 0 && (
-                <ul className="mt-4 space-y-2">
-                  {inst.bullets!.slice(0, 3).map((b, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-sm text-black/70">
-                      <svg
-                        className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--nsi-green)]"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={3}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
+                <ul className="mt-6 grid gap-4 sm:grid-cols-2">
+                  {inst.bullets!.map((b, idx) => (
+                    <li key={idx} className="flex items-start gap-3 text-[1rem] font-medium text-black/70">
+                      <div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--nsi-green)]" />
                       <span>{b}</span>
                     </li>
                   ))}
@@ -339,71 +319,36 @@ export function PublicationPoster({
               )}
             </div>
           </div>
-        ) : (
-          <div id="institution-spotlight" className="scroll-mt-24" aria-hidden />
-        )}
-
-        {/* Sources / References */}
-        {sources.length > 0 ? (
-          <div className="mt-8 overflow-hidden rounded-2xl border border-black/8 bg-white">
-            <div className="border-b border-black/8 bg-[color:var(--nsi-paper)] px-6 py-3 text-center text-sm font-semibold text-[color:var(--nsi-ink)]">
-              Sources / References
-            </div>
-            <ul className="list-none space-y-0 divide-y divide-black/6 px-6 py-4">
-              {sources.map((s, idx) => (
-                <li key={idx} className="py-2.5">
-                  <a
-                    href={s.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-medium text-[color:var(--nsi-green)] hover:underline"
-                  >
-                    {s.label}
-                  </a>
-                  <span className="ml-2 text-xs text-black/50 break-all">{s.url}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : (
-          <div className="mt-8 rounded-2xl border border-dashed border-black/15 bg-[color:var(--nsi-paper)] px-6 py-6 text-center text-sm text-black/55">
-            Sources / References — to be added.
-          </div>
         )}
       </div>
 
-      {/* Footer */}
-      <div className="nsi-band px-8 py-6 text-white">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-4">
-            <NSIBadgeLogo className="h-16 w-14" />
+      {/* Footer Band */}
+      <div className="nsi-band px-10 py-10 text-white">
+        <div className="flex flex-col items-center gap-8 md:flex-row md:justify-between">
+          <div className="flex items-center gap-6">
+            <NSIBadgeLogo className="h-24 w-20" />
             <div>
-              <div className="font-serif text-lg font-semibold">
-                Nigeria Stability Index (NSI)
-              </div>
-              <div className="text-sm opacity-80">
-                Tracking security, economy, governance.
-              </div>
+              <div className="font-serif text-2xl font-bold">Nigeria Stability Index (NSI)</div>
+              <div className="mt-1 text-lg opacity-70">Tracking security, economy, governance.</div>
             </div>
           </div>
 
-          <div className="text-center text-sm opacity-80">
-            www.NigeriaStabilityIndex.com
-          </div>
-
-          <div className="flex items-center gap-4">
-            {SOCIAL.map(({ href, label, Icon }) => (
-              <Link
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="opacity-80 transition-opacity hover:opacity-100"
-                aria-label={label}
-              >
-                <Icon className="h-5 w-5" />
-              </Link>
-            ))}
+          <div className="flex flex-col items-center gap-4">
+            <div className="text-xl font-bold tracking-wider">www.NigeriaStabilityIndex.org</div>
+            <div className="flex items-center gap-6">
+              {SOCIAL.map(({ href, label, Icon }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="opacity-70 transition-all hover:opacity-100 hover:scale-110"
+                  aria-label={label}
+                >
+                  <Icon className="h-6 w-6" />
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>

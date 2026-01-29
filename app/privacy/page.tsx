@@ -20,20 +20,29 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main className="mx-auto w-full max-w-7xl px-6 pb-14 pt-10">
-      <section className="nsi-section-card rounded-[30px] px-8 py-9">
-        <h1 className="font-serif text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-          Privacy
-        </h1>
-        <p className="mt-5 max-w-2xl text-base leading-7 text-[color:var(--nsi-ink-soft)]">
-          The Nigeria Stability Index (NSI) respects your privacy. This page
-          describes how we handle your information when you use our website,
-          subscribe to updates, or participate in check-ins.
-        </p>
+    <main className="w-full pb-20">
+      <section className="relative overflow-hidden pt-16">
+        <div className="mx-auto w-full max-w-7xl px-6">
+          <div className="nsi-section-card px-8 py-10">
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/60 px-4 py-1.5 text-sm font-medium text-[color:var(--nsi-ink)] backdrop-blur-md">
+                Privacy
+              </div>
+              <h1 className="mt-6 font-serif text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)] lg:text-5xl">
+                Your data stays calm and minimal
+              </h1>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-[color:var(--nsi-ink-soft)]">
+                The Nigeria Stability Index (NSI) respects your privacy. This page
+                describes how we handle your information when you use our website,
+                subscribe to updates, or participate in check-ins.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section className="mt-10 space-y-8">
-        <div className="nsi-card-solid rounded-[28px] p-8">
+      <section className="mx-auto mt-12 w-full max-w-7xl space-y-6 px-6">
+        <div className="nsi-card-soft p-8">
           <h2 className="font-serif text-xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
             Email subscriptions
           </h2>
@@ -46,7 +55,7 @@ export default function PrivacyPage() {
           </p>
         </div>
 
-        <div className="nsi-card-solid rounded-[28px] p-8">
+        <div className="nsi-card-soft p-8">
           <h2 className="font-serif text-xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
             Check-in and spotlight data
           </h2>
@@ -60,7 +69,7 @@ export default function PrivacyPage() {
           </p>
         </div>
 
-        <div className="nsi-card-solid rounded-[28px] p-8">
+        <div className="nsi-card-soft p-8">
           <h2 className="font-serif text-xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
             Website usage and cookies
           </h2>
@@ -72,7 +81,7 @@ export default function PrivacyPage() {
           </p>
         </div>
 
-        <div className="nsi-card-solid rounded-[28px] p-8">
+        <div className="nsi-card-soft p-8">
           <h2 className="font-serif text-xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
             Contact
           </h2>

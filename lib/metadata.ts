@@ -1,3 +1,5 @@
+import { Metadata } from "next";
+
 /**
  * Centralized metadata configuration for Nigeria Stability Index
  */
@@ -35,13 +37,13 @@ export const siteConfig = {
   },
 } as const;
 
-export const defaultMetadata = {
+export const defaultMetadata: Metadata = {
   title: {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  keywords: siteConfig.keywords,
+  keywords: [...siteConfig.keywords],
   authors: [{ name: siteConfig.author.name }],
   creator: siteConfig.author.name,
   publisher: siteConfig.author.organization,
@@ -90,4 +92,4 @@ export const defaultMetadata = {
     // yandex: "your-yandex-verification-code",
     // bing: "your-bing-verification-code",
   },
-} as const;
+};

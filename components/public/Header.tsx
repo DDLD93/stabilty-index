@@ -18,40 +18,40 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="nsi-band relative text-white">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+    <header className="nsi-band sticky top-0 z-50 text-white backdrop-blur-md">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4">
         <Link
           href="/"
           className="flex items-center gap-3 transition-opacity hover:opacity-95"
         >
-          <NSIShieldMark className="h-10 w-10" />
-          <div className="leading-tight">
-            <div className="font-serif text-[1.125rem] font-bold tracking-tight">
+          <NSIShieldMark className="h-9 w-9" />
+          <div className="hidden leading-tight sm:block">
+            <div className="font-serif text-[1rem] font-bold tracking-tight">
               Nigeria Stability Index{" "}
               <span className="font-medium text-[color:var(--nsi-gold-light)]">
                 (NSI)
               </span>
             </div>
           </div>
+          <div className="block sm:hidden font-serif text-[1.125rem] font-bold tracking-tight">
+            NSI
+          </div>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-7 text-[0.9375rem] font-medium md:flex">
+        <nav className="hidden items-center gap-6 text-[0.875rem] font-medium md:flex">
           {navLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
-              className="opacity-85 transition-all hover:opacity-100"
+              className="opacity-90 transition-all hover:text-[color:var(--nsi-gold-light)] hover:opacity-100"
             >
               {label}
             </Link>
           ))}
           <Link
-            className="ml-3 rounded-lg bg-[color:var(--nsi-gold)] px-6 py-2.5 text-[0.9375rem] font-semibold text-[color:var(--nsi-ink)] transition-all hover:brightness-[0.96]"
+            className="ml-2 rounded-xl bg-[color:var(--nsi-gold)] px-6 py-2.5 text-[0.875rem] font-bold text-[color:var(--nsi-ink)] shadow-md transition-all hover:brightness-110"
             href="/subscribe"
-            style={{
-              boxShadow: "0 4px 12px -4px oklch(0.7 0.12 86 / 0.45)",
-            }}
           >
             Subscribe
           </Link>
@@ -103,7 +103,7 @@ export function Header() {
             <Link
               href="/subscribe"
               onClick={() => setMobileOpen(false)}
-              className="mt-3 inline-flex justify-center rounded-lg bg-[color:var(--nsi-gold)] px-6 py-3 text-[0.9375rem] font-semibold text-[color:var(--nsi-ink)]"
+              className="mt-3 inline-flex justify-center rounded-xl bg-[color:var(--nsi-gold)] px-6 py-3 text-[0.9375rem] font-semibold text-[color:var(--nsi-ink)] shadow-md transition-all hover:brightness-110"
             >
               Subscribe
             </Link>

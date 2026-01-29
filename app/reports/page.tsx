@@ -37,27 +37,33 @@ export default async function ReportsPage() {
   });
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-6 pb-14 pt-10">
-      <section className="nsi-section-card rounded-[30px] px-8 py-9">
-        <div className="flex items-center gap-3">
-          <NSIShieldMark className="h-10 w-10" />
-          <h1 className="font-serif text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-            Reports Archive
-          </h1>
+    <main className="w-full pb-20">
+      <section className="relative overflow-hidden pt-16">
+        <div className="mx-auto w-full max-w-7xl px-6">
+          <div className="nsi-section-card px-8 py-10">
+            <div className="relative z-10">
+              <div className="flex items-center gap-3">
+                <NSIShieldMark className="h-10 w-10" />
+                <h1 className="font-serif text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)] lg:text-5xl">
+                  Reports Archive
+                </h1>
+              </div>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-[color:var(--nsi-ink-soft)]">
+                Published monthly snapshots of Nigeria&apos;s stability — overall
+                score, pillar summaries, and highlighted state and institution
+                spotlights.
+              </p>
+            </div>
+          </div>
         </div>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-[color:var(--nsi-ink-soft)]">
-          Published monthly snapshots of Nigeria&apos;s stability — overall
-          score, pillar summaries, and highlighted state and institution
-          spotlights.
-        </p>
       </section>
 
       {reports.length ? (
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
+        <div className="mx-auto mt-12 grid w-full max-w-7xl gap-6 px-6 md:grid-cols-2">
           {reports.map((r) => (
             <article
               key={r.id}
-              className="overflow-hidden rounded-[28px] border border-[color:var(--nsi-card-border)] bg-white shadow-md transition-all hover:shadow-lg"
+              className="overflow-hidden rounded-[28px] border border-black/10 bg-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
             >
               <div className="bg-[color:var(--nsi-green)] px-7 py-3 text-sm font-semibold text-white">
                 {r.period}
@@ -83,7 +89,7 @@ export default async function ReportsPage() {
                 </div>
                 <Link
                   href={`/reports/${r.id}`}
-                  className="inline-flex w-full items-center justify-center rounded-lg bg-[color:var(--nsi-green)] px-5 py-3 text-sm font-semibold text-white transition-all hover:brightness-[1.08]"
+                  className="inline-flex w-full items-center justify-center rounded-xl bg-[color:var(--nsi-green)] px-5 py-3 text-sm font-semibold text-white transition-all hover:brightness-110"
                 >
                   View Snapshot
                 </Link>
@@ -92,16 +98,18 @@ export default async function ReportsPage() {
           ))}
         </div>
       ) : (
-        <div className="mt-10 rounded-[28px] border border-[color:var(--nsi-card-border)] bg-white p-8 shadow-sm">
-          <p className="text-[color:var(--nsi-ink-soft)]">
-            No published reports yet.
-          </p>
-          <Link
-            href="/"
-            className="mt-4 inline-block text-sm font-medium text-[color:var(--nsi-green)] hover:underline"
-          >
-            Back to Home
-          </Link>
+        <div className="mx-auto mt-12 w-full max-w-7xl px-6">
+          <div className="nsi-card-soft p-8">
+            <p className="text-[color:var(--nsi-ink-soft)]">
+              No published reports yet.
+            </p>
+            <Link
+              href="/"
+              className="mt-4 inline-block text-sm font-medium text-[color:var(--nsi-green)] hover:underline"
+            >
+              Back to Home
+            </Link>
+          </div>
         </div>
       )}
     </main>

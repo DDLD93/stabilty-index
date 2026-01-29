@@ -84,25 +84,34 @@ export default async function SpotlightsPage() {
     : "/reports";
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-6 pb-14 pt-10">
-      <section className="nsi-section-card rounded-[30px] px-8 py-9">
-        <h1 className="font-serif text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-          Spotlights
-        </h1>
-        <p className="mt-5 max-w-2xl text-base leading-7 text-[color:var(--nsi-ink-soft)]">
-          Each month we highlight a state and an institution based on
-          evidence, not endorsement. Read the full context in the latest
-          snapshot.
-        </p>
-        <p className="mt-3 text-sm italic text-[color:var(--nsi-ink-soft)]">
-          Evidence-based spotlight. Not an endorsement.
-        </p>
+    <main className="w-full pb-20">
+      <section className="relative overflow-hidden pt-16">
+        <div className="mx-auto w-full max-w-7xl px-6">
+          <div className="nsi-section-card px-8 py-10">
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/60 px-4 py-1.5 text-sm font-medium text-[color:var(--nsi-ink)] backdrop-blur-md">
+                Spotlights
+              </div>
+              <h1 className="mt-6 font-serif text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)] lg:text-5xl">
+                Evidence-based highlights
+              </h1>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-[color:var(--nsi-ink-soft)]">
+                Each month we highlight a state and an institution based on
+                evidence, not endorsement. Read the full context in the latest
+                snapshot.
+              </p>
+              <p className="mt-3 text-sm italic text-[color:var(--nsi-ink-soft)]">
+                Evidence-based spotlight. Not an endorsement.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section className="mt-10 grid gap-6 md:grid-cols-2">
+      <section className="mx-auto mt-12 grid w-full max-w-7xl gap-6 px-6 md:grid-cols-2">
         <div
           id="state-spotlight"
-          className="nsi-card-solid rounded-[28px] p-8 scroll-mt-24"
+          className="nsi-card-soft p-8 scroll-mt-24"
         >
           <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-green)]">
             State Spotlight
@@ -115,7 +124,7 @@ export default async function SpotlightsPage() {
           </p>
           <Link
             href={stateHref}
-            className="mt-6 inline-flex rounded-lg bg-[color:var(--nsi-green)] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-[1.08]"
+            className="mt-6 inline-flex rounded-xl bg-[color:var(--nsi-green)] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
           >
             Read Spotlight
           </Link>
@@ -123,7 +132,7 @@ export default async function SpotlightsPage() {
 
         <div
           id="institution-spotlight"
-          className="nsi-card-solid rounded-[28px] p-8 scroll-mt-24"
+          className="nsi-card-soft p-8 scroll-mt-24"
         >
           <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-green)]">
             Institution Spotlight
@@ -136,7 +145,7 @@ export default async function SpotlightsPage() {
           </p>
           <Link
             href={instHref}
-            className="mt-6 inline-flex rounded-lg bg-[color:var(--nsi-green)] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-[1.08]"
+            className="mt-6 inline-flex rounded-xl bg-[color:var(--nsi-green)] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
           >
             Read Spotlight
           </Link>
@@ -144,7 +153,7 @@ export default async function SpotlightsPage() {
       </section>
 
       {snapshot ? (
-        <div className="mt-8 text-center">
+        <div className="mx-auto mt-10 w-full max-w-7xl px-6 text-center">
           <Link
             href={`/reports/${snapshot.id}`}
             className="text-sm font-medium text-[color:var(--nsi-green)] hover:underline"
@@ -153,7 +162,7 @@ export default async function SpotlightsPage() {
           </Link>
         </div>
       ) : (
-        <div className="mt-8 text-center text-sm text-[color:var(--nsi-ink-soft)]">
+        <div className="mx-auto mt-10 w-full max-w-7xl px-6 text-center text-sm text-[color:var(--nsi-ink-soft)]">
           <Link href="/reports" className="text-[color:var(--nsi-green)] hover:underline">
             Reports Archive
           </Link>
