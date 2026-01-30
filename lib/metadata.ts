@@ -8,7 +8,7 @@ export const siteConfig = {
   name: "Nigeria Stability Index",
   shortName: "NSI",
   description: "A calm snapshot of how Nigeria is holding together. Tracking stability through security, economy, governance, investor confidence, and social stability.",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.NigeriaStabilityIndex.org",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.nigeriastabilityIndex.ng",
   ogImage: "/opengraph-image", // Next.js automatically serves opengraph-image.tsx at this route
   author: {
     name: "Nigeria Stability Index",
