@@ -1,3 +1,14 @@
+/** Five stability pillars: key and label (single source of truth for admin survey and public form). */
+export const PILLARS = [
+  { key: "Security", label: "Security" },
+  { key: "FX & Economy", label: "FX & Economy" },
+  { key: "Investor Confidence", label: "Investor Confidence" },
+  { key: "Governance", label: "Governance" },
+  { key: "Social Stability", label: "Social Stability" },
+] as const;
+
+export const PILLAR_KEYS = PILLARS.map((p) => p.key);
+
 export const NIGERIAN_STATES = [
   "Abia",
   "Adamawa",

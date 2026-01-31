@@ -6,9 +6,9 @@ import { useEffect, useMemo, useState } from "react";
 type Item = {
   id: string;
   createdAt: string;
-  stabilityScore: number;
-  mood: string;
-  oneWord: string;
+  stabilityScore: number | null;
+  mood: string | null;
+  oneWord: string | null;
   spotlightState: string | null;
   spotlightTags: string[];
   spotlightComment: string | null;
@@ -139,15 +139,15 @@ export function SpotlightFeed() {
               <div className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-3 py-1 text-xs">
                 <span className="text-black/60">Score:</span>
                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[color:var(--nsi-green)]/10 font-semibold text-[color:var(--nsi-green)]">
-                  {item.stabilityScore}
+                  {item.stabilityScore ?? "—"}
                 </span>
               </div>
             </div>
 
             <div className="mt-3 text-sm text-black/70">
-              <span className="font-semibold text-black">{item.oneWord}</span>
+              <span className="font-semibold text-black">{item.oneWord ?? "—"}</span>
               <span className="mx-2 text-black/30">·</span>
-              <span>{item.mood}</span>
+              <span>{item.mood ?? "—"}</span>
             </div>
 
             {item.spotlightTags.length > 0 && (

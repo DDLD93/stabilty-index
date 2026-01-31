@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { defaultMetadata } from "@/lib/metadata";
+import { SpotlightCard } from "@/components/public/SpotlightCard";
 
 export const dynamic = "force-dynamic";
 
@@ -29,12 +30,27 @@ type InstitutionSpotlight = {
   bullets?: string[];
 };
 
-function safeArray<T>(v: unknown): T[] {
-  return Array.isArray(v) ? (v as T[]) : [];
-}
-
 function safeString(v: unknown): string {
   return typeof v === "string" && v.length > 0 ? v : "";
+}
+
+function hasStateSpotlight(raw: unknown): raw is StateSpotlight {
+  if (!raw || typeof raw !== "object") return false;
+  const s = raw as StateSpotlight;
+  return Boolean(
+    safeString(s.state) ||
+      (Array.isArray(s.bullets) && s.bullets.some(Boolean))
+  );
+}
+
+function hasInstitutionSpotlight(raw: unknown): raw is InstitutionSpotlight {
+  if (!raw || typeof raw !== "object") return false;
+  const i = raw as InstitutionSpotlight;
+  return Boolean(
+    safeString(i.institution) ||
+      safeString(i.summary) ||
+      (Array.isArray(i.bullets) && i.bullets.some(Boolean))
+  );
 }
 
 export default async function SpotlightsPage() {
@@ -64,24 +80,10 @@ export default async function SpotlightsPage() {
   const instSpot = (snapshot?.institutionSpotlightContent ??
     {}) as InstitutionSpotlight;
 
-  const stateTitle = safeString(stateSpot.state) || "State Spotlight";
-  const stateSummary =
-    safeArray<string>(stateSpot.bullets)?.[0] ||
-    "Evidence-based highlight from our latest snapshot. Not an endorsement.";
-
-  const instTitle =
-    safeString(instSpot.institution) || "Institution Spotlight";
-  const instSummary =
-    safeString(instSpot.summary) ||
-    safeArray<string>(instSpot.bullets)?.[0] ||
-    "Evidence-based highlight from our latest snapshot. Not an endorsement.";
-
-  const stateHref = snapshot
-    ? `/reports/${snapshot.id}#state-spotlight`
-    : "/reports";
-  const instHref = snapshot
-    ? `/reports/${snapshot.id}#institution-spotlight`
-    : "/reports";
+  const showStateSpotlight = hasStateSpotlight(snapshot?.stateSpotlightContent);
+  const showInstSpotlight = hasInstitutionSpotlight(
+    snapshot?.institutionSpotlightContent
+  );
 
   return (
     <main className="w-full pb-20">
@@ -108,48 +110,14 @@ export default async function SpotlightsPage() {
         </div>
       </section>
 
-      <section className="mx-auto mt-12 grid w-full max-w-7xl gap-6 px-6 md:grid-cols-2">
-        <div
-          id="state-spotlight"
-          className="nsi-card-soft p-8 scroll-mt-24"
-        >
-          <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-green)]">
-            State Spotlight
-          </div>
-          <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-            {stateTitle}
-          </h2>
-          <p className="mt-3 text-sm leading-6 text-[color:var(--nsi-ink-soft)] line-clamp-2">
-            {stateSummary}
-          </p>
-          <Link
-            href={stateHref}
-            className="mt-6 inline-flex rounded-xl bg-[color:var(--nsi-green)] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
-          >
-            Read Spotlight
-          </Link>
-        </div>
-
-        <div
-          id="institution-spotlight"
-          className="nsi-card-soft p-8 scroll-mt-24"
-        >
-          <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-green)]">
-            Institution Spotlight
-          </div>
-          <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-            {instTitle}
-          </h2>
-          <p className="mt-3 text-sm leading-6 text-[color:var(--nsi-ink-soft)] line-clamp-2">
-            {instSummary}
-          </p>
-          <Link
-            href={instHref}
-            className="mt-6 inline-flex rounded-xl bg-[color:var(--nsi-green)] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
-          >
-            Read Spotlight
-          </Link>
-        </div>
+      <section className="mx-auto mt-12 w-full max-w-7xl px-6">
+        <SpotlightCard
+          stateSpot={stateSpot}
+          instSpot={instSpot}
+          showState={showStateSpotlight}
+          showInst={showInstSpotlight}
+          reportHref={snapshot ? `/reports/${snapshot.id}` : "/spotlights"}
+        />
       </section>
 
       {snapshot ? (

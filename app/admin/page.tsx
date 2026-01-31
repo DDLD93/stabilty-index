@@ -61,6 +61,12 @@ export default async function AdminPage() {
 
           <div className="mt-8 flex flex-wrap gap-3 border-t border-black/5 pt-6">
             <CycleControls />
+            <Link
+              className="rounded-xl border border-black/15 bg-white px-4 py-2 text-sm font-medium hover:bg-black/[.03]"
+              href="/admin/cycle"
+            >
+              Set up cycle / Define questions
+            </Link>
           </div>
         </section>
 

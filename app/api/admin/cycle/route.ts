@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireAdminSession } from "@/lib/adminSession";
+import { PILLAR_KEYS } from "@/lib/constants";
 import { z } from "zod";
+import type { Prisma } from "@prisma/client";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -10,9 +12,29 @@ function formatMonthYear(d: Date) {
   return new Intl.DateTimeFormat("en-NG", { month: "long", year: "numeric" }).format(d);
 }
 
+const surveyQuestionSchema = z.object({
+  pillarKey: z.string(),
+  pillarLabel: z.string(),
+  questionText: z.string().trim().min(1),
+});
+
 const actionSchema = z.object({
   action: z.enum(["OPEN", "CLOSE", "NEXT"]),
 });
+
+const surveySchema = z.object({
+  surveyQuestions: z.array(surveyQuestionSchema).length(5).refine(
+    (arr) => {
+      const keys = arr.map((q) => q.pillarKey).sort().join(",");
+      const expected = [...PILLAR_KEYS].sort().join(",");
+      return keys === expected;
+    },
+    { message: "Must have one question per pillar (Security, FX & Economy, Investor Confidence, Governance, Social Stability)." }
+  ),
+  action: z.enum(["OPEN"]).optional(),
+});
+
+const patchSchema = z.union([actionSchema, surveySchema]);
 
 export async function GET() {
   const session = await requireAdminSession();
@@ -20,7 +42,7 @@ export async function GET() {
 
   const currentCycle = await db.cycle.findFirst({
     orderBy: { createdAt: "desc" },
-    select: { id: true, status: true, monthYear: true, createdAt: true },
+    select: { id: true, status: true, monthYear: true, surveyQuestions: true, createdAt: true },
   });
 
   const counts = currentCycle
@@ -42,12 +64,47 @@ export async function PATCH(req: Request) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const json = await req.json().catch(() => null);
-  const parsed = actionSchema.safeParse(json);
-  if (!parsed.success) return NextResponse.json({ error: "Invalid action." }, { status: 400 });
+  const parsed = patchSchema.safeParse(json);
+  if (!parsed.success) {
+    const msg = parsed.error.errors[0]?.message ?? "Invalid request.";
+    return NextResponse.json({ error: msg }, { status: 400 });
+  }
 
-  const { action } = parsed.data;
   const currentCycle = await db.cycle.findFirst({ orderBy: { createdAt: "desc" } });
 
+  // Survey update: set surveyQuestions (and optionally open)
+  if ("surveyQuestions" in parsed.data) {
+    const { surveyQuestions, action } = parsed.data;
+    const surveyJson = surveyQuestions as unknown as Prisma.InputJsonValue;
+    if (!currentCycle) {
+      const created = await db.cycle.create({
+        data: {
+          status: "OPEN",
+          monthYear: formatMonthYear(new Date()),
+          surveyQuestions: surveyJson,
+        },
+      });
+      await db.auditLog.create({
+        data: { adminUserId: (session.user as { id?: string } | undefined)?.id, action: "AdminOpenCycle" },
+      });
+      return NextResponse.json({ currentCycle: created });
+    }
+    const updated = await db.cycle.update({
+      where: { id: currentCycle.id },
+      data: {
+        surveyQuestions: surveyJson,
+        ...(action === "OPEN" ? { status: "OPEN" as const } : {}),
+      },
+    });
+    if (action === "OPEN") {
+      await db.auditLog.create({
+        data: { adminUserId: (session.user as { id?: string } | undefined)?.id, action: "AdminOpenCycle" },
+      });
+    }
+    return NextResponse.json({ currentCycle: updated });
+  }
+
+  const { action } = parsed.data;
   if (!currentCycle) {
     const created = await db.cycle.create({
       data: { status: "OPEN", monthYear: formatMonthYear(new Date()) },

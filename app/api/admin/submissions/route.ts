@@ -31,6 +31,7 @@ export async function GET(req: Request) {
       stabilityScore: true,
       mood: true,
       oneWord: true,
+      pillarResponses: true,
       spotlightState: true,
       spotlightTags: true,
       spotlightComment: true,

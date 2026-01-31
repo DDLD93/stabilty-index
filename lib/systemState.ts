@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
 
 export type PublicPhase =
   | "COLLECTION_OPEN"
@@ -19,14 +18,17 @@ export type PublicSystemState = {
         publicSentimentSummary?: unknown;
         stateSpotlightContent?: unknown;
         institutionSpotlightContent?: unknown;
+        sourcesReferences?: unknown;
       }
     | null;
 };
 
-function isMissingTableError(error: unknown) {
-  // Prisma uses P2021 when a table/view isn't present in the connected database.
-  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2021";
-}
+/** Fallback when DB is unavailable or any error occurs. */
+export const DEFAULT_PUBLIC_SYSTEM_STATE: PublicSystemState = {
+  phase: "COLLECTION_OPEN",
+  currentCycle: null,
+  latestPublishedSnapshot: null,
+};
 
 export async function getPublicSystemState(): Promise<PublicSystemState> {
   let currentCycle: { id: string; status: "OPEN" | "CLOSED" | "ARCHIVED"; monthYear: string } | null = null;
@@ -39,6 +41,9 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
         overallNarrative?: string | null;
         pillarScores?: unknown;
         publicSentimentSummary?: unknown;
+        stateSpotlightContent?: unknown;
+        institutionSpotlightContent?: unknown;
+        sourcesReferences?: unknown;
       }
     | null = null;
 
@@ -61,14 +66,12 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
         publicSentimentSummary: true,
         stateSpotlightContent: true,
         institutionSpotlightContent: true,
+        sourcesReferences: true,
       },
     });
   } catch (error) {
-    // Allow the app to boot on a fresh database before migrations are applied.
-    if (isMissingTableError(error)) {
-      return { phase: "COLLECTION_OPEN", currentCycle: null, latestPublishedSnapshot: null };
-    }
-    throw error;
+    console.error("[getPublicSystemState]", error);
+    return DEFAULT_PUBLIC_SYSTEM_STATE;
   }
 
   // If no cycle exists yet, treat as collection open (admin can still set it up).
@@ -76,67 +79,75 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
     return { phase: "COLLECTION_OPEN", currentCycle: null, latestPublishedSnapshot: null };
   }
 
-  const hasPublishedForCurrent = await db.snapshot.findFirst({
-    where: { cycleId: currentCycle.id, publishedAt: { not: null } },
-    select: { id: true },
-  });
+  try {
+    const hasPublishedForCurrent = await db.snapshot.findFirst({
+      where: { cycleId: currentCycle.id, publishedAt: { not: null } },
+      select: { id: true },
+    });
 
-  // Per plan: current cycle state takes precedence over past publications.
-  if (currentCycle.status === "OPEN" && !hasPublishedForCurrent) {
-    return {
-      phase: "COLLECTION_OPEN",
-      currentCycle,
-      latestPublishedSnapshot: latestPublishedSnapshot
-        ? {
-            id: latestPublishedSnapshot.id,
-            period: latestPublishedSnapshot.period,
-            overallScore: latestPublishedSnapshot.overallScore,
-            overallNarrative: latestPublishedSnapshot.overallNarrative,
-            pillarScores: latestPublishedSnapshot.pillarScores,
-            publicSentimentSummary: latestPublishedSnapshot.publicSentimentSummary,
-            stateSpotlightContent: latestPublishedSnapshot.stateSpotlightContent,
-            institutionSpotlightContent: latestPublishedSnapshot.institutionSpotlightContent,
-          }
-        : null,
-    };
+    // Per plan: current cycle state takes precedence over past publications.
+    if (currentCycle.status === "OPEN" && !hasPublishedForCurrent) {
+      return {
+        phase: "COLLECTION_OPEN",
+        currentCycle,
+        latestPublishedSnapshot: latestPublishedSnapshot
+          ? {
+              id: latestPublishedSnapshot.id,
+              period: latestPublishedSnapshot.period,
+              overallScore: latestPublishedSnapshot.overallScore,
+              overallNarrative: latestPublishedSnapshot.overallNarrative,
+              pillarScores: latestPublishedSnapshot.pillarScores,
+              publicSentimentSummary: latestPublishedSnapshot.publicSentimentSummary,
+              stateSpotlightContent: latestPublishedSnapshot.stateSpotlightContent,
+              institutionSpotlightContent: latestPublishedSnapshot.institutionSpotlightContent,
+              sourcesReferences: latestPublishedSnapshot.sourcesReferences,
+            }
+          : null,
+      };
+    }
+
+    if (currentCycle.status === "CLOSED" && !hasPublishedForCurrent) {
+      return {
+        phase: "PROCESSING_CLOSED",
+        currentCycle,
+        latestPublishedSnapshot: latestPublishedSnapshot
+          ? {
+              id: latestPublishedSnapshot.id,
+              period: latestPublishedSnapshot.period,
+              overallScore: latestPublishedSnapshot.overallScore,
+              overallNarrative: latestPublishedSnapshot.overallNarrative,
+              pillarScores: latestPublishedSnapshot.pillarScores,
+              publicSentimentSummary: latestPublishedSnapshot.publicSentimentSummary,
+              stateSpotlightContent: latestPublishedSnapshot.stateSpotlightContent,
+              institutionSpotlightContent: latestPublishedSnapshot.institutionSpotlightContent,
+              sourcesReferences: latestPublishedSnapshot.sourcesReferences,
+            }
+          : null,
+      };
+    }
+
+    if (latestPublishedSnapshot) {
+      return {
+        phase: "PUBLICATION_LIVE",
+        currentCycle,
+        latestPublishedSnapshot: {
+          id: latestPublishedSnapshot.id,
+          period: latestPublishedSnapshot.period,
+          overallScore: latestPublishedSnapshot.overallScore,
+          overallNarrative: latestPublishedSnapshot.overallNarrative,
+          pillarScores: latestPublishedSnapshot.pillarScores,
+          publicSentimentSummary: latestPublishedSnapshot.publicSentimentSummary,
+          stateSpotlightContent: latestPublishedSnapshot.stateSpotlightContent,
+          institutionSpotlightContent: latestPublishedSnapshot.institutionSpotlightContent,
+          sourcesReferences: latestPublishedSnapshot.sourcesReferences,
+        },
+      };
+    }
+
+    return { phase: "COLLECTION_OPEN", currentCycle, latestPublishedSnapshot: null };
+  } catch (error) {
+    console.error("[getPublicSystemState]", error);
+    return DEFAULT_PUBLIC_SYSTEM_STATE;
   }
-
-  if (currentCycle.status === "CLOSED" && !hasPublishedForCurrent) {
-    return {
-      phase: "PROCESSING_CLOSED",
-      currentCycle,
-      latestPublishedSnapshot: latestPublishedSnapshot
-        ? {
-            id: latestPublishedSnapshot.id,
-            period: latestPublishedSnapshot.period,
-            overallScore: latestPublishedSnapshot.overallScore,
-            overallNarrative: latestPublishedSnapshot.overallNarrative,
-            pillarScores: latestPublishedSnapshot.pillarScores,
-            publicSentimentSummary: latestPublishedSnapshot.publicSentimentSummary,
-            stateSpotlightContent: latestPublishedSnapshot.stateSpotlightContent,
-            institutionSpotlightContent: latestPublishedSnapshot.institutionSpotlightContent,
-          }
-        : null,
-    };
-  }
-
-  if (latestPublishedSnapshot) {
-    return {
-      phase: "PUBLICATION_LIVE",
-      currentCycle,
-      latestPublishedSnapshot: {
-        id: latestPublishedSnapshot.id,
-        period: latestPublishedSnapshot.period,
-        overallScore: latestPublishedSnapshot.overallScore,
-        overallNarrative: latestPublishedSnapshot.overallNarrative,
-        pillarScores: latestPublishedSnapshot.pillarScores,
-        publicSentimentSummary: latestPublishedSnapshot.publicSentimentSummary,
-        stateSpotlightContent: latestPublishedSnapshot.stateSpotlightContent,
-        institutionSpotlightContent: latestPublishedSnapshot.institutionSpotlightContent,
-      },
-    };
-  }
-
-  return { phase: "COLLECTION_OPEN", currentCycle, latestPublishedSnapshot: null };
 }
 

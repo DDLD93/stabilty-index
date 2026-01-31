@@ -13,9 +13,10 @@ enum CycleStatus {
 }
 
 model Cycle {
-  id        String      @id @default(cuid())
-  status    CycleStatus @default(OPEN)
-  monthYear String
+  id              String      @id @default(cuid())
+  status          CycleStatus @default(OPEN)
+  monthYear       String
+  surveyQuestions Json?
 
   submissions Submission[]
   snapshots   Snapshot[]
@@ -32,9 +33,11 @@ model Submission {
   cycleId   String
   cycle     Cycle  @relation(fields: [cycleId], references: [id], onDelete: Cascade)
 
-  stabilityScore Int
-  mood           String
-  oneWord        String
+  stabilityScore Int?
+  mood           String?
+  oneWord        String?
+
+  pillarResponses Json?
 
   spotlightState   String?
   spotlightTags    String[]

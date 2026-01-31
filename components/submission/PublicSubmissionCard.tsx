@@ -1,9 +1,21 @@
 "use client";
 
-import { MOODS, NIGERIAN_STATES, SPOTLIGHT_TAGS } from "@/lib/constants";
-import { useMemo, useState } from "react";
+import { MOODS, NIGERIAN_STATES, PILLAR_KEYS, SPOTLIGHT_TAGS } from "@/lib/constants";
+import { useEffect, useMemo, useState } from "react";
 
-type SubmitPayload = {
+type SurveyQuestion = {
+  pillarKey: string;
+  pillarLabel: string;
+  questionText: string;
+};
+
+type PublicCycle = {
+  id: string;
+  monthYear: string;
+  surveyQuestions: SurveyQuestion[];
+};
+
+type LegacyPayload = {
   stabilityScore: number;
   mood: string;
   oneWord: string;
@@ -13,6 +25,10 @@ type SubmitPayload = {
 };
 
 export function PublicSubmissionCard() {
+  const [cycle, setCycle] = useState<PublicCycle | null | "loading">("loading");
+  const [pillarValues, setPillarValues] = useState<Record<string, number>>(() =>
+    Object.fromEntries(PILLAR_KEYS.map((k) => [k, 3]))
+  );
   const [stabilityScore, setStabilityScore] = useState(6);
   const [mood, setMood] = useState<(typeof MOODS)[number]>("Calm");
   const [oneWord, setOneWord] = useState("");
@@ -22,14 +38,68 @@ export function PublicSubmissionCard() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
-  const canSubmit = useMemo(() => oneWord.trim().length > 0 && mood.length > 0, [oneWord, mood]);
+  const surveyMode = cycle !== "loading" && cycle !== null && cycle.surveyQuestions?.length === 5;
 
-  async function onSubmit(e: React.FormEvent) {
+  const canSubmitLegacy = useMemo(
+    () => oneWord.trim().length > 0 && mood.length > 0,
+    [oneWord, mood]
+  );
+  const canSubmitSurvey = useMemo(
+    () =>
+      PILLAR_KEYS.every(
+        (k) => typeof pillarValues[k] === "number" && pillarValues[k] >= 1 && pillarValues[k] <= 5
+      ),
+    [pillarValues]
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/public/cycle")
+      .then((res) => res.json())
+      .then((data: { cycle: PublicCycle | null }) => {
+        if (!cancelled && data.cycle?.surveyQuestions?.length === 5) {
+          setCycle(data.cycle);
+        } else {
+          setCycle(null);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setCycle(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function submitSurvey(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setStatus("submitting");
+    const payload = {
+      pillarResponses: { ...pillarValues },
+      spotlightState: spotlightState.trim() || null,
+      spotlightTags,
+      spotlightComment: spotlightComment.trim() || null,
+    };
+    const res = await fetch("/api/public/submit", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const data = (await res.json().catch(() => null)) as { error?: string } | null;
+      setError(data?.error ?? "Submission failed.");
+      setStatus("error");
+      return;
+    }
+    setStatus("success");
+  }
 
-    const payload: SubmitPayload = {
+  async function submitLegacy(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setStatus("submitting");
+    const payload: LegacyPayload = {
       stabilityScore,
       mood,
       oneWord: oneWord.trim(),
@@ -37,21 +107,90 @@ export function PublicSubmissionCard() {
       spotlightTags,
       spotlightComment: spotlightComment.trim() ? spotlightComment.trim() : null,
     };
-
     const res = await fetch("/api/public/submit", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(payload),
     });
-
     if (!res.ok) {
       const data = (await res.json().catch(() => null)) as { error?: string } | null;
       setError(data?.error ?? "Submission failed.");
       setStatus("error");
       return;
     }
-
     setStatus("success");
+  }
+
+  if (cycle === "loading") {
+    return (
+      <div className="rounded-3xl border border-black/10 bg-white p-8 shadow-sm">
+        <p className="text-[color:var(--nsi-ink-soft)]">Loading check-in…</p>
+      </div>
+    );
+  }
+
+  if (surveyMode && cycle) {
+    const questions = cycle.surveyQuestions as SurveyQuestion[];
+    return (
+      <div className="rounded-3xl border border-black/10 bg-white p-8 shadow-sm">
+        <h2 className="font-serif text-2xl font-semibold tracking-tight text-[color:var(--nsi-green)]">
+          How stable does Nigeria feel to you right now?
+        </h2>
+        <p className="mt-2 text-sm text-black/65">
+          Rate each pillar from 1 (very unstable) to 5 (very stable). This check-in stores{" "}
+          <span className="font-medium">no personal information</span>.
+        </p>
+        <form className="mt-8 space-y-6" onSubmit={submitSurvey}>
+          {questions.map((q) => (
+            <fieldset key={q.pillarKey} className="rounded-2xl border border-black/10 bg-[color:var(--nsi-paper)] p-5">
+              <legend className="text-sm font-medium text-black/80">{q.questionText}</legend>
+              <div className="mt-3 flex flex-wrap gap-3">
+                {[1, 2, 3, 4, 5].map((n) => {
+                  const checked = pillarValues[q.pillarKey] === n;
+                  return (
+                    <label
+                      key={n}
+                      className={`flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm transition ${
+                        checked
+                          ? "border-[color:var(--nsi-green)] bg-[color:var(--nsi-green)] text-white"
+                          : "border-black/15 bg-white hover:bg-black/[.03]"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name={q.pillarKey}
+                        value={n}
+                        checked={checked}
+                        onChange={() => setPillarValues((prev) => ({ ...prev, [q.pillarKey]: n }))}
+                        className="sr-only"
+                      />
+                      {n}
+                    </label>
+                  );
+                })}
+              </div>
+            </fieldset>
+          ))}
+          {status === "success" ? (
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-800">
+              Thanks — your check-in has been recorded.
+            </div>
+          ) : null}
+          {status === "error" && error ? (
+            <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-800">
+              {error}
+            </div>
+          ) : null}
+          <button
+            className="rounded-xl bg-[color:var(--nsi-green)] px-6 py-3 text-sm font-medium text-white hover:opacity-95 disabled:opacity-60"
+            type="submit"
+            disabled={!canSubmitSurvey || status === "submitting"}
+          >
+            {status === "submitting" ? "Submitting…" : "Submit check-in"}
+          </button>
+        </form>
+      </div>
+    );
   }
 
   return (
@@ -64,7 +203,7 @@ export function PublicSubmissionCard() {
         phone numbers, or addresses.
       </p>
 
-      <form className="mt-8 space-y-8" onSubmit={onSubmit}>
+      <form className="mt-8 space-y-8" onSubmit={submitLegacy}>
         <div className="rounded-2xl border border-black/10 bg-[color:var(--nsi-paper)] p-6">
           <div className="flex items-end justify-between gap-3">
             <div>
@@ -200,7 +339,7 @@ export function PublicSubmissionCard() {
         <button
           className="rounded-xl bg-[color:var(--nsi-green)] px-6 py-3 text-sm font-medium text-white hover:opacity-95 disabled:opacity-60"
           type="submit"
-          disabled={!canSubmit || status === "submitting"}
+          disabled={!canSubmitLegacy || status === "submitting"}
         >
           {status === "submitting" ? "Submitting…" : "Submit check-in"}
         </button>
@@ -208,4 +347,3 @@ export function PublicSubmissionCard() {
     </div>
   );
 }
-

@@ -285,4 +285,5 @@
     @apply hover:border-black/15 hover:shadow-md;
     @apply focus-within:border-[color:var(--nsi-green)] focus-within:ring-2 focus-within:ring-[color:var(--nsi-green)]/20;
   }
+
 }

@@ -10,14 +10,51 @@ import {
   PillarSecurityIcon,
   PillarSocialIcon,
 } from "@/components/public/icons";
+import { SpotlightCard } from "@/components/public/SpotlightCard";
 import { RulerGauge } from "@/components/public/RulerGauge";
 
 export const dynamic = "force-dynamic";
 
 type Pillar = { title: string; score: number; summary?: string };
+type StateSpotlight = { state?: string; score?: number; bullets?: string[] };
+type InstitutionSpotlight = { institution?: string; summary?: string; bullets?: string[] };
+type PublicSentiment = { topWords?: string[]; averagePublicScore?: number; topMood?: string };
+type SourceRef = { label?: string; url?: string };
 
 function safeArray<T>(v: unknown): T[] {
   return Array.isArray(v) ? (v as T[]) : [];
+}
+
+function safeString(v: unknown): string {
+  return typeof v === "string" && v.length > 0 ? v : "";
+}
+
+function safeNumber(v: unknown): number | null {
+  const n = typeof v === "number" ? v : Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+function hasStateSpotlight(raw: unknown): raw is StateSpotlight {
+  if (!raw || typeof raw !== "object") return false;
+  const s = raw as StateSpotlight;
+  return Boolean(safeString(s.state) || (Array.isArray(s.bullets) && s.bullets.some(Boolean)));
+}
+
+function hasInstitutionSpotlight(raw: unknown): raw is InstitutionSpotlight {
+  if (!raw || typeof raw !== "object") return false;
+  const i = raw as InstitutionSpotlight;
+  return Boolean(safeString(i.institution) || safeString(i.summary) || (Array.isArray(i.bullets) && i.bullets.some(Boolean)));
+}
+
+function hasSentiment(raw: unknown): raw is PublicSentiment {
+  if (!raw || typeof raw !== "object") return false;
+  const s = raw as PublicSentiment;
+  return Boolean(safeString(s.topMood) || (Array.isArray(s.topWords) && s.topWords.length > 0) || safeNumber(s.averagePublicScore) != null);
+}
+
+function hasSources(raw: unknown): raw is SourceRef[] {
+  if (!Array.isArray(raw)) return false;
+  return raw.some((x) => x && typeof x === "object" && safeString((x as SourceRef).label) && safeString((x as SourceRef).url));
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -52,6 +89,7 @@ const PILLAR_NAMES = [
 
 export default async function Home() {
   const state = await getPublicSystemState();
+  console.log({state});
   const latest = state.latestPublishedSnapshot;
 
   const pillars = safeArray<Pillar>(
@@ -72,6 +110,22 @@ export default async function Home() {
   const period = latest?.period ?? "January 2026";
   const narrative = latest?.overallNarrative ?? "Cautiously Stable";
 
+  const stateSpot = (latest?.stateSpotlightContent ?? {}) as StateSpotlight;
+  const instSpot = (latest?.institutionSpotlightContent ?? {}) as InstitutionSpotlight;
+  const sentiment = (latest?.publicSentimentSummary ?? {}) as PublicSentiment;
+  const sourcesRaw = latest?.sourcesReferences;
+  const sources = Array.isArray(sourcesRaw)
+    ? (sourcesRaw as SourceRef[]).filter((x) => x && safeString(x.label) && safeString(x.url))
+    : [];
+
+  const showStateSpotlight = hasStateSpotlight(latest?.stateSpotlightContent);
+  const showInstSpotlight = hasInstitutionSpotlight(latest?.institutionSpotlightContent);
+  const showSentiment = hasSentiment(latest?.publicSentimentSummary);
+  const showSources = hasSources(latest?.sourcesReferences);
+
+  const cycle = state.currentCycle;
+  const cycleOpen = cycle?.status === "OPEN";
+
   const IconFor = (title: string) => {
     const t = title.toLowerCase();
     if (t.includes("security")) return PillarSecurityIcon;
@@ -89,8 +143,6 @@ export default async function Home() {
     if (t.includes("govern")) return "/pillars/governance.png"; 
     return "/pillars/social.png"; 
   };
-
-  const moods = ["Calm", "Hopeful", "Tired", "Tense", "Optimistic", "Uncertain"];
 
   return (
     <main className="w-full pb-20">
@@ -110,12 +162,30 @@ export default async function Home() {
         <div className="mx-auto w-full max-w-7xl px-6">
           <div className="grid items-center gap-12 md:grid-cols-2 lg:gap-20">
             <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 rounded-full bg-black/5 px-4 py-1.5 text-sm font-medium text-[color:var(--nsi-ink)] backdrop-blur-md border border-black/10 mb-6">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[color:var(--nsi-gold)] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[color:var(--nsi-gold)]"></span>
-                </span>
-                Live Updates: {period}
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <div className="inline-flex items-center gap-2 rounded-full bg-black/5 px-4 py-1.5 text-sm font-medium text-[color:var(--nsi-ink)] backdrop-blur-md border border-black/10">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[color:var(--nsi-gold)] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[color:var(--nsi-gold)]"></span>
+                  </span>
+                  Live Updates: {period}
+                </div>
+                {cycle && (
+                  <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium border backdrop-blur-md">
+                    {cycleOpen && (
+                      <>
+                        <span className="relative flex h-2 w-2 rounded-full bg-[color:var(--nsi-green)]" />
+                        <span className="text-[color:var(--nsi-ink)]">Survey open for {cycle.monthYear}</span>
+                      </>
+                    )}
+                    {cycle?.status === "CLOSED" && (
+                      <span className="text-[color:var(--nsi-ink-soft)]">Collection closed for {cycle.monthYear}. Next report coming soon.</span>
+                    )}
+                    {cycle.status === "ARCHIVED" && (
+                      <span className="text-[color:var(--nsi-ink-soft)]">Cycle archived</span>
+                    )}
+                  </div>
+                )}
               </div>
               <h1 className="font-serif text-5xl font-bold leading-[1.1] tracking-tight text-[color:var(--nsi-ink)] lg:text-7xl drop-shadow-sm">
                 Tracking How Nigeria
@@ -126,6 +196,14 @@ export default async function Home() {
                 Beyond the noise: a calm, data-driven pulse on security, economy, governance, and the nation&apos;s stability.
               </p>
               <div className="mt-12 flex flex-wrap gap-4">
+                {cycleOpen && (
+                  <Link
+                    href="/survey"
+                    className="inline-flex items-center rounded-xl bg-[color:var(--nsi-green)] px-8 py-4 text-lg font-bold text-white shadow-2xl transition-all hover:scale-105 hover:brightness-110"
+                  >
+                    Take the survey
+                  </Link>
+                )}
                 <Link
                   href={snapshotHref}
                   className="inline-flex items-center rounded-xl bg-[color:var(--nsi-gold)] px-8 py-4 text-lg font-bold text-[color:var(--nsi-ink)] shadow-2xl transition-all hover:scale-105 hover:brightness-110"
@@ -200,24 +278,107 @@ export default async function Home() {
           })}
         </section>
 
-        {/* Mood Section */}
-        <section className="mt-32 text-center py-16 rounded-[3rem] bg-white/60 backdrop-blur-sm border border-black/5 shadow-sm">
+        {/* State & Institution Spotlight Card */}
+        <section className="mt-20">
+          <SpotlightCard
+            stateSpot={stateSpot}
+            instSpot={instSpot}
+            showState={showStateSpotlight}
+            showInst={showInstSpotlight}
+            reportHref={latest ? `/reports/${latest.id}` : "/spotlights"}
+          />
+        </section>
+
+        {/* Sentiment & Sources Section */}
+        <section className="mt-20 grid gap-6 md:grid-cols-2">
+          {showSentiment ? (
+            <div className="overflow-hidden rounded-2xl border border-black/10 bg-white shadow-lg">
+              <div className="border-b border-black/5 bg-black/5 px-6 py-4">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">What Nigerians Said</h3>
+              </div>
+              <div className="p-6">
+                {safeString(sentiment.topMood) && (
+                  <p className="text-lg font-medium text-[color:var(--nsi-ink)]">
+                    Top mood: <span className="text-[color:var(--nsi-gold-deep)]">&ldquo;{sentiment.topMood}&rdquo;</span>
+                  </p>
+                )}
+                {safeArray<string>(sentiment.topWords).length > 0 && (
+                  <p className="mt-2 text-sm text-[color:var(--nsi-ink-soft)]">
+                    Top words: {safeArray<string>(sentiment.topWords).slice(0, 5).join(", ")}
+                  </p>
+                )}
+                {safeNumber(sentiment.averagePublicScore) != null && (
+                  <p className="mt-3 text-2xl font-bold text-[color:var(--nsi-green)]">
+                    Average public score: {safeNumber(sentiment.averagePublicScore)!.toFixed(1)}/10
+                  </p>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-black/10 bg-[color:var(--nsi-paper-2)] p-8 text-center">
+              <p className="text-sm font-medium uppercase tracking-wider text-[color:var(--nsi-ink-soft)]">Sentiment Summary</p>
+              <p className="mt-3 text-[color:var(--nsi-ink-soft)]">To be published with the report.</p>
+            </div>
+          )}
+          {showSources ? (
+            <div className="overflow-hidden rounded-2xl border border-black/10 bg-white shadow-lg">
+              <div className="border-b border-black/5 bg-black/5 px-6 py-4">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">Sources & References</h3>
+              </div>
+              <div className="p-6">
+                <ul className="space-y-3">
+                  {sources.slice(0, 5).map((s, idx) => (
+                    <li key={idx}>
+                      <a
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-medium text-[color:var(--nsi-green)] hover:underline"
+                      >
+                        {s.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+                {sources.length > 5 && (
+                  <Link href={snapshotHref} className="mt-4 inline-block text-sm font-medium text-[color:var(--nsi-ink-soft)] hover:underline">
+                    View all in full report →
+                  </Link>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-black/10 bg-[color:var(--nsi-paper-2)] p-8 text-center">
+              <p className="text-sm font-medium uppercase tracking-wider text-[color:var(--nsi-ink-soft)]">Sources & References</p>
+              <p className="mt-3 text-[color:var(--nsi-ink-soft)]">To be published with the snapshot.</p>
+            </div>
+          )}
+        </section>
+
+        {/* Survey CTA / Share how Nigeria feels */}
+        <section className="mt-20 text-center py-16 rounded-[3rem] bg-white/60 backdrop-blur-sm border border-black/5 shadow-sm">
           <h2 className="font-serif text-3xl font-bold text-[color:var(--nsi-ink)]">
-            How stable does Nigeria feel to you right now?
+            {cycleOpen ? "Share how Nigeria feels to you" : "How stable does Nigeria feel to you?"}
           </h2>
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
-            {moods.map((mood) => (
-              <button
-                key={mood}
-                className="px-8 py-3 rounded-xl bg-white border border-black/10 text-[color:var(--nsi-ink-soft)] font-medium transition-all hover:bg-[color:var(--nsi-gold)] hover:text-[color:var(--nsi-ink)] hover:scale-105"
+          {cycleOpen ? (
+            <div className="mt-10">
+              <Link
+                href="/survey"
+                className="inline-flex items-center rounded-xl bg-[color:var(--nsi-green)] px-10 py-4 text-lg font-bold text-white shadow-2xl transition-all hover:scale-105 hover:brightness-110"
               >
-                {mood}
-              </button>
-            ))}
-          </div>
-          <p className="mt-8 text-lg italic text-[color:var(--nsi-ink-soft)]">
-            Top mood this week: <span className="font-semibold text-[color:var(--nsi-gold-deep)]">&ldquo;Cautiously hopeful&rdquo;</span>
-          </p>
+                Take the survey
+              </Link>
+              <p className="mt-6 text-[color:var(--nsi-ink-soft)]">One question per pillar — your voice shapes the index.</p>
+            </div>
+          ) : (
+            <p className="mt-8 text-lg italic text-[color:var(--nsi-ink-soft)]">
+              {showSentiment && safeString(sentiment.topMood) ? (
+                <>Top mood this period: <span className="font-semibold text-[color:var(--nsi-gold-deep)]">&ldquo;{sentiment.topMood}&rdquo;</span></>
+              ) : (
+                "Survey opens each cycle. Check back soon."
+              )}
+            </p>
+          )}
         </section>
 
         {/* Report Section */}

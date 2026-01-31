@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { PILLARS } from "@/lib/constants";
 
 type Item = {
   id: string;
   createdAt: string;
-  stabilityScore: number;
-  mood: string;
-  oneWord: string;
+  stabilityScore: number | null;
+  mood: string | null;
+  oneWord: string | null;
+  pillarResponses: Record<string, number> | null;
   spotlightState: string | null;
   spotlightTags: string[];
   spotlightComment: string | null;
@@ -125,6 +127,11 @@ export function SubmissionsTable() {
               <th scope="col" className="px-4 py-3">
                 Score
               </th>
+              {PILLARS.map((p) => (
+                <th key={p.key} scope="col" className="px-4 py-3">
+                  {p.label}
+                </th>
+              ))}
               <th scope="col" className="px-4 py-3">
                 Mood
               </th>
@@ -158,12 +165,25 @@ export function SubmissionsTable() {
                   </time>
                 </td>
                 <td className="px-4 py-4">
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--nsi-green)]/10 font-semibold text-[color:var(--nsi-green)]">
-                    {s.stabilityScore}
-                  </span>
+                  {s.stabilityScore != null ? (
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--nsi-green)]/10 font-semibold text-[color:var(--nsi-green)]">
+                      {s.stabilityScore}
+                    </span>
+                  ) : (
+                    <span className="text-black/40">—</span>
+                  )}
                 </td>
-                <td className="px-4 py-4">{s.mood}</td>
-                <td className="px-4 py-4 font-medium">{s.oneWord}</td>
+                {PILLARS.map((p) => (
+                  <td key={p.key} className="px-4 py-4">
+                    {s.pillarResponses?.[p.key] != null ? (
+                      <span className="font-medium">{s.pillarResponses[p.key]}</span>
+                    ) : (
+                      <span className="text-black/40">—</span>
+                    )}
+                  </td>
+                ))}
+                <td className="px-4 py-4">{s.mood ?? "—"}</td>
+                <td className="px-4 py-4 font-medium">{s.oneWord ?? "—"}</td>
                 <td className="px-4 py-4">
                   {s.spotlightState ? (
                     <div>
@@ -202,7 +222,7 @@ export function SubmissionsTable() {
               <tr>
                 <td
                   className="px-4 py-12 text-center text-sm text-black/60"
-                  colSpan={6}
+                  colSpan={6 + PILLARS.length}
                 >
                   <div className="flex flex-col items-center gap-2">
                     <span className="text-3xl">📭</span>

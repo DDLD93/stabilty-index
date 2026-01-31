@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireAdminSession } from "@/lib/adminSession";
+import { PILLARS } from "@/lib/constants";
 
 function csvEscape(v: string) {
   const s = v.replaceAll(`"`, `""`);
@@ -19,6 +20,7 @@ export async function GET() {
       stabilityScore: true,
       mood: true,
       oneWord: true,
+      pillarResponses: true,
       spotlightState: true,
       spotlightTags: true,
       spotlightComment: true,
@@ -26,30 +28,35 @@ export async function GET() {
     },
   });
 
+  const pillarCols = PILLARS.map((p) => p.key);
   const header = [
     "createdAt",
     "cycleId",
     "stabilityScore",
     "mood",
     "oneWord",
+    ...pillarCols,
     "spotlightState",
     "spotlightTags",
     "spotlightComment",
   ].join(",");
 
   const body = rows
-    .map((r) =>
-      [
+    .map((r) => {
+      const pr = (r.pillarResponses ?? {}) as Record<string, number>;
+      const pillarVals = pillarCols.map((k) => (pr[k] != null ? String(pr[k]) : ""));
+      return [
         csvEscape(r.createdAt.toISOString()),
         csvEscape(r.cycleId),
-        String(r.stabilityScore),
-        csvEscape(r.mood),
-        csvEscape(r.oneWord),
+        r.stabilityScore != null ? String(r.stabilityScore) : "",
+        csvEscape(r.mood ?? ""),
+        csvEscape(r.oneWord ?? ""),
+        ...pillarVals,
         csvEscape(r.spotlightState ?? ""),
         csvEscape(r.spotlightTags.join("|")),
         csvEscape(r.spotlightComment ?? ""),
-      ].join(",")
-    )
+      ].join(",");
+    })
     .join("\n");
 
   await db.auditLog.create({
