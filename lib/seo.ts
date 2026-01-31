@@ -81,6 +81,7 @@ export function getOrganizationSchema(): OrganizationSchema {
     "@type": "Organization",
     name: siteConfig.name,
     url: siteConfig.url,
+    logo: `${siteConfig.url}/assetes/NSI_logo_web_1200w.png`,
     description: siteConfig.description,
     sameAs: [
       siteConfig.social.twitter.site ? `https://twitter.com/${siteConfig.social.twitter.site.replace("@", "")}` : "",
@@ -147,7 +148,7 @@ export function getArticleSchema({
       name: siteConfig.author.organization,
       logo: {
         "@type": "ImageObject",
-        url: `${siteConfig.url}/icon-512.png`,
+        url: `${siteConfig.url}/assetes/nsi-favicon-512x512.png`,
       },
     },
     mainEntityOfPage: {

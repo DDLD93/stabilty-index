@@ -116,7 +116,7 @@ export default async function ReportDetailPage({
         />
       )}
       <main className="w-full pb-20">
-        <section className="relative overflow-hidden pt-16">
+        <section className="relative overflow-hidden pt-20">
           <div className="mx-auto w-full max-w-6xl px-6">
             <div className="nsi-section-card px-8 py-8">
               <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
@@ -136,7 +136,7 @@ export default async function ReportDetailPage({
             </div>
           </div>
         </section>
-        <div className="mx-auto mt-10 w-full max-w-6xl px-6">
+        <div className="mx-auto mt-12 w-full max-w-6xl px-6">
           <PublicationDashboard snapshotId={id} />
         </div>
       </main>

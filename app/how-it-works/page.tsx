@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default function HowItWorksPage() {
   return (
     <main className="w-full pb-20">
-      <section className="relative overflow-hidden pt-16">
+      <section className="relative overflow-hidden pt-20">
         <div className="mx-auto w-full max-w-7xl px-6">
           <div className="nsi-section-card px-8 py-10">
             <div className="relative z-10">
@@ -40,7 +40,7 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      <section className="mx-auto mt-12 grid w-full max-w-7xl gap-6 px-6 md:grid-cols-3">
+      <section className="mx-auto mt-20 grid w-full max-w-7xl gap-6 px-6 md:grid-cols-3">
         <div className="nsi-card-soft p-8">
           <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-ink-soft)]">
             1) Collection

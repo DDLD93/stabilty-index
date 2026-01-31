@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function SurveyPage() {
   return (
-    <main className="w-full pb-20 pt-16">
+    <main className="w-full pb-20 pt-20">
       <div className="mx-auto max-w-3xl px-6">
         <div className="mb-8 flex items-center justify-between">
           <Link

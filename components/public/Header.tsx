@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
-import { NSIShieldMark } from "@/components/public/icons";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -24,7 +24,13 @@ export function Header() {
           href="/"
           className="flex items-center gap-3 transition-opacity hover:opacity-95"
         >
-          <NSIShieldMark className="h-9 w-9" />
+          <Image
+            src="/assetes/NSI_logo_web_800w.png"
+            alt="Nigeria Stability Index"
+            width={160}
+            height={36}
+            className="h-9 w-auto"
+          />
           <div className="hidden leading-tight sm:block">
             <div className="font-serif text-[1rem] font-bold tracking-tight">
               Nigeria Stability Index{" "}

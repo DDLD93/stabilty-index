@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <main className="w-full pb-20">
-      <section className="relative overflow-hidden pt-16">
+      <section className="relative overflow-hidden pt-20">
         <div className="mx-auto w-full max-w-7xl px-6">
           <div className="nsi-section-card px-8 py-12">
             <div className="absolute inset-0 -z-10 opacity-[0.12]">
@@ -67,7 +67,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto mt-12 grid w-full max-w-7xl gap-6 px-6 md:grid-cols-2">
+      <section className="mx-auto mt-20 grid w-full max-w-7xl gap-6 px-6 md:grid-cols-2">
         <div className="nsi-card-soft p-8">
           <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-ink-soft)]">
             What we measure

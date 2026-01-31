@@ -24,7 +24,7 @@ export default function AdminLayout({
         tabIndex={-1}
         className="flex-1 overflow-auto bg-[color:var(--nsi-paper)] focus:outline-none"
       >
-        <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-8 md:py-10 lg:px-10">
+        <div className="mx-auto w-full max-w-7xl px-6 py-8 md:py-10">
           {children}
         </div>
       </main>

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <main className="w-full pb-20">
-      <section className="relative overflow-hidden pt-16">
+      <section className="relative overflow-hidden pt-20">
         <div className="mx-auto w-full max-w-7xl px-6">
           <div className="nsi-section-card px-8 py-10">
             <div className="relative z-10">
@@ -41,7 +41,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="mx-auto mt-12 w-full max-w-7xl px-6">
+      <section className="mx-auto mt-20 w-full max-w-7xl px-6">
         <div className="nsi-card-soft p-8">
           <h2 className="font-serif text-xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
             Email

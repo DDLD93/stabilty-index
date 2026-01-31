@@ -43,7 +43,7 @@ function SignInInner() {
   }
 
   return (
-    <div className="min-h-screen bg-[color:var(--nsi-paper)] px-6 py-16">
+    <div className="min-h-screen bg-[color:var(--nsi-paper)] px-6 py-20">
       <div className="mx-auto w-full max-w-md">
         <div className="nsi-section-card px-8 py-10">
           <div className="relative z-10">

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default function MethodologyPage() {
   return (
     <main className="w-full pb-20">
-      <section className="relative overflow-hidden pt-16">
+      <section className="relative overflow-hidden pt-20">
         <div className="mx-auto w-full max-w-7xl px-6">
           <div className="nsi-section-card px-8 py-12">
             <div className="absolute inset-0 -z-10 opacity-[0.12]">
@@ -109,7 +109,7 @@ export default function MethodologyPage() {
         </div>
       </section>
 
-      <section className="mx-auto mt-12 w-full max-w-7xl px-6">
+      <section className="mx-auto mt-20 w-full max-w-7xl px-6">
         <div className="nsi-card-soft p-8">
           <h2 className="font-serif text-xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
           How we measure

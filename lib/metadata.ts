@@ -9,7 +9,8 @@ export const siteConfig = {
   shortName: "NSI",
   description: "A calm snapshot of how Nigeria is holding together. Tracking stability through security, economy, governance, investor confidence, and social stability.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.nigeriastabilityIndex.ng",
-  ogImage: "/opengraph-image", // Next.js automatically serves opengraph-image.tsx at this route
+  ogImage: "/assetes/NSI_logo_web_1200w.png",
+  favicon: "/assetes/nsi-favicon.ico",
   author: {
     name: "Nigeria Stability Index",
     organization: "'24 Angels Initiative",
@@ -50,6 +51,16 @@ export const defaultMetadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   alternates: {
     canonical: "/",
+  },
+  icons: {
+    icon: [
+      { url: "/assetes/nsi-favicon.ico", type: "image/x-icon" },
+      { url: "/assetes/nsi-favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/assetes/nsi-favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/assetes/nsi-favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/assetes/nsi-favicon-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/assetes/nsi-favicon-180x180.png",
   },
   openGraph: {
     type: "website",
