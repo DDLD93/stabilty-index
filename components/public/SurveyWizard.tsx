@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { PILLAR_KEYS, NIGERIAN_STATES, SPOTLIGHT_TAGS } from "@/lib/constants";
+import { getDeviceHash } from "@/lib/deviceHash";
 
 export type SurveyQuestion = {
   pillarKey: string;
@@ -20,6 +22,15 @@ const SCALE = [1, 2, 3, 4, 5] as const;
 const PILLAR_STEPS = 5;
 const TOTAL_STEPS = 6; // intro + 5 pillars + optional spotlight
 
+function getPillarImage(pillarKey: string): string {
+  const t = pillarKey.toLowerCase();
+  if (t.includes("security")) return "/pillars/security.png";
+  if (t.includes("econom")) return "/pillars/economy.png";
+  if (t.includes("invest")) return "/pillars/investor.png";
+  if (t.includes("govern")) return "/pillars/governance.png";
+  return "/pillars/social.png";
+}
+
 export function SurveyWizard() {
   const [cycle, setCycle] = useState<Cycle | null>(null);
   const [loading, setLoading] = useState(true);
@@ -32,15 +43,25 @@ export function SurveyWizard() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [deviceHash, setDeviceHash] = useState<string | null>(null);
+  const [alreadySubmitted, setAlreadySubmitted] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
       setError(null);
+      const hash = getDeviceHash();
+      if (!cancelled) setDeviceHash(hash);
       try {
-        const res = await fetch("/api/public/cycle");
-        const data = (await res.json()) as { cycle: Cycle | null };
+        const url = hash ? `/api/public/cycle?deviceHash=${encodeURIComponent(hash)}` : "/api/public/cycle";
+        const res = await fetch(url);
+        const data = (await res.json()) as { cycle: Cycle | null; alreadySubmitted?: boolean };
         if (cancelled) return;
+        if (data.alreadySubmitted === true) {
+          setAlreadySubmitted(true);
+          setLoading(false);
+          return;
+        }
         if (!data.cycle || !Array.isArray(data.cycle.surveyQuestions) || data.cycle.surveyQuestions.length !== 5) {
           setCycle(null);
           return;
@@ -88,6 +109,7 @@ export function SurveyWizard() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          ...(deviceHash && { deviceHash }),
           pillarResponses,
           spotlightState: spotlightState || null,
           spotlightTags: spotlightTags.length ? spotlightTags : undefined,
@@ -109,15 +131,38 @@ export function SurveyWizard() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center">
+      <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
         <p className="text-[color:var(--nsi-ink-soft)]">Loading survey…</p>
+      </div>
+    );
+  }
+
+  if (alreadySubmitted) {
+    return (
+      <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
+        <h2 className="font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">Already submitted</h2>
+        <p className="mt-4 text-[color:var(--nsi-ink-soft)]">You&apos;ve already submitted for this cycle.</p>
+        <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <Link
+            href="/"
+            className="inline-flex rounded-xl bg-[color:var(--nsi-green)] px-6 py-3 text-sm font-semibold text-white transition-all hover:brightness-110"
+          >
+            Back to home
+          </Link>
+          <Link
+            href="/reports"
+            className="inline-flex rounded-xl border border-black/15 bg-white px-6 py-3 text-sm font-semibold text-[color:var(--nsi-ink)] transition-all hover:bg-black/5"
+          >
+            View reports
+          </Link>
+        </div>
       </div>
     );
   }
 
   if (error || !cycle) {
     return (
-      <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center">
+      <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
         <h2 className="font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">Survey is not available right now</h2>
         <p className="mt-4 text-[color:var(--nsi-ink-soft)]">
           {error ?? "Collection may be closed or the survey is still being set up. Check back later."}
@@ -134,7 +179,7 @@ export function SurveyWizard() {
 
   if (submitted) {
     return (
-      <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center">
+      <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
         <h2 className="font-serif text-2xl font-semibold text-[color:var(--nsi-ink)]">Thank you</h2>
         <p className="mt-4 text-[color:var(--nsi-ink-soft)]">Your responses have been recorded and help shape the Nigeria Stability Index.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
@@ -158,10 +203,10 @@ export function SurveyWizard() {
   const questions = cycle.surveyQuestions;
 
   return (
-    <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white shadow-xl">
-      <div className="border-b border-black/10 px-6 py-4">
+    <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white shadow-lg">
+      <div className="border-b border-black/5 bg-black/5 px-6 py-4">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-[color:var(--nsi-ink-soft)]">
+          <span className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
             {step === 0 ? "Intro" : step <= PILLAR_STEPS ? `Step ${step} of ${TOTAL_STEPS}` : "Optional"}
           </span>
           <span className="text-xs text-[color:var(--nsi-ink-soft)]">{cycle.monthYear}</span>
@@ -189,23 +234,36 @@ export function SurveyWizard() {
           </>
         )}
 
-        {step >= 1 && step <= PILLAR_STEPS && questions[step - 1] && (
+        {step >= 1 && step <= PILLAR_STEPS && questions[step - 1] && (() => {
+          const q = questions[step - 1];
+          const pillarImage = getPillarImage(q.pillarKey);
+          return (
           <>
-            <h2 className="font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">
-              {questions[step - 1].questionText}
+            <div className="flex items-center gap-4 rounded-xl border border-black/5 bg-[color:var(--nsi-paper-2)] p-4">
+              <div className="relative h-12 w-12 shrink-0 overflow-hidden">
+                <Image
+                  src={pillarImage}
+                  alt={q.pillarLabel}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <span className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
+                {q.pillarLabel}
+              </span>
+            </div>
+            <h2 className="mt-6 font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">
+              {q.questionText}
             </h2>
             <p className="mt-1 text-sm text-[color:var(--nsi-ink-soft)]">
-              {questions[step - 1].pillarLabel} — choose 1 (least stable) to 5 (most stable).
+              Choose 1 (least stable) to 5 (most stable).
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               {SCALE.map((n) => (
                 <button
                   key={n}
                   type="button"
-                  onClick={() => {
-                    setPillar(questions[step - 1].pillarKey, n);
-                    setTimeout(goNext, 200);
-                  }}
+                  onClick={() => setPillar(questions[step - 1].pillarKey, n)}
                   className={`min-w-[3rem] rounded-xl border-2 px-6 py-4 text-lg font-bold transition-all ${
                     pillarResponses[questions[step - 1].pillarKey] === n
                       ? "border-[color:var(--nsi-green)] bg-[color:var(--nsi-green)]/10 text-[color:var(--nsi-green)]"
@@ -220,7 +278,7 @@ export function SurveyWizard() {
               <button
                 type="button"
                 onClick={goBack}
-                className="rounded-xl border border-black/15 px-6 py-2.5 text-sm font-medium text-[color:var(--nsi-ink)] hover:bg-black/5"
+                className="rounded-xl border border-black/15 px-6 py-2.5 text-sm font-medium text-[color:var(--nsi-ink)] transition-all hover:bg-black/5"
               >
                 Back
               </button>
@@ -228,14 +286,15 @@ export function SurveyWizard() {
                 <button
                   type="button"
                   onClick={goNext}
-                  className="rounded-xl bg-[color:var(--nsi-green)] px-6 py-2.5 text-sm font-semibold text-white hover:brightness-110"
+                  className="rounded-xl bg-[color:var(--nsi-green)] px-6 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
                 >
                   Next
                 </button>
               )}
             </div>
           </>
-        )}
+          );
+        })()}
 
         {step === TOTAL_STEPS && (
           <>
@@ -295,7 +354,7 @@ export function SurveyWizard() {
               <button
                 type="button"
                 onClick={goBack}
-                className="rounded-xl border border-black/15 px-6 py-2.5 text-sm font-medium text-[color:var(--nsi-ink)] hover:bg-black/5"
+                className="rounded-xl border border-black/15 px-6 py-2.5 text-sm font-medium text-[color:var(--nsi-ink)] transition-all hover:bg-black/5"
               >
                 Back
               </button>

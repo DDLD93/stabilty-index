@@ -25,6 +25,7 @@ const pillarResponsesSchema = z.record(z.string(), z.number().int().min(1).max(5
 const submitSchema = z.union([
   legacySchema,
   z.object({
+    deviceHash: z.string().min(1).optional(),
     pillarResponses: pillarResponsesSchema,
     spotlightState: z.enum(NIGERIAN_STATES).nullable().optional(),
     spotlightTags: z.array(z.enum(SPOTLIGHT_TAGS)).max(8).optional().default([]),
@@ -84,6 +85,19 @@ export async function POST(req: Request) {
         { status: 409 }
       );
     }
+    const deviceHash = (data as { deviceHash?: string }).deviceHash;
+    if (deviceHash) {
+      const existing = await db.submission.findFirst({
+        where: { cycleId: cycle.id, deviceHash },
+        select: { id: true },
+      });
+      if (existing) {
+        return NextResponse.json(
+          { error: "You have already submitted for this cycle." },
+          { status: 409 }
+        );
+      }
+    }
     const pillarResponses = data.pillarResponses as Record<string, number>;
     const values = PILLAR_KEYS.map((k) => pillarResponses[k]).filter((v): v is number => typeof v === "number");
     const avg = values.length === 5 ? values.reduce((a, b) => a + b, 0) / 5 : 0;
@@ -93,6 +107,7 @@ export async function POST(req: Request) {
     await db.submission.create({
       data: {
         cycleId: cycle.id,
+        ...(deviceHash && { deviceHash }),
         stabilityScore: clampedScore,
         mood: null,
         oneWord: null,

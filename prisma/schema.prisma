@@ -33,6 +33,8 @@ model Submission {
   cycleId   String
   cycle     Cycle  @relation(fields: [cycleId], references: [id], onDelete: Cascade)
 
+  deviceHash String?
+
   stabilityScore Int?
   mood           String?
   oneWord        String?
@@ -49,6 +51,8 @@ model Submission {
   updatedAt DateTime @updatedAt
 
   @@index([cycleId, createdAt])
+  @@index([cycleId, deviceHash])
+  @@unique([cycleId, deviceHash])
   @@index([isFlagged])
 }
 
