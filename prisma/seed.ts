@@ -14,9 +14,18 @@ const prisma = new PrismaClient({ adapter });
 const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? "admin@nigeriastabilityindex.com";
 const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? "admin-change-me";
 
-async function main() {
-  const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
+/** Clear all tables (schema order: respect FK; do not seed after). */
+async function clearAllTables() {
+  await prisma.auditLog.deleteMany();
+  await prisma.adminUser.deleteMany();
+  await prisma.snapshot.deleteMany();
+  await prisma.submission.deleteMany();
+  await prisma.cycle.deleteMany();
+  console.log("Cleared all tables.");
+}
 
+async function seedAdmin() {
+  const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
   const admin = await prisma.adminUser.upsert({
     where: { email: ADMIN_EMAIL },
     update: { passwordHash },
@@ -25,8 +34,12 @@ async function main() {
       passwordHash,
     },
   });
-
   console.log("Seeded admin user:", admin.email);
+}
+
+async function main() {
+  await clearAllTables();
+  // Don't seed: seedAdmin() left available but not called.
 }
 
 main()

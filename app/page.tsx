@@ -60,7 +60,7 @@ function hasSources(raw: unknown): raw is SourceRef[] {
 export async function generateMetadata(): Promise<Metadata> {
   const state = await getPublicSystemState();
   const latest = state.latestPublishedSnapshot;
-  const displayScore = latest ? latest.overallScore : 6.6;
+  const displayScore = latest ? latest.overallScore : 0.0;
 
   return {
     ...defaultMetadata,
@@ -106,7 +106,7 @@ export default async function Home() {
         }));
 
   const snapshotHref = latest ? `/reports/${latest.id}` : "/reports";
-  const displayScore = latest ? latest.overallScore : 6.6;
+  const displayScore = latest ? latest.overallScore : 0.0;
   const period = latest?.period ?? "January 2026";
   const narrative = latest?.overallNarrative ?? "Cautiously Stable";
 
