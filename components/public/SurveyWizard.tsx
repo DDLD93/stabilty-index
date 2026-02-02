@@ -135,7 +135,7 @@ export function SurveyWizard() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
+      <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
         <p className="text-[color:var(--nsi-ink-soft)]">Loading survey…</p>
       </div>
     );
@@ -143,7 +143,7 @@ export function SurveyWizard() {
 
   if (alreadySubmitted) {
     return (
-      <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
+      <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
         <h2 className="font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">Already submitted</h2>
         <p className="mt-4 text-[color:var(--nsi-ink-soft)]">You&apos;ve already submitted for this cycle.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
@@ -166,7 +166,7 @@ export function SurveyWizard() {
 
   if (error || !cycle) {
     return (
-      <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
+      <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
         <h2 className="font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">Survey is not available right now</h2>
         <p className="mt-4 text-[color:var(--nsi-ink-soft)]">
           {error ?? "Collection may be closed or the survey is still being set up. Check back later."}
@@ -183,7 +183,7 @@ export function SurveyWizard() {
 
   if (submitted) {
     return (
-      <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
+      <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
         <h2 className="font-serif text-2xl font-semibold text-[color:var(--nsi-ink)]">Thank you</h2>
         <p className="mt-4 text-[color:var(--nsi-ink-soft)]">Your responses have been recorded and help shape the Nigeria Stability Index.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
@@ -207,8 +207,8 @@ export function SurveyWizard() {
   const questions = cycle.surveyQuestions;
 
   return (
-    <div className="mx-auto max-w-xl rounded-2xl border border-black/10 bg-white shadow-lg">
-      <div className="border-b border-black/5 bg-black/5 px-6 py-4">
+    <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white shadow-lg">
+      <div className="border-b border-black/5 bg-black/5 px-4 py-3 sm:px-6 sm:py-4">
         <div className="flex items-center justify-between">
           <span className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
             {step === 0 ? "Intro" : step <= PILLAR_STEPS ? `Step ${step} of ${TOTAL_STEPS}` : "Optional"}
@@ -217,7 +217,7 @@ export function SurveyWizard() {
         </div>
       </div>
 
-      <div className="p-8">
+      <div className="p-6 sm:p-8">
         {step === 0 && (
           <>
             <h2 className="font-serif text-2xl font-semibold text-[color:var(--nsi-ink)]">
@@ -266,13 +266,13 @@ export function SurveyWizard() {
             <p className="mt-1 text-sm text-[color:var(--nsi-ink-soft)]">
               Choose 1 (least stable) to 5 (most stable).
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-nowrap gap-1 sm:gap-2 md:gap-3">
               {SCALE.map((n) => (
                 <button
                   key={n}
                   type="button"
                   onClick={() => setPillar(questions[step - 1].pillarKey, n)}
-                  className={`min-w-[3rem] rounded-xl border-2 px-6 py-4 text-lg font-bold transition-all ${
+                  className={`flex-1 min-w-0 rounded-xl border-2 px-2 py-3 text-lg font-bold transition-all sm:px-4 sm:py-4 md:px-6 ${
                     pillarResponses[questions[step - 1].pillarKey] === n
                       ? "border-[color:var(--nsi-green)] bg-[color:var(--nsi-green)]/10 text-[color:var(--nsi-green)]"
                       : "border-black/15 bg-white text-[color:var(--nsi-ink-soft)] hover:border-black/25 hover:bg-black/5"
