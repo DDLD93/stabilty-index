@@ -27,6 +27,8 @@ const submitSchema = z.union([
   z.object({
     deviceHash: z.string().min(1).optional(),
     pillarResponses: pillarResponsesSchema,
+    mood: z.enum(MOODS).nullable().optional(),
+    oneWord: z.string().trim().max(40).nullable().optional(),
     spotlightState: z.enum(NIGERIAN_STATES).nullable().optional(),
     spotlightTags: z.array(z.enum(SPOTLIGHT_TAGS)).max(8).optional().default([]),
     spotlightComment: z.string().trim().max(600).nullable().optional(),
@@ -104,17 +106,24 @@ export async function POST(req: Request) {
     const stabilityScore = Math.round(avg * 2);
     const clampedScore = Math.min(10, Math.max(1, stabilityScore));
 
+    const pillarData = data as {
+      mood?: string | null;
+      oneWord?: string | null;
+      spotlightState?: string | null;
+      spotlightTags?: string[];
+      spotlightComment?: string | null;
+    };
     await db.submission.create({
       data: {
         cycleId: cycle.id,
         ...(deviceHash && { deviceHash }),
         stabilityScore: clampedScore,
-        mood: null,
-        oneWord: null,
+        mood: pillarData.mood ?? null,
+        oneWord: pillarData.oneWord ?? null,
         pillarResponses: pillarResponses as object,
-        spotlightState: data.spotlightState ?? null,
+        spotlightState: pillarData.spotlightState ?? null,
         spotlightTags: data.spotlightTags ?? [],
-        spotlightComment: data.spotlightComment ?? null,
+        spotlightComment: pillarData.spotlightComment ?? null,
       },
     });
     return NextResponse.json({ ok: true });

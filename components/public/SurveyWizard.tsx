@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { PILLAR_KEYS, NIGERIAN_STATES, SPOTLIGHT_TAGS } from "@/lib/constants";
+import { MOODS, PILLAR_KEYS, NIGERIAN_STATES, SPOTLIGHT_TAGS } from "@/lib/constants";
 import { getDeviceHash } from "@/lib/deviceHash";
 
 export type SurveyQuestion = {
@@ -37,6 +37,8 @@ export function SurveyWizard() {
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const [pillarResponses, setPillarResponses] = useState<Record<string, number>>({});
+  const [mood, setMood] = useState<string | null>(null);
+  const [oneWord, setOneWord] = useState("");
   const [spotlightState, setSpotlightState] = useState<string | null>(null);
   const [spotlightTags, setSpotlightTags] = useState<string[]>([]);
   const [spotlightComment, setSpotlightComment] = useState("");
@@ -111,6 +113,8 @@ export function SurveyWizard() {
         body: JSON.stringify({
           ...(deviceHash && { deviceHash }),
           pillarResponses,
+          mood: mood || null,
+          oneWord: oneWord.trim() || null,
           spotlightState: spotlightState || null,
           spotlightTags: spotlightTags.length ? spotlightTags : undefined,
           spotlightComment: spotlightComment.trim() || undefined,
@@ -239,20 +243,24 @@ export function SurveyWizard() {
           const pillarImage = getPillarImage(q.pillarKey);
           return (
           <>
-            <div className="flex items-center gap-4 rounded-xl border border-black/5 bg-[color:var(--nsi-paper-2)] p-4">
-              <div className="relative h-12 w-12 shrink-0 overflow-hidden">
+            <div className="overflow-hidden rounded-2xl border border-black/10 bg-[color:var(--nsi-paper-2)] shadow-inner">
+              <div className="relative flex h-40 w-full items-center justify-center px-6 py-8">
                 <Image
                   src={pillarImage}
                   alt={q.pillarLabel}
                   fill
-                  className="object-contain"
+                  className="object-contain p-6"
+                  sizes="(max-width: 448px) 100vw, 448px"
+                  priority
                 />
               </div>
-              <span className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
-                {q.pillarLabel}
-              </span>
+              <div className="border-t border-black/5 px-6 py-4">
+                <span className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
+                  {q.pillarLabel}
+                </span>
+              </div>
             </div>
-            <h2 className="mt-6 font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">
+            <h2 className="mt-8 font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">
               {q.questionText}
             </h2>
             <p className="mt-1 text-sm text-[color:var(--nsi-ink-soft)]">
@@ -300,9 +308,43 @@ export function SurveyWizard() {
           <>
             <h2 className="font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">Anything else?</h2>
             <p className="mt-2 text-sm text-[color:var(--nsi-ink-soft)]">
-              Optional: highlight a state, add tags, or a short comment.
+              Optional: how you feel, one word, a state, tags, or a short comment.
             </p>
             <div className="mt-6 space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-[color:var(--nsi-ink)]">How are you feeling about Nigeria? (optional)</label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {MOODS.map((m) => {
+                    const active = m === mood;
+                    return (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => setMood(active ? null : m)}
+                        className={`rounded-xl px-4 py-2 text-sm font-medium transition-all ${
+                          active
+                            ? "bg-[color:var(--nsi-green)] text-white"
+                            : "border border-black/15 bg-white text-[color:var(--nsi-ink-soft)] hover:border-black/25 hover:bg-black/5"
+                        }`}
+                      >
+                        {m}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[color:var(--nsi-ink)]">One word to describe Nigeria today (optional)</label>
+                <input
+                  type="text"
+                  value={oneWord}
+                  onChange={(e) => setOneWord(e.target.value.slice(0, 40))}
+                  maxLength={40}
+                  placeholder="e.g. steady, tense, hopeful…"
+                  className="mt-1.5 w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-[color:var(--nsi-ink)] placeholder:text-black/40 focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-1 focus:ring-[color:var(--nsi-green)]"
+                />
+                <p className="mt-1 text-xs text-[color:var(--nsi-ink-soft)]">{oneWord.length}/40</p>
+              </div>
               <div>
                 <label className="block text-sm font-medium text-[color:var(--nsi-ink)]">State</label>
                 <select
