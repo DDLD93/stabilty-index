@@ -147,7 +147,7 @@ export default async function Home() {
   return (
     <main className="w-full pb-20">
       {/* Hero Section - Immersive Full Width */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-0">
         <div className="absolute inset-0 -z-10">
           <Image
             src="/abuja-skyline.png"
@@ -156,10 +156,10 @@ export default async function Home() {
             className="object-cover opacity-20 grayscale brightness-110"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-[color:var(--nsi-paper)]/40 backdrop-blur-[1px]" />
+          <div className="absolute inset-0 bg-linear-to-b from-white/10 via-transparent to-(--nsi-paper)/40 backdrop-blur-[1px]" />
         </div>
         
-        <div className="mx-auto w-full max-w-7xl px-6">
+        <div className="mx-auto w-full max-w-7xl px-12">
           <div className="grid items-center gap-12 md:grid-cols-2 lg:gap-20">
             <div className="relative z-10">
               <div className="flex flex-wrap items-center gap-3 mb-6">
@@ -187,7 +187,7 @@ export default async function Home() {
                   </div>
                 )}
               </div>
-              <h1 className="font-serif text-5xl font-bold leading-[1.1] tracking-tight text-[color:var(--nsi-ink)] lg:text-7xl drop-shadow-sm">
+              <h1 className="font-serif text-5xl font-bold leading-[1.1] tracking-tight text-[color:var(--nsi-ink)] lg:text-5xl drop-shadow-sm">
                 Tracking How Nigeria
                 <br />
                 <span className="text-[color:var(--nsi-green)]">Is Holding Together</span>

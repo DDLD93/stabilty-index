@@ -53,15 +53,7 @@ export function SpotlightCard({
           className="flex flex-col border-b border-black/5 p-6 scroll-mt-24 md:border-b-0 md:border-r md:border-black/5"
         >
           <div className="flex items-start gap-4">
-            <div className="shrink-0 overflow-hidden rounded-xl border border-black/5 p-2">
-              <Image
-                src="/spotlights/state-spotlight-logo.png"
-                alt="State Spotlight"
-                width={56}
-                height={56}
-                className="object-contain"
-              />
-            </div>
+            
             <div className="min-w-0 flex-1">
               <h3 className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
                 State Spotlight
@@ -91,16 +83,26 @@ export function SpotlightCard({
                   </Link>
                 </>
               ) : (
-                <div className="mt-3 rounded-xl bg-[color:var(--nsi-paper-2)] p-6 text-center">
-                  <p className="text-sm text-[color:var(--nsi-ink-soft)]">
-                    Coming in this month&apos;s report.
-                  </p>
-                  <Link
-                    href={stateHref}
-                    className="mt-4 inline-flex rounded-xl bg-[color:var(--nsi-green)] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
-                  >
-                    View spotlights
-                  </Link>
+                <div className="mt-3 rounded-2xl border border-black/10 overflow-hidden flex h-40 bg-white shadow-lg">
+                  <div className="group relative w-1/2 flex items-center justify-center bg-white">
+                    <Image
+                      src="/spotlights/state-spotlight-logo.png"
+                      alt="State Spotlight"
+                      fill
+                      className="object-contain transition-transform duration-700 group-hover:scale-110"
+                    />
+                  </div>
+                  <div className="w-1/2 bg-[color:var(--nsi-paper-2)] flex flex-col items-center justify-center p-6 text-center">
+                    <p className="text-sm text-[color:var(--nsi-ink-soft)]">
+                      Coming in this month&apos;s report.
+                    </p>
+                    <Link
+                      href={stateHref}
+                      className="mt-4 inline-flex rounded-xl bg-[color:var(--nsi-green)] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
+                    >
+                      View spotlights
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>
@@ -143,16 +145,26 @@ export function SpotlightCard({
                   </Link>
                 </>
               ) : (
-                <div className="mt-3 rounded-xl bg-[color:var(--nsi-paper-2)] p-6 text-center">
-                  <p className="text-sm text-[color:var(--nsi-ink-soft)]">
-                    To be published with the snapshot.
-                  </p>
-                  <Link
-                    href={instHref}
-                    className="mt-4 inline-flex rounded-xl bg-[color:var(--nsi-green)] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
-                  >
-                    View spotlights
-                  </Link>
+                <div className="mt-3 rounded-2xl border border-black/10 overflow-hidden flex h-40 bg-white shadow-lg">
+                  <div className="group relative w-1/2 flex items-center justify-center bg-white">
+                    <Image
+                      src="/spotlights/institution-spotlight-logo.png"
+                      alt="Institution Spotlight"
+                      fill
+                      className="object-contain transition-transform duration-700 group-hover:scale-110"
+                    />
+                  </div>
+                  <div className="w-1/2 bg-[color:var(--nsi-paper-2)] flex flex-col items-center justify-center p-6 text-center">
+                    <p className="text-sm text-[color:var(--nsi-ink-soft)]">
+                      To be published with the snapshot.
+                    </p>
+                    <Link
+                      href={instHref}
+                      className="mt-4 inline-flex rounded-xl bg-[color:var(--nsi-green)] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
+                    >
+                      View spotlights
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>
