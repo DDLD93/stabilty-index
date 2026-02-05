@@ -115,15 +115,7 @@ export function SpotlightCard({
           className="flex flex-col p-6 scroll-mt-24"
         >
           <div className="flex items-start gap-4">
-            <div className="shrink-0 overflow-hidden rounded-xl border border-black/5 p-2">
-              <Image
-                src="/spotlights/institution-spotlight-logo.png"
-                alt="Institution Spotlight"
-                width={56}
-                height={56}
-                className="object-contain"
-              />
-            </div>
+            
             <div className="min-w-0 flex-1">
               <h3 className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
                 Institution Spotlight

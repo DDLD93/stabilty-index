@@ -147,7 +147,7 @@ export default async function Home() {
   return (
     <main className="w-full pb-20">
       {/* Hero Section - Immersive Full Width */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-0">
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-0 ">
         <div className="absolute inset-0 -z-10">
           <Image
             src="/abuja-skyline.png"
@@ -195,24 +195,24 @@ export default async function Home() {
               <p className="mt-8 max-w-lg text-lg leading-relaxed text-[color:var(--nsi-ink-soft)] backdrop-blur-[1px]">
                 Beyond the noise: a calm, data-driven pulse on security, economy, governance, and the nation&apos;s stability.
               </p>
-              <div className="mt-12 flex flex-wrap gap-4">
+              <div className="mt-12 flex flex-wrap gap-3 items-center md:flex-nowrap">
                 {cycleOpen && (
                   <Link
                     href="/survey"
-                    className="inline-flex items-center rounded-xl bg-[color:var(--nsi-green)] px-8 py-4 text-lg font-bold text-white shadow-2xl transition-all hover:scale-105 hover:brightness-110"
+                    className="inline-flex w-full md:w-auto justify-center items-center rounded-xl bg-[color:var(--nsi-green)] px-4 py-3 text-sm font-bold text-white shadow-2xl transition-all hover:scale-105 hover:brightness-110 whitespace-nowrap shrink mb-2 md:mb-0"
                   >
                     Take the survey
                   </Link>
                 )}
                 <Link
                   href={snapshotHref}
-                  className="inline-flex items-center rounded-xl bg-[color:var(--nsi-gold)] px-8 py-4 text-lg font-bold text-[color:var(--nsi-ink)] shadow-2xl transition-all hover:scale-105 hover:brightness-110"
+                  className="inline-flex w-full md:w-auto justify-center items-center rounded-xl bg-[color:var(--nsi-gold)] px-4 py-3 text-sm font-bold text-[color:var(--nsi-ink)] shadow-2xl transition-all hover:scale-105 hover:brightness-110 whitespace-nowrap shrink mb-2 md:mb-0"
                 >
                   View Full Report
                 </Link>
                 <Link
                   href="/about"
-                  className="inline-flex items-center rounded-xl bg-black/5 px-8 py-4 text-lg font-bold text-[color:var(--nsi-ink)] backdrop-blur-md border border-black/10 transition-all hover:bg-black/10"
+                  className="inline-flex w-full md:w-auto justify-center items-center rounded-xl bg-black/5 px-4 py-3 text-sm font-bold text-[color:var(--nsi-ink)] backdrop-blur-md border border-black/10 transition-all hover:bg-black/10 whitespace-nowrap md:whitespace-normal mb-2 md:mb-0"
                 >
                   Our Methodology
                 </Link>
@@ -220,7 +220,7 @@ export default async function Home() {
             </div>
 
             <div className="flex flex-col items-center justify-center text-center relative py-12">
-              <div className="nsi-score-display relative p-12 rounded-[3rem] border-black/10 bg-white/40 backdrop-blur-xl shadow-2xl">
+              <div className="nsi-score-display relative p-8 rounded-[3rem] border-black/10 bg-white/40 backdrop-blur-xl shadow-2xl">
                 <div className="flex items-baseline gap-2 relative z-10">
                   <span className="text-[8rem] font-bold tracking-tighter text-[color:var(--nsi-green)] lg:text-[11rem] drop-shadow-sm">
                     {displayScore.toFixed(1)}
