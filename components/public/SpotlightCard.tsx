@@ -22,11 +22,6 @@ function safeString(v: unknown): string {
   return typeof v === "string" && v.length > 0 ? v : "";
 }
 
-function safeNumber(v: unknown): number | null {
-  const n = typeof v === "number" ? v : Number(v);
-  return Number.isFinite(n) ? n : null;
-}
-
 export type SpotlightCardProps = {
   stateSpot: StateSpotlight;
   instSpot: InstitutionSpotlight;
@@ -87,11 +82,6 @@ export function SpotlightCard({
                   <p className="mt-3 font-serif text-2xl font-semibold text-[color:var(--nsi-ink)]">
                     {safeString(stateSpot.state) || "State Spotlight"}
                   </p>
-                  {safeNumber(stateSpot.score) != null && (
-                    <p className="mt-2 text-2xl font-bold text-[color:var(--nsi-green)]">
-                      {safeNumber(stateSpot.score)!.toFixed(1)}/10
-                    </p>
-                  )}
                   <div className="mt-4 text-sm leading-relaxed text-[color:var(--nsi-ink-soft)] [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mt-1">
                     <SafeHtml html={stateKeyPointsHtml} />
                   </div>
