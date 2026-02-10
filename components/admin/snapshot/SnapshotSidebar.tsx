@@ -36,6 +36,7 @@ export function SnapshotSidebar({
   completionStatus,
 }: SnapshotSidebarProps) {
   const completionPercent = Math.round((completionStatus.completed / completionStatus.total) * 100);
+  const selectedCycle = selectedId !== "new" ? list.find((s) => s.id === selectedId)?.cycleMonthYear : null;
 
   return (
     <aside className="sticky top-6 flex h-fit w-full flex-col gap-6 lg:w-80">
@@ -68,10 +69,25 @@ export function SnapshotSidebar({
           <option value="new">+ New draft</option>
           {list.map((s) => (
             <option key={s.id} value={s.id}>
-              {s.period} {s.isLocked ? "· locked" : s.publishedAt ? "· published" : "· draft"}
+              {s.period}
+              {s.cycleMonthYear ? ` (${s.cycleMonthYear})` : ""}{" "}
+              {s.isLocked ? "· locked" : s.publishedAt ? "· published" : "· draft"}
             </option>
           ))}
         </select>
+
+        {model.id && (
+          <div className="mt-4">
+            <a
+              href={published ? `/reports/${model.id}` : `/admin/snapshot/${model.id}/preview`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="admin-btn-secondary w-full justify-center text-sm"
+            >
+              {published ? "View report" : "Preview report"}
+            </a>
+          </div>
+        )}
 
         {/* Status Info */}
         <div className="mt-5 space-y-3 border-t border-black/5 pt-5">
@@ -85,6 +101,12 @@ export function SnapshotSidebar({
             <span className="text-[color:var(--nsi-ink-soft)]">Period</span>
             <span className="font-medium text-[color:var(--nsi-ink)]">{model.period || "—"}</span>
           </div>
+          {selectedCycle && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-[color:var(--nsi-ink-soft)]">Cycle</span>
+              <span className="font-medium text-[color:var(--nsi-ink)]">{selectedCycle}</span>
+            </div>
+          )}
           <div className="flex items-center justify-between text-sm">
             <span className="text-[color:var(--nsi-ink-soft)]">Score</span>
             <span className="font-serif text-lg font-semibold text-[color:var(--nsi-green)]">

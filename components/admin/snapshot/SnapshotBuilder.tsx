@@ -8,8 +8,10 @@ import {
   SnapshotListItem,
   SnapshotApiResponse,
   InstitutionSpotlight,
+  StreetPulseSpotlight,
   SourceRef,
   defaultSnapshot,
+  bulletsToKeyPointsHtml,
   hasError,
   hasSnapshot,
 } from "./types";
@@ -42,13 +44,14 @@ export function SnapshotBuilder() {
   const locked = !!model.isLocked;
   const published = !!model.publishedAt;
 
-  // Validation & completion status
+  // Validation & completion status (keyPointsHtml: treat as complete if it has any text content)
+  const hasKeyPoints = (html: string) => (html || "").replace(/<[^>]+>/g, "").trim().length >= 1;
   const completionStatus = useMemo(() => {
     const checks = [
       model.period.trim().length > 2,
       model.overallNarrative.trim().length > 0,
       model.pillarScores.pillars.every((p) => p.title && p.summary),
-      model.stateSpotlightContent.bullets.filter(Boolean).length >= 1,
+      hasKeyPoints(model.stateSpotlightContent.keyPointsHtml),
       model.publicSentimentSummary.topMood.trim().length > 0,
     ];
     return {
@@ -62,7 +65,7 @@ export function SnapshotBuilder() {
       model.period.trim().length > 2 &&
       model.overallNarrative.trim().length > 0 &&
       model.pillarScores.pillars.length === 5 &&
-      model.stateSpotlightContent.bullets.filter(Boolean).length >= 1
+      hasKeyPoints(model.stateSpotlightContent.keyPointsHtml)
     );
   }, [model]);
 
@@ -92,19 +95,42 @@ export function SnapshotBuilder() {
     }
     const snap = data.snapshot;
 
-    const inst = (snap.institutionSpotlightContent as unknown as InstitutionSpotlight | null) ?? {
+    const inst = (snap.institutionSpotlightContent as unknown as (InstitutionSpotlight & { bullets?: string[] }) | null) ?? {
       institution: "",
       summary: "",
-      bullets: [],
+      keyPointsHtml: "",
     };
     const instNorm =
-      typeof inst === "object" && inst !== null && "institution" in inst
+      typeof inst === "object" && inst !== null
         ? {
             institution: String(inst.institution ?? ""),
             summary: String(inst.summary ?? ""),
-            bullets: Array.isArray(inst.bullets) ? inst.bullets.map(String) : [],
+            keyPointsHtml:
+              typeof (inst as { keyPointsHtml?: string }).keyPointsHtml === "string"
+                ? (inst as { keyPointsHtml: string }).keyPointsHtml
+                : bulletsToKeyPointsHtml(Array.isArray(inst.bullets) ? inst.bullets : []),
           }
-        : { institution: "", summary: "", bullets: [] };
+        : { institution: "", summary: "", keyPointsHtml: "" };
+
+    const stateRaw = (snap.stateSpotlightContent as unknown as { state?: string; score?: number; bullets?: string[]; keyPointsHtml?: string }) ?? {};
+    const stateNorm = {
+      state: String(stateRaw.state ?? ""),
+      score: Number(stateRaw.score) || 0,
+      keyPointsHtml:
+        typeof stateRaw.keyPointsHtml === "string"
+          ? stateRaw.keyPointsHtml
+          : bulletsToKeyPointsHtml(Array.isArray(stateRaw.bullets) ? stateRaw.bullets : []),
+    };
+
+    const streetPulseRaw = (snap.streetPulseSpotlightContent as unknown as StreetPulseSpotlight | null) ?? null;
+    const streetPulseNorm: StreetPulseSpotlight =
+      typeof streetPulseRaw === "object" && streetPulseRaw !== null
+        ? {
+            title: String(streetPulseRaw.title ?? ""),
+            summary: String(streetPulseRaw.summary ?? ""),
+            keyPointsHtml: String(streetPulseRaw.keyPointsHtml ?? ""),
+          }
+        : { title: "", summary: "", keyPointsHtml: "" };
 
     const sr = (snap.sourcesReferences as unknown as SourceRef[] | null) ?? [];
     const srNorm = Array.isArray(sr)
@@ -120,13 +146,9 @@ export function SnapshotBuilder() {
       overallScore: snap.overallScore,
       overallNarrative: snap.overallNarrative,
       pillarScores: (snap.pillarScores as unknown as SnapshotModel["pillarScores"]) ?? { pillars: [] },
-      stateSpotlightContent:
-        (snap.stateSpotlightContent as unknown as SnapshotModel["stateSpotlightContent"]) ?? {
-          state: "",
-          score: 0,
-          bullets: [],
-        },
+      stateSpotlightContent: stateNorm,
       institutionSpotlightContent: instNorm,
+      streetPulseSpotlightContent: streetPulseNorm,
       sourcesReferences: srNorm,
       publicSentimentSummary:
         (snap.publicSentimentSummary as unknown as SnapshotModel["publicSentimentSummary"]) ?? {
@@ -167,6 +189,7 @@ export function SnapshotBuilder() {
         pillarScores: model.pillarScores,
         stateSpotlightContent: model.stateSpotlightContent,
         institutionSpotlightContent: model.institutionSpotlightContent,
+        streetPulseSpotlightContent: model.streetPulseSpotlightContent,
         sourcesReferences: model.sourcesReferences,
         publicSentimentSummary: model.publicSentimentSummary,
       }),

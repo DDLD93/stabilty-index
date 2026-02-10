@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireAdminSession } from "@/lib/adminSession";
+import { requireAdminSession, getAuditAdminUserId } from "@/lib/adminSession";
 import { PILLARS } from "@/lib/constants";
 
 function csvEscape(v: string) {
@@ -11,6 +11,8 @@ function csvEscape(v: string) {
 export async function GET() {
   const session = await requireAdminSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const adminUserId = await getAuditAdminUserId(session);
 
   const rows = await db.submission.findMany({
     where: { isFlagged: false },
@@ -61,7 +63,7 @@ export async function GET() {
 
   await db.auditLog.create({
     data: {
-      adminUserId: (session.user as { id?: string } | undefined)?.id,
+      ...(adminUserId ? { adminUserId } : {}),
       action: "AdminExportCsv",
       metadata: { rows: rows.length },
     },

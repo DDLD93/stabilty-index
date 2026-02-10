@@ -11,16 +11,16 @@ if (!connectionString) {
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
-const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? "admin@nigeriastabilityindex.com";
-const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? "admin-change-me";
+const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? "admin@system.com";
+const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? "12345678";
 
 /** Clear all tables (schema order: respect FK; do not seed after). */
 async function clearAllTables() {
   await prisma.auditLog.deleteMany();
   await prisma.adminUser.deleteMany();
-  await prisma.snapshot.deleteMany();
-  await prisma.submission.deleteMany();
-  await prisma.cycle.deleteMany();
+  // await prisma.snapshot.deleteMany();
+  // await prisma.submission.deleteMany();
+  // await prisma.cycle.deleteMany();
   console.log("Cleared all tables.");
 }
 
@@ -38,7 +38,8 @@ async function seedAdmin() {
 }
 
 async function main() {
-  await clearAllTables();
+  // await clearAllTables();
+  await seedAdmin();
   // Don't seed: seedAdmin() left available but not called.
 }
 

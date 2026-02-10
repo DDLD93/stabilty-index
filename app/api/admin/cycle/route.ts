@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireAdminSession } from "@/lib/adminSession";
+import { requireAdminSession, getAuditAdminUserId } from "@/lib/adminSession";
 import { PILLAR_KEYS } from "@/lib/constants";
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
@@ -63,6 +63,8 @@ export async function PATCH(req: Request) {
   const session = await requireAdminSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const adminUserId = await getAuditAdminUserId(session);
+
   const json = await req.json().catch(() => null);
   const parsed = patchSchema.safeParse(json);
   if (!parsed.success) {
@@ -85,7 +87,7 @@ export async function PATCH(req: Request) {
         },
       });
       await db.auditLog.create({
-        data: { adminUserId: (session.user as { id?: string } | undefined)?.id, action: "AdminOpenCycle" },
+        data: { ...(adminUserId ? { adminUserId } : {}), action: "AdminOpenCycle" },
       });
       return NextResponse.json({ currentCycle: created });
     }
@@ -98,7 +100,7 @@ export async function PATCH(req: Request) {
     });
     if (action === "OPEN") {
       await db.auditLog.create({
-        data: { adminUserId: (session.user as { id?: string } | undefined)?.id, action: "AdminOpenCycle" },
+        data: { ...(adminUserId ? { adminUserId } : {}), action: "AdminOpenCycle" },
       });
     }
     return NextResponse.json({ currentCycle: updated });
@@ -115,7 +117,7 @@ export async function PATCH(req: Request) {
   if (action === "OPEN") {
     const updated = await db.cycle.update({ where: { id: currentCycle.id }, data: { status: "OPEN" } });
     await db.auditLog.create({
-      data: { adminUserId: (session.user as { id?: string } | undefined)?.id, action: "AdminOpenCycle" },
+      data: { ...(adminUserId ? { adminUserId } : {}), action: "AdminOpenCycle" },
     });
     return NextResponse.json({ currentCycle: updated });
   }
@@ -123,7 +125,7 @@ export async function PATCH(req: Request) {
   if (action === "CLOSE") {
     const updated = await db.cycle.update({ where: { id: currentCycle.id }, data: { status: "CLOSED" } });
     await db.auditLog.create({
-      data: { adminUserId: (session.user as { id?: string } | undefined)?.id, action: "AdminCloseCycle" },
+      data: { ...(adminUserId ? { adminUserId } : {}), action: "AdminCloseCycle" },
     });
     return NextResponse.json({ currentCycle: updated });
   }
@@ -138,7 +140,7 @@ export async function PATCH(req: Request) {
   });
   await db.auditLog.create({
     data: {
-      adminUserId: (session.user as { id?: string } | undefined)?.id,
+      ...(adminUserId ? { adminUserId } : {}),
       action: "AdminCreateNextCycle",
       metadata: { archivedCycleId: archived.id, newCycleId: created.id },
     },

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireAdminSession } from "@/lib/adminSession";
+import { requireAdminSession, getAuditAdminUserId } from "@/lib/adminSession";
 
 export async function POST(
   _req: Request,
@@ -23,9 +23,10 @@ export async function POST(
     data: { isLocked: true },
   });
 
+  const adminUserId = await getAuditAdminUserId(session);
   await db.auditLog.create({
     data: {
-      adminUserId: (session.user as { id?: string } | undefined)?.id,
+      ...(adminUserId ? { adminUserId } : {}),
       action: "AdminLockSnapshot",
       metadata: { snapshotId: updated.id },
     },

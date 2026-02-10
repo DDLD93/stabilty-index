@@ -23,12 +23,14 @@ export const metadata: Metadata = {
   },
 };
 
-type StateSpotlight = { state?: string; score?: number; bullets?: string[] };
+type StateSpotlight = { state?: string; score?: number; bullets?: string[]; keyPointsHtml?: string };
 type InstitutionSpotlight = {
   institution?: string;
   summary?: string;
   bullets?: string[];
+  keyPointsHtml?: string;
 };
+type StreetPulseSpotlight = { title?: string; summary?: string; keyPointsHtml?: string };
 
 function safeString(v: unknown): string {
   return typeof v === "string" && v.length > 0 ? v : "";
@@ -39,6 +41,7 @@ function hasStateSpotlight(raw: unknown): raw is StateSpotlight {
   const s = raw as StateSpotlight;
   return Boolean(
     safeString(s.state) ||
+      (typeof s.keyPointsHtml === "string" && s.keyPointsHtml.replace(/<[^>]+>/g, "").trim()) ||
       (Array.isArray(s.bullets) && s.bullets.some(Boolean))
   );
 }
@@ -49,7 +52,18 @@ function hasInstitutionSpotlight(raw: unknown): raw is InstitutionSpotlight {
   return Boolean(
     safeString(i.institution) ||
       safeString(i.summary) ||
+      (typeof i.keyPointsHtml === "string" && i.keyPointsHtml.replace(/<[^>]+>/g, "").trim()) ||
       (Array.isArray(i.bullets) && i.bullets.some(Boolean))
+  );
+}
+
+function hasStreetPulseSpotlight(raw: unknown): raw is StreetPulseSpotlight {
+  if (!raw || typeof raw !== "object") return false;
+  const s = raw as StreetPulseSpotlight;
+  return Boolean(
+    safeString(s.title) ||
+      safeString(s.summary) ||
+      (typeof s.keyPointsHtml === "string" && s.keyPointsHtml.replace(/<[^>]+>/g, "").trim())
   );
 }
 
@@ -59,6 +73,7 @@ export default async function SpotlightsPage() {
     period: string;
     stateSpotlightContent: unknown;
     institutionSpotlightContent: unknown;
+    streetPulseSpotlightContent: unknown;
   } | null = null;
 
   try {
@@ -70,6 +85,7 @@ export default async function SpotlightsPage() {
         period: true,
         stateSpotlightContent: true,
         institutionSpotlightContent: true,
+        streetPulseSpotlightContent: true,
       },
     });
   } catch {
@@ -79,11 +95,13 @@ export default async function SpotlightsPage() {
   const stateSpot = (snapshot?.stateSpotlightContent ?? {}) as StateSpotlight;
   const instSpot = (snapshot?.institutionSpotlightContent ??
     {}) as InstitutionSpotlight;
+  const streetPulseSpot = (snapshot?.streetPulseSpotlightContent ?? {}) as StreetPulseSpotlight;
 
   const showStateSpotlight = hasStateSpotlight(snapshot?.stateSpotlightContent);
   const showInstSpotlight = hasInstitutionSpotlight(
     snapshot?.institutionSpotlightContent
   );
+  const showStreetPulse = hasStreetPulseSpotlight(snapshot?.streetPulseSpotlightContent);
 
   return (
     <main className="w-full pb-20">
@@ -114,8 +132,10 @@ export default async function SpotlightsPage() {
         <SpotlightCard
           stateSpot={stateSpot}
           instSpot={instSpot}
+          streetPulseSpot={streetPulseSpot}
           showState={showStateSpotlight}
           showInst={showInstSpotlight}
+          showStreetPulse={showStreetPulse}
           reportHref={snapshot ? `/reports/${snapshot.id}` : "/spotlights"}
         />
       </section>

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { requireAdminSession } from "@/lib/adminSession";
+import { requireAdminSession, getAuditAdminUserId } from "@/lib/adminSession";
 
 const bodySchema = z.object({
   flagged: z.boolean(),
@@ -13,6 +13,8 @@ export async function PATCH(
 ) {
   const session = await requireAdminSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const adminUserId = await getAuditAdminUserId(session);
 
   const { id } = await params;
   const json = await req.json().catch(() => null);
@@ -26,7 +28,7 @@ export async function PATCH(
 
   await db.auditLog.create({
     data: {
-      adminUserId: (session.user as { id?: string } | undefined)?.id,
+      ...(adminUserId ? { adminUserId } : {}),
       action: parsed.data.flagged ? "AdminFlagSubmission" : "AdminUnflagSubmission",
       metadata: { submissionId: id },
     },

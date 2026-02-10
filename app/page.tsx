@@ -16,8 +16,9 @@ import { RulerGauge } from "@/components/public/RulerGauge";
 export const dynamic = "force-dynamic";
 
 type Pillar = { title: string; score: number; summary?: string };
-type StateSpotlight = { state?: string; score?: number; bullets?: string[] };
-type InstitutionSpotlight = { institution?: string; summary?: string; bullets?: string[] };
+type StateSpotlight = { state?: string; score?: number; bullets?: string[]; keyPointsHtml?: string };
+type InstitutionSpotlight = { institution?: string; summary?: string; bullets?: string[]; keyPointsHtml?: string };
+type StreetPulseSpotlight = { title?: string; summary?: string; keyPointsHtml?: string };
 type PublicSentiment = { topWords?: string[]; averagePublicScore?: number; topMood?: string };
 type SourceRef = { label?: string; url?: string };
 
@@ -37,13 +38,32 @@ function safeNumber(v: unknown): number | null {
 function hasStateSpotlight(raw: unknown): raw is StateSpotlight {
   if (!raw || typeof raw !== "object") return false;
   const s = raw as StateSpotlight;
-  return Boolean(safeString(s.state) || (Array.isArray(s.bullets) && s.bullets.some(Boolean)));
+  return Boolean(
+    safeString(s.state) ||
+      (typeof s.keyPointsHtml === "string" && s.keyPointsHtml.replace(/<[^>]+>/g, "").trim()) ||
+      (Array.isArray(s.bullets) && s.bullets.some(Boolean))
+  );
 }
 
 function hasInstitutionSpotlight(raw: unknown): raw is InstitutionSpotlight {
   if (!raw || typeof raw !== "object") return false;
   const i = raw as InstitutionSpotlight;
-  return Boolean(safeString(i.institution) || safeString(i.summary) || (Array.isArray(i.bullets) && i.bullets.some(Boolean)));
+  return Boolean(
+    safeString(i.institution) ||
+      safeString(i.summary) ||
+      (typeof i.keyPointsHtml === "string" && i.keyPointsHtml.replace(/<[^>]+>/g, "").trim()) ||
+      (Array.isArray(i.bullets) && i.bullets.some(Boolean))
+  );
+}
+
+function hasStreetPulseSpotlight(raw: unknown): raw is StreetPulseSpotlight {
+  if (!raw || typeof raw !== "object") return false;
+  const s = raw as StreetPulseSpotlight;
+  return Boolean(
+    safeString(s.title) ||
+      safeString(s.summary) ||
+      (typeof s.keyPointsHtml === "string" && s.keyPointsHtml.replace(/<[^>]+>/g, "").trim())
+  );
 }
 
 function hasSentiment(raw: unknown): raw is PublicSentiment {
@@ -89,7 +109,6 @@ const PILLAR_NAMES = [
 
 export default async function Home() {
   const state = await getPublicSystemState();
-  console.log({state});
   const latest = state.latestPublishedSnapshot;
 
   const pillars = safeArray<Pillar>(
@@ -112,6 +131,7 @@ export default async function Home() {
 
   const stateSpot = (latest?.stateSpotlightContent ?? {}) as StateSpotlight;
   const instSpot = (latest?.institutionSpotlightContent ?? {}) as InstitutionSpotlight;
+  const streetPulseSpot = (latest?.streetPulseSpotlightContent ?? {}) as StreetPulseSpotlight;
   const sentiment = (latest?.publicSentimentSummary ?? {}) as PublicSentiment;
   const sourcesRaw = latest?.sourcesReferences;
   const sources = Array.isArray(sourcesRaw)
@@ -120,6 +140,7 @@ export default async function Home() {
 
   const showStateSpotlight = hasStateSpotlight(latest?.stateSpotlightContent);
   const showInstSpotlight = hasInstitutionSpotlight(latest?.institutionSpotlightContent);
+  const showStreetPulse = hasStreetPulseSpotlight(latest?.streetPulseSpotlightContent);
   const showSentiment = hasSentiment(latest?.publicSentimentSummary);
   const showSources = hasSources(latest?.sourcesReferences);
 
@@ -283,8 +304,10 @@ export default async function Home() {
           <SpotlightCard
             stateSpot={stateSpot}
             instSpot={instSpot}
+            streetPulseSpot={streetPulseSpot}
             showState={showStateSpotlight}
             showInst={showInstSpotlight}
+            showStreetPulse={showStreetPulse}
             reportHref={latest ? `/reports/${latest.id}` : "/spotlights"}
           />
         </section>

@@ -18,6 +18,7 @@ export type PublicSystemState = {
         publicSentimentSummary?: unknown;
         stateSpotlightContent?: unknown;
         institutionSpotlightContent?: unknown;
+        streetPulseSpotlightContent?: unknown;
         sourcesReferences?: unknown;
       }
     | null;
@@ -43,6 +44,7 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
         publicSentimentSummary?: unknown;
         stateSpotlightContent?: unknown;
         institutionSpotlightContent?: unknown;
+        streetPulseSpotlightContent?: unknown;
         sourcesReferences?: unknown;
       }
     | null = null;
@@ -66,6 +68,7 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
         publicSentimentSummary: true,
         stateSpotlightContent: true,
         institutionSpotlightContent: true,
+        streetPulseSpotlightContent: true,
         sourcesReferences: true,
       },
     });
@@ -100,6 +103,7 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
               publicSentimentSummary: latestPublishedSnapshot.publicSentimentSummary,
               stateSpotlightContent: latestPublishedSnapshot.stateSpotlightContent,
               institutionSpotlightContent: latestPublishedSnapshot.institutionSpotlightContent,
+              streetPulseSpotlightContent: latestPublishedSnapshot.streetPulseSpotlightContent,
               sourcesReferences: latestPublishedSnapshot.sourcesReferences,
             }
           : null,
@@ -120,6 +124,7 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
               publicSentimentSummary: latestPublishedSnapshot.publicSentimentSummary,
               stateSpotlightContent: latestPublishedSnapshot.stateSpotlightContent,
               institutionSpotlightContent: latestPublishedSnapshot.institutionSpotlightContent,
+              streetPulseSpotlightContent: latestPublishedSnapshot.streetPulseSpotlightContent,
               sourcesReferences: latestPublishedSnapshot.sourcesReferences,
             }
           : null,
@@ -139,6 +144,7 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
           publicSentimentSummary: latestPublishedSnapshot.publicSentimentSummary,
           stateSpotlightContent: latestPublishedSnapshot.stateSpotlightContent,
           institutionSpotlightContent: latestPublishedSnapshot.institutionSpotlightContent,
+          streetPulseSpotlightContent: latestPublishedSnapshot.streetPulseSpotlightContent,
           sourcesReferences: latestPublishedSnapshot.sourcesReferences,
         },
       };

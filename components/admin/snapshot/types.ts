@@ -6,6 +6,7 @@ export type SnapshotListItem = {
   isLocked: boolean;
   createdAt: string;
   cycleId: string | null;
+  cycleMonthYear: string | null;
 };
 
 export type Pillar = {
@@ -17,7 +18,7 @@ export type Pillar = {
 export type InstitutionSpotlight = {
   institution: string;
   summary: string;
-  bullets: string[];
+  keyPointsHtml: string;
 };
 
 export type SourceRef = {
@@ -28,7 +29,13 @@ export type SourceRef = {
 export type StateSpotlight = {
   state: string;
   score: number;
-  bullets: string[];
+  keyPointsHtml: string;
+};
+
+export type StreetPulseSpotlight = {
+  title: string;
+  summary: string;
+  keyPointsHtml: string;
 };
 
 export type PublicSentiment = {
@@ -46,6 +53,7 @@ export type SnapshotModel = {
   pillarScores: { pillars: Pillar[] };
   stateSpotlightContent: StateSpotlight;
   institutionSpotlightContent: InstitutionSpotlight;
+  streetPulseSpotlightContent: StreetPulseSpotlight;
   sourcesReferences: SourceRef[];
   publicSentimentSummary: PublicSentiment;
   publishedAt?: string | null;
@@ -73,12 +81,17 @@ export const defaultSnapshot: SnapshotModel = {
   stateSpotlightContent: {
     state: "Lagos",
     score: 7.1,
-    bullets: ["Strongest in transportation", "Top in public services delivery", "Rising regional influence"],
+    keyPointsHtml: "<ul><li>Strongest in transportation</li><li>Top in public services delivery</li><li>Rising regional influence</li></ul>",
   },
   institutionSpotlightContent: {
     institution: "",
     summary: "",
-    bullets: [],
+    keyPointsHtml: "",
+  },
+  streetPulseSpotlightContent: {
+    title: "",
+    summary: "",
+    keyPointsHtml: "",
   },
   sourcesReferences: [],
   publicSentimentSummary: {
@@ -87,6 +100,24 @@ export const defaultSnapshot: SnapshotModel = {
     topMood: "Cautiously hopeful",
   },
 };
+
+/** Normalize legacy bullets array to keyPointsHtml for backward compatibility. */
+export function bulletsToKeyPointsHtml(bullets: unknown): string {
+  if (typeof bullets === "string" && bullets.length > 0) return bullets;
+  if (!Array.isArray(bullets)) return "";
+  const items = bullets.filter((b): b is string => typeof b === "string" && b.trim().length > 0);
+  if (items.length === 0) return "";
+  return "<ul>" + items.map((b) => "<li>" + escapeHtml(b) + "</li>").join("") + "</ul>";
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
 // Utility functions
 export function prettyDate(s: string | null) {

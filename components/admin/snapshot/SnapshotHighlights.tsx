@@ -2,6 +2,7 @@
 
 import { NIGERIAN_STATES } from "@/lib/constants";
 import { SnapshotModel } from "./types";
+import { KeyPointsEditor } from "./KeyPointsEditor";
 
 type SnapshotHighlightsProps = {
   model: SnapshotModel;
@@ -13,10 +14,10 @@ export function SnapshotHighlights({ model, setModel, locked }: SnapshotHighligh
   return (
     <div className="space-y-8">
       <p className="text-sm text-[color:var(--nsi-ink-soft)]">
-        Feature a state and institution in this month&apos;s spotlight sections.
+        Feature a state, institution, and on-ground street pulse in this month&apos;s spotlight sections.
       </p>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-3">
         {/* State Spotlight */}
         <div className="rounded-2xl border border-black/10 bg-gradient-to-br from-emerald-500/5 to-transparent p-6">
           <div className="mb-4 flex items-center gap-3">
@@ -79,29 +80,18 @@ export function SnapshotHighlights({ model, setModel, locked }: SnapshotHighligh
 
             <div>
               <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Key Points</span>
-              <p className="mt-0.5 text-xs text-[color:var(--nsi-ink-soft)]">3 bullet points about this state</p>
-              <div className="mt-2 space-y-2">
-                {[0, 1, 2].map((idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-xs font-medium text-emerald-600">
-                      {idx + 1}
-                    </span>
-                    <input
-                      className="admin-input flex-1 text-sm"
-                      value={model.stateSpotlightContent.bullets[idx] ?? ""}
-                      onChange={(e) =>
-                        setModel((m) => {
-                          const bullets = [...m.stateSpotlightContent.bullets];
-                          while (bullets.length <= idx) bullets.push("");
-                          bullets[idx] = e.target.value;
-                          return { ...m, stateSpotlightContent: { ...m.stateSpotlightContent, bullets } };
-                        })
-                      }
-                      disabled={locked}
-                      placeholder={`Point ${idx + 1}`}
-                    />
-                  </div>
-                ))}
+              <p className="mt-0.5 text-xs text-[color:var(--nsi-ink-soft)]">Rich text: lists, bold, italic</p>
+              <div className="mt-2">
+                <KeyPointsEditor
+                  value={model.stateSpotlightContent.keyPointsHtml}
+                  onChange={(html) =>
+                    setModel((m) => ({
+                      ...m,
+                      stateSpotlightContent: { ...m.stateSpotlightContent, keyPointsHtml: html },
+                    }))
+                  }
+                  disabled={locked}
+                />
               </div>
             </div>
           </div>
@@ -162,35 +152,96 @@ export function SnapshotHighlights({ model, setModel, locked }: SnapshotHighligh
 
             <div>
               <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Key Points</span>
-              <p className="mt-0.5 text-xs text-[color:var(--nsi-ink-soft)]">3 bullet points about this institution</p>
-              <div className="mt-2 space-y-2">
-                {[0, 1, 2].map((idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-500/10 text-xs font-medium text-purple-600">
-                      {idx + 1}
-                    </span>
-                    <input
-                      className="admin-input flex-1 text-sm"
-                      value={model.institutionSpotlightContent.bullets[idx] ?? ""}
-                      onChange={(e) =>
-                        setModel((m) => {
-                          const bullets = [...m.institutionSpotlightContent.bullets];
-                          while (bullets.length <= idx) bullets.push("");
-                          bullets[idx] = e.target.value;
-                          return {
-                            ...m,
-                            institutionSpotlightContent: {
-                              ...m.institutionSpotlightContent,
-                              bullets,
-                            },
-                          };
-                        })
-                      }
-                      disabled={locked}
-                      placeholder={`Point ${idx + 1}`}
-                    />
-                  </div>
-                ))}
+              <p className="mt-0.5 text-xs text-[color:var(--nsi-ink-soft)]">Rich text: lists, bold, italic</p>
+              <div className="mt-2">
+                <KeyPointsEditor
+                  value={model.institutionSpotlightContent.keyPointsHtml}
+                  onChange={(html) =>
+                    setModel((m) => ({
+                      ...m,
+                      institutionSpotlightContent: {
+                        ...m.institutionSpotlightContent,
+                        keyPointsHtml: html,
+                      },
+                    }))
+                  }
+                  disabled={locked}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* On-Ground Street Pulse */}
+        <div className="rounded-2xl border border-black/10 bg-gradient-to-br from-amber-500/5 to-transparent p-6">
+          <div className="mb-4 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10">
+              <PulseIcon className="h-5 w-5 text-amber-600" />
+            </div>
+            <div>
+              <h3 className="font-serif text-lg font-semibold text-[color:var(--nsi-ink)]">
+                On-Ground Street Pulse
+              </h3>
+              <p className="text-xs text-[color:var(--nsi-ink-soft)]">Street-level pulse and sentiment</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <label className="block">
+              <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Title</span>
+              <input
+                className="admin-input mt-1"
+                value={model.streetPulseSpotlightContent.title}
+                onChange={(e) =>
+                  setModel((m) => ({
+                    ...m,
+                    streetPulseSpotlightContent: {
+                      ...m.streetPulseSpotlightContent,
+                      title: e.target.value,
+                    },
+                  }))
+                }
+                disabled={locked}
+                placeholder="e.g., Market & transport pulse"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Summary</span>
+              <input
+                className="admin-input mt-1"
+                value={model.streetPulseSpotlightContent.summary}
+                onChange={(e) =>
+                  setModel((m) => ({
+                    ...m,
+                    streetPulseSpotlightContent: {
+                      ...m.streetPulseSpotlightContent,
+                      summary: e.target.value,
+                    },
+                  }))
+                }
+                disabled={locked}
+                placeholder="Brief summary..."
+              />
+            </label>
+
+            <div>
+              <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Key Points</span>
+              <p className="mt-0.5 text-xs text-[color:var(--nsi-ink-soft)]">Rich text: lists, bold, italic</p>
+              <div className="mt-2">
+                <KeyPointsEditor
+                  value={model.streetPulseSpotlightContent.keyPointsHtml}
+                  onChange={(html) =>
+                    setModel((m) => ({
+                      ...m,
+                      streetPulseSpotlightContent: {
+                        ...m.streetPulseSpotlightContent,
+                        keyPointsHtml: html,
+                      },
+                    }))
+                  }
+                  disabled={locked}
+                />
               </div>
             </div>
           </div>
@@ -212,6 +263,14 @@ function BuildingIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+    </svg>
+  );
+}
+
+function PulseIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
     </svg>
   );
 }

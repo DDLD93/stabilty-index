@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { requireAdminSession } from "@/lib/adminSession";
+import { requireAdminSession, getAuditAdminUserId } from "@/lib/adminSession";
 import { Prisma } from "@prisma/client";
 
 const updateSchema = z.object({
@@ -11,6 +11,7 @@ const updateSchema = z.object({
   pillarScores: z.unknown().optional(),
   stateSpotlightContent: z.unknown().optional(),
   institutionSpotlightContent: z.unknown().optional(),
+  streetPulseSpotlightContent: z.unknown().optional(),
   sourcesReferences: z.unknown().optional(),
   publicSentimentSummary: z.unknown().optional(),
   cycleId: z.string().nullable().optional(),
@@ -72,6 +73,9 @@ export async function PATCH(
     ...(parsed.data.institutionSpotlightContent !== undefined
       ? { institutionSpotlightContent: parsed.data.institutionSpotlightContent as Prisma.InputJsonValue }
       : {}),
+    ...(parsed.data.streetPulseSpotlightContent !== undefined
+      ? { streetPulseSpotlightContent: parsed.data.streetPulseSpotlightContent as Prisma.InputJsonValue }
+      : {}),
     ...(parsed.data.sourcesReferences !== undefined
       ? { sourcesReferences: parsed.data.sourcesReferences as Prisma.InputJsonValue }
       : {}),
@@ -86,9 +90,10 @@ export async function PATCH(
     data: updateData,
   });
 
+  const adminUserId = await getAuditAdminUserId(session);
   await db.auditLog.create({
     data: {
-      adminUserId: (session.user as { id?: string } | undefined)?.id,
+      ...(adminUserId ? { adminUserId } : {}),
       action: "AdminUpdateSnapshot",
       metadata: { snapshotId: updated.id },
     },

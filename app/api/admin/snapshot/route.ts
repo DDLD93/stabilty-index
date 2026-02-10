@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { requireAdminSession } from "@/lib/adminSession";
+import { requireAdminSession, getAuditAdminUserId } from "@/lib/adminSession";
 import { Prisma } from "@prisma/client";
 
 const listSchema = z.object({
@@ -17,6 +17,7 @@ const upsertSchema = z.object({
   pillarScores: z.unknown(),
   stateSpotlightContent: z.unknown(),
   institutionSpotlightContent: z.unknown().optional(),
+  streetPulseSpotlightContent: z.unknown().optional(),
   sourcesReferences: z.unknown().optional(),
   publicSentimentSummary: z.unknown(),
 });
@@ -40,15 +41,22 @@ export async function GET(req: Request) {
       isLocked: true,
       createdAt: true,
       cycleId: true,
+      cycle: { select: { monthYear: true } },
     },
   });
+  const itemsWithCycle = items.map(({ cycle, ...rest }) => ({
+    ...rest,
+    cycleMonthYear: cycle?.monthYear ?? null,
+  }));
 
-  return NextResponse.json({ items });
+  return NextResponse.json({ items: itemsWithCycle });
 }
 
 export async function POST(req: Request) {
   const session = await requireAdminSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const adminUserId = await getAuditAdminUserId(session);
 
   const json = await req.json().catch(() => null);
   const parsed = upsertSchema.safeParse(json);
@@ -84,6 +92,9 @@ export async function POST(req: Request) {
         ...(data.institutionSpotlightContent !== undefined
           ? { institutionSpotlightContent: data.institutionSpotlightContent as Prisma.InputJsonValue }
           : {}),
+        ...(data.streetPulseSpotlightContent !== undefined
+          ? { streetPulseSpotlightContent: data.streetPulseSpotlightContent as Prisma.InputJsonValue }
+          : {}),
         ...(data.sourcesReferences !== undefined
           ? { sourcesReferences: data.sourcesReferences as Prisma.InputJsonValue }
           : {}),
@@ -94,7 +105,7 @@ export async function POST(req: Request) {
 
     await db.auditLog.create({
       data: {
-        adminUserId: (session.user as { id?: string } | undefined)?.id,
+        ...(adminUserId ? { adminUserId } : {}),
         action: "AdminUpdateSnapshot",
         metadata: { snapshotId: updated.id },
       },
@@ -116,6 +127,9 @@ export async function POST(req: Request) {
       ...(data.institutionSpotlightContent !== undefined
         ? { institutionSpotlightContent: data.institutionSpotlightContent as Prisma.InputJsonValue }
         : {}),
+      ...(data.streetPulseSpotlightContent !== undefined
+        ? { streetPulseSpotlightContent: data.streetPulseSpotlightContent as Prisma.InputJsonValue }
+        : {}),
       ...(data.sourcesReferences !== undefined
         ? { sourcesReferences: data.sourcesReferences as Prisma.InputJsonValue }
         : {}),
@@ -126,7 +140,7 @@ export async function POST(req: Request) {
 
   await db.auditLog.create({
     data: {
-      adminUserId: (session.user as { id?: string } | undefined)?.id,
+      ...(adminUserId ? { adminUserId } : {}),
       action: "AdminCreateSnapshotDraft",
       metadata: { snapshotId: created.id },
     },

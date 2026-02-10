@@ -12,17 +12,26 @@ import {
   SocialXIcon,
 } from "@/components/public/icons";
 import { SemiGauge } from "@/components/public/SemiGauge";
+import { SafeHtml } from "@/components/ui/SafeHtml";
+import { getKeyPointsHtml } from "@/lib/spotlight";
 
 export type PosterPillar = { title: string; score: number; summary?: string };
 export type PosterSpotlight = {
   state?: string;
   score?: number;
   bullets?: string[];
+  keyPointsHtml?: string;
 };
 export type PosterInstitutionSpotlight = {
   institution?: string;
   summary?: string;
   bullets?: string[];
+  keyPointsHtml?: string;
+};
+export type PosterStreetPulseSpotlight = {
+  title?: string;
+  summary?: string;
+  keyPointsHtml?: string;
 };
 export type PosterSentiment = {
   topWords?: string[];
@@ -49,6 +58,7 @@ export function PublicationPoster({
   pillars,
   spotlight,
   institutionSpotlight,
+  streetPulseSpotlight,
   sourcesReferences,
   sentiment,
 }: {
@@ -59,6 +69,7 @@ export function PublicationPoster({
   pillars: PosterPillar[];
   spotlight: PosterSpotlight;
   institutionSpotlight?: PosterInstitutionSpotlight;
+  streetPulseSpotlight?: PosterStreetPulseSpotlight;
   sourcesReferences?: SourceRef[];
   sentiment: PosterSentiment;
 }) {
@@ -74,8 +85,15 @@ export function PublicationPoster({
   const avg = sentiment.averagePublicScore ?? null;
   const topWords = sentiment.topWords ?? [];
   const inst = institutionSpotlight ?? {};
+  const streetPulse = streetPulseSpotlight ?? {};
   const sources = sourcesReferences ?? [];
   const hasSentiment = topWords.length > 0 || avg != null;
+  const stateKeyPointsHtml = getKeyPointsHtml(spotlight);
+  const instKeyPointsHtml = getKeyPointsHtml(inst);
+  const streetPulseKeyPointsHtml =
+    typeof streetPulse.keyPointsHtml === "string" ? streetPulse.keyPointsHtml : "";
+  const hasStreetPulse =
+    streetPulse.title || streetPulse.summary || streetPulseKeyPointsHtml.trim();
 
   // Extract edition number from period if possible
   const editionMatch = period.match(/(\d+)/);
@@ -178,35 +196,41 @@ export function PublicationPoster({
                   <span className="text-2xl font-semibold text-black/25">/10</span>
                 </div>
 
-                <ul className="mt-8 space-y-3">
-                  {(spotlight.bullets?.length
-                    ? spotlight.bullets
-                    : [
-                        "Strongest in transportation",
-                        "Top in public services delivery",
-                        "Rising regional influence",
-                      ]
-                  )
-                    .slice(0, 3)
-                    .map((b, idx) => (
-                      <li key={idx} className="flex items-start gap-3 text-[1rem] font-medium text-black/70">
-                        <svg
-                          className="mt-1 h-5 w-5 shrink-0 text-[color:var(--nsi-green)]"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={3}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span>{b}</span>
-                      </li>
-                    ))}
-                </ul>
+                <div className="mt-8 text-[1rem] font-medium text-black/70 [&_ul]:space-y-3 [&_ul]:list-none [&_li]:flex [&_li]:items-start [&_li]:gap-3">
+                  {stateKeyPointsHtml ? (
+                    <SafeHtml html={stateKeyPointsHtml} />
+                  ) : (
+                    <ul className="space-y-3">
+                      {(spotlight.bullets?.length
+                        ? spotlight.bullets
+                        : [
+                            "Strongest in transportation",
+                            "Top in public services delivery",
+                            "Rising regional influence",
+                          ]
+                      )
+                        .slice(0, 3)
+                        .map((b, idx) => (
+                          <li key={idx} className="flex items-start gap-3">
+                            <svg
+                              className="mt-1 h-5 w-5 shrink-0 text-[color:var(--nsi-green)]"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={3}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                            <span>{b}</span>
+                          </li>
+                        ))}
+                    </ul>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center justify-center p-4">
@@ -307,15 +331,47 @@ export function PublicationPoster({
               {inst.summary && (
                 <p className="mt-3 text-[1.1rem] leading-relaxed text-black/70">{inst.summary}</p>
               )}
-              {(inst.bullets ?? []).length > 0 && (
-                <ul className="mt-6 grid gap-4 sm:grid-cols-2">
-                  {inst.bullets!.map((b, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-[1rem] font-medium text-black/70">
-                      <div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--nsi-green)]" />
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
+              {(instKeyPointsHtml || (inst.bullets ?? []).length > 0) && (
+                <div className="mt-6 text-[1rem] font-medium text-black/70 [&_ul]:grid [&_ul]:gap-4 [&_ul]:sm:grid-cols-2 [&_li]:flex [&_li]:items-start [&_li]:gap-3">
+                  {instKeyPointsHtml ? (
+                    <SafeHtml html={instKeyPointsHtml} />
+                  ) : (
+                    <ul className="grid gap-4 sm:grid-cols-2">
+                      {inst.bullets!.map((b, idx) => (
+                        <li key={idx} className="flex items-start gap-3">
+                          <div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--nsi-green)]" />
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        {hasStreetPulse && (
+          <div id="street-pulse-spotlight" className="mt-8 overflow-hidden rounded-2xl border border-black/10 bg-white scroll-mt-24">
+            <div className="nsi-band py-3 text-center text-sm font-bold text-white">
+              On-Ground Street Pulse
+            </div>
+            <div className="p-8">
+              {(streetPulse.title || streetPulse.summary) && (
+                <>
+                  {streetPulse.title && (
+                    <h4 className="font-serif text-2xl font-bold text-[color:var(--nsi-ink)]">
+                      {streetPulse.title}
+                    </h4>
+                  )}
+                  {streetPulse.summary && (
+                    <p className="mt-3 text-[1.1rem] leading-relaxed text-black/70">{streetPulse.summary}</p>
+                  )}
+                </>
+              )}
+              {streetPulseKeyPointsHtml && (
+                <div className="mt-4 text-[1rem] text-black/70 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mt-1">
+                  <SafeHtml html={streetPulseKeyPointsHtml} />
+                </div>
               )}
             </div>
           </div>
