@@ -189,12 +189,6 @@ export function PublicationPoster({
                 <p className="mt-2 text-lg italic text-black/50">
                   Infrastructure Leading the Nation
                 </p>
-                <div className="mt-6 flex items-baseline gap-2">
-                  <span className="text-6xl font-bold text-[color:var(--nsi-green)]">
-                    {(spotlight.score ?? 7.1).toFixed(1)}
-                  </span>
-                  <span className="text-2xl font-semibold text-black/25">/10</span>
-                </div>
 
                 <div className="mt-8 text-[1rem] font-medium text-black/70 [&_ul]:space-y-3 [&_ul]:list-none [&_li]:flex [&_li]:items-start [&_li]:gap-3">
                   {stateKeyPointsHtml ? (
