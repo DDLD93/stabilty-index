@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   NSIBadgeLogo,
-  NigeriaMapSilhouette,
   PillarEconomyIcon,
   PillarGovernanceIcon,
   PillarInvestorIcon,
@@ -181,7 +180,7 @@ export function PublicationPoster({
             <div className="nsi-band py-3 text-center text-sm font-bold text-white">
               Monthly State Highlight
             </div>
-            <div className="grid gap-10 p-8 md:grid-cols-2">
+            <div className="p-8">
               <div className="flex flex-col justify-center">
                 <h4 className="font-serif text-3xl font-bold text-[color:var(--nsi-ink)]">
                   {spotlight.state ? `${spotlight.state} State` : "Lagos State"}
@@ -224,13 +223,6 @@ export function PublicationPoster({
                         ))}
                     </ul>
                   )}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-center p-4">
-                <div className="relative">
-                  <div className="absolute inset-0 scale-110 blur-2xl opacity-10 bg-[color:var(--nsi-gold)] rounded-full" />
-                  <NigeriaMapSilhouette className="h-64 w-64 relative opacity-95" />
                 </div>
               </div>
             </div>
