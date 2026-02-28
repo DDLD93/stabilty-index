@@ -50,10 +50,17 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
     | null = null;
 
   try {
-    currentCycle = await db.cycle.findFirst({
+    // Use the OPEN cycle as "current" when one exists so homepage phase matches the survey; otherwise use latest by date.
+    const openCycle = await db.cycle.findFirst({
+      where: { status: "OPEN" },
       orderBy: { createdAt: "desc" },
       select: { id: true, status: true, monthYear: true },
     });
+    const latestCycle = await db.cycle.findFirst({
+      orderBy: { createdAt: "desc" },
+      select: { id: true, status: true, monthYear: true },
+    });
+    currentCycle = openCycle ?? latestCycle;
 
     latestPublishedSnapshot = await db.snapshot.findFirst({
       where: { publishedAt: { not: null } },

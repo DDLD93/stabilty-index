@@ -18,8 +18,11 @@ const surveyQuestionSchema = z.object({
   questionText: z.string().trim().min(1),
 });
 
+const optionalMonthYear = z.string().min(1).max(100).optional();
+
 const actionSchema = z.object({
   action: z.enum(["OPEN", "CLOSE", "NEXT"]),
+  monthYear: optionalMonthYear,
 });
 
 const surveySchema = z.object({
@@ -32,6 +35,7 @@ const surveySchema = z.object({
     { message: "Must have one question per pillar (Security, FX & Economy, Investor Confidence, Governance, Social Stability)." }
   ),
   action: z.enum(["OPEN"]).optional(),
+  monthYear: optionalMonthYear,
 });
 
 const patchSchema = z.union([actionSchema, surveySchema]);
@@ -76,13 +80,16 @@ export async function PATCH(req: Request) {
 
   // Survey update: set surveyQuestions (and optionally open)
   if ("surveyQuestions" in parsed.data) {
-    const { surveyQuestions, action } = parsed.data;
+    const { surveyQuestions, action, monthYear: bodyMonthYear } = parsed.data;
     const surveyJson = surveyQuestions as unknown as Prisma.InputJsonValue;
+    const monthYear = bodyMonthYear?.trim() ? bodyMonthYear.trim() : formatMonthYear(new Date());
     if (!currentCycle) {
+      // Only one open cycle: close any other OPEN before creating
+      await db.cycle.updateMany({ where: { status: "OPEN" }, data: { status: "CLOSED" } });
       const created = await db.cycle.create({
         data: {
           status: "OPEN",
-          monthYear: formatMonthYear(new Date()),
+          monthYear,
           surveyQuestions: surveyJson,
         },
       });
@@ -90,6 +97,19 @@ export async function PATCH(req: Request) {
         data: { ...(adminUserId ? { adminUserId } : {}), action: "AdminOpenCycle" },
       });
       return NextResponse.json({ currentCycle: created });
+    }
+    if (action === "OPEN") {
+      if (currentCycle.status === "ARCHIVED") {
+        return NextResponse.json(
+          { error: "Archived cycles cannot be reopened." },
+          { status: 400 }
+        );
+      }
+      // Only one open cycle: close any other OPEN (not this one)
+      await db.cycle.updateMany({
+        where: { status: "OPEN", id: { not: currentCycle.id } },
+        data: { status: "CLOSED" },
+      });
     }
     const updated = await db.cycle.update({
       where: { id: currentCycle.id },
@@ -106,15 +126,29 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ currentCycle: updated });
   }
 
-  const { action } = parsed.data;
+  const { action, monthYear: bodyMonthYear } = parsed.data;
+  const defaultMonthYear = bodyMonthYear?.trim() ? bodyMonthYear.trim() : formatMonthYear(new Date());
   if (!currentCycle) {
+    // Only one open cycle: close any other OPEN before creating
+    await db.cycle.updateMany({ where: { status: "OPEN" }, data: { status: "CLOSED" } });
     const created = await db.cycle.create({
-      data: { status: "OPEN", monthYear: formatMonthYear(new Date()) },
+      data: { status: "OPEN", monthYear: defaultMonthYear },
     });
     return NextResponse.json({ currentCycle: created });
   }
 
   if (action === "OPEN") {
+    if (currentCycle.status === "ARCHIVED") {
+      return NextResponse.json(
+        { error: "Archived cycles cannot be reopened." },
+        { status: 400 }
+      );
+    }
+    // Only one open cycle: close any other OPEN (not this one)
+    await db.cycle.updateMany({
+      where: { status: "OPEN", id: { not: currentCycle.id } },
+      data: { status: "CLOSED" },
+    });
     const updated = await db.cycle.update({ where: { id: currentCycle.id }, data: { status: "OPEN" } });
     await db.auditLog.create({
       data: { ...(adminUserId ? { adminUserId } : {}), action: "AdminOpenCycle" },
@@ -135,8 +169,10 @@ export async function PATCH(req: Request) {
     where: { id: currentCycle.id },
     data: { status: "ARCHIVED" },
   });
+  // Only one open cycle: ensure no other is OPEN before creating
+  await db.cycle.updateMany({ where: { status: "OPEN" }, data: { status: "CLOSED" } });
   const created = await db.cycle.create({
-    data: { status: "OPEN", monthYear: formatMonthYear(new Date()) },
+    data: { status: "OPEN", monthYear: defaultMonthYear },
   });
   await db.auditLog.create({
     data: {

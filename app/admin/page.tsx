@@ -1,20 +1,35 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { db } from "@/lib/db";
 import { CycleControls } from "@/components/admin/CycleControls";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { DashboardCycleFilter } from "@/components/admin/DashboardCycleFilter";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminPage() {
-  const currentCycle = await db.cycle.findFirst({
-    orderBy: { createdAt: "desc" },
-    select: { id: true, status: true, monthYear: true, createdAt: true },
-  });
+type PageProps = {
+  searchParams: Promise<{ cycleId?: string | string[] }> | { cycleId?: string | string[] };
+};
 
-  const counts = currentCycle
+export default async function AdminPage(props: PageProps) {
+  const searchParams = await Promise.resolve(props.searchParams);
+  const cycleIdParam = searchParams.cycleId;
+  const cycleId = typeof cycleIdParam === "string" ? cycleIdParam : Array.isArray(cycleIdParam) ? cycleIdParam[0] : undefined;
+
+  const displayCycle = cycleId
+    ? await db.cycle.findUnique({
+        where: { id: cycleId },
+        select: { id: true, status: true, monthYear: true, createdAt: true },
+      })
+    : await db.cycle.findFirst({
+        orderBy: { createdAt: "desc" },
+        select: { id: true, status: true, monthYear: true, createdAt: true },
+      });
+
+  const counts = displayCycle
     ? await db.submission.groupBy({
         by: ["isFlagged"],
-        where: { cycleId: currentCycle.id },
+        where: { cycleId: displayCycle.id },
         _count: { _all: true },
       })
     : [];
@@ -29,6 +44,10 @@ export default async function AdminPage() {
         description="Manage the current cycle, submissions, and spotlights."
       />
 
+      <Suspense fallback={<div className="mb-4 h-10 animate-pulse rounded bg-black/5" />}>
+        <DashboardCycleFilter selectedCycleId={displayCycle?.id ?? null} />
+      </Suspense>
+
       <div className="grid w-full gap-6 lg:grid-cols-3">
         {/* Current Cycle Card */}
         <section
@@ -39,28 +58,28 @@ export default async function AdminPage() {
             id="cycle-heading"
             className="text-sm font-semibold uppercase tracking-wide text-[color:var(--nsi-ink-soft)]"
           >
-            Current cycle
+            Cycle
           </h2>
           <div className="mt-3 font-serif text-3xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-            {currentCycle ? currentCycle.monthYear : "—"}
+            {displayCycle ? displayCycle.monthYear : "—"}
           </div>
           <div className="mt-4 flex items-center gap-3 text-sm text-[color:var(--nsi-ink-soft)]">
             <span>Status:</span>
             <span
               className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
-                currentCycle?.status === "OPEN"
+                displayCycle?.status === "OPEN"
                   ? "bg-emerald-100 text-emerald-800"
-                  : currentCycle?.status === "CLOSED"
+                  : displayCycle?.status === "CLOSED"
                     ? "bg-amber-100 text-amber-800"
                     : "bg-gray-100 text-gray-700"
               }`}
             >
-              {currentCycle?.status ?? "NONE"}
+              {displayCycle?.status ?? "NONE"}
             </span>
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3 border-t border-black/5 pt-6">
-            <CycleControls />
+            <CycleControls cycleStatus={displayCycle?.status ?? null} />
             <Link
               className="rounded-xl border border-black/15 bg-white px-4 py-2 text-sm font-medium hover:bg-black/[.03]"
               href="/admin/cycle"

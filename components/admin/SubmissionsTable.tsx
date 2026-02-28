@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { PILLARS } from "@/lib/constants";
+import { CycleFilter } from "./CycleFilter";
 
 type Item = {
   id: string;
@@ -25,34 +26,38 @@ export function SubmissionsTable() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showFlagged, setShowFlagged] = useState(false);
+  const [cycleId, setCycleId] = useState<string | null>(null);
 
   const filtered = useMemo(
     () => (showFlagged ? items : items.filter((i) => !i.isFlagged)),
     [items, showFlagged]
   );
 
-  async function load(cursor?: string | null) {
-    setError(null);
-    setLoading(true);
-    const url = new URL(window.location.origin + "/api/admin/submissions");
-    url.searchParams.set("take", "25");
-    if (cursor) url.searchParams.set("cursor", cursor);
-    const res = await fetch(url.toString());
-    setLoading(false);
-    if (!res.ok) {
-      const data = (await res.json().catch(() => null)) as { error?: string } | null;
-      setError(data?.error ?? "Failed to load.");
-      return;
-    }
-    const data = (await res.json()) as Page;
-    setItems((prev) => (cursor ? [...prev, ...data.items] : data.items));
-    setNextCursor(data.nextCursor);
-  }
+  const load = useCallback(
+    async (cursor?: string | null) => {
+      setError(null);
+      setLoading(true);
+      const url = new URL(window.location.origin + "/api/admin/submissions");
+      url.searchParams.set("take", "25");
+      if (cursor) url.searchParams.set("cursor", cursor);
+      if (cycleId) url.searchParams.set("cycleId", cycleId);
+      const res = await fetch(url.toString());
+      setLoading(false);
+      if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as { error?: string } | null;
+        setError(data?.error ?? "Failed to load.");
+        return;
+      }
+      const data = (await res.json()) as Page;
+      setItems((prev) => (cursor ? [...prev, ...data.items] : data.items));
+      setNextCursor(data.nextCursor);
+    },
+    [cycleId]
+  );
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     void load(null);
-  }, []);
+  }, [load]);
 
   async function toggleFlag(id: string, flagged: boolean) {
     setError(null);
@@ -69,6 +74,10 @@ export function SubmissionsTable() {
     setItems((prev) => prev.map((x) => (x.id === id ? { ...x, isFlagged: flagged } : x)));
   }
 
+  const exportHref = cycleId
+    ? `/api/admin/submissions/export?cycleId=${encodeURIComponent(cycleId)}`
+    : "/api/admin/submissions/export";
+
   return (
     <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
       {/* Live region for screen reader announcements */}
@@ -78,6 +87,26 @@ export function SubmissionsTable() {
           : error
             ? `Error: ${error}`
             : `${filtered.length} submissions loaded`}
+      </div>
+
+      <div className="mb-6 flex flex-wrap items-end gap-4">
+        <CycleFilter
+          value={cycleId}
+          onChange={(id) => {
+            setCycleId(id);
+            setItems([]);
+            setNextCursor(null);
+          }}
+          showAllOption={false}
+          id="submissions-cycle-filter"
+        />
+        <a
+          href={exportHref}
+          download
+          className="admin-btn-secondary"
+        >
+          Export CSV
+        </a>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4">

@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 
 const listSchema = z.object({
   take: z.coerce.number().int().min(1).max(50).default(20),
+  cycleId: z.string().optional(),
 });
 
 const upsertSchema = z.object({
@@ -27,11 +28,15 @@ export async function GET(req: Request) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const url = new URL(req.url);
-  const parsed = listSchema.safeParse({ take: url.searchParams.get("take") ?? undefined });
+  const parsed = listSchema.safeParse({
+    take: url.searchParams.get("take") ?? undefined,
+    cycleId: url.searchParams.get("cycleId") ?? undefined,
+  });
   if (!parsed.success) return NextResponse.json({ error: "Invalid query." }, { status: 400 });
 
   const items = await db.snapshot.findMany({
     take: parsed.data.take,
+    where: parsed.data.cycleId ? { cycleId: parsed.data.cycleId } : undefined,
     orderBy: { createdAt: "desc" },
     select: {
       id: true,

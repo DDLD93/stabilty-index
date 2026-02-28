@@ -8,14 +8,24 @@ function csvEscape(v: string) {
   return `"${s}"`;
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = await requireAdminSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const adminUserId = await getAuditAdminUserId(session);
 
+  const url = new URL(req.url);
+  let cycleId = url.searchParams.get("cycleId")?.trim() || null;
+  if (!cycleId) {
+    const current = await db.cycle.findFirst({
+      orderBy: { createdAt: "desc" },
+      select: { id: true },
+    });
+    cycleId = current?.id ?? null;
+  }
+
   const rows = await db.submission.findMany({
-    where: { isFlagged: false },
+    where: { isFlagged: false, ...(cycleId ? { cycleId } : {}) },
     orderBy: { createdAt: "desc" },
     select: {
       createdAt: true,

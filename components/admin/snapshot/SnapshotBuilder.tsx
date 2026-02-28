@@ -21,6 +21,7 @@ import { SnapshotPillars } from "./SnapshotPillars";
 import { SnapshotHighlights } from "./SnapshotHighlights";
 import { SnapshotSentiment } from "./SnapshotSentiment";
 import { SnapshotSources } from "./SnapshotSources";
+import { CycleFilter } from "../CycleFilter";
 
 type TabId = "overview" | "pillars" | "highlights" | "sentiment" | "sources";
 
@@ -40,6 +41,7 @@ export function SnapshotBuilder() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>("overview");
+  const [cycleId, setCycleId] = useState<string | null>(null);
 
   const locked = !!model.isLocked;
   const published = !!model.publishedAt;
@@ -71,11 +73,14 @@ export function SnapshotBuilder() {
 
   // API functions
   const loadList = useCallback(async () => {
-    const res = await fetch("/api/admin/snapshot?take=20");
+    const url = new URL(window.location.origin + "/api/admin/snapshot");
+    url.searchParams.set("take", "20");
+    if (cycleId) url.searchParams.set("cycleId", cycleId);
+    const res = await fetch(url.toString());
     if (!res.ok) return;
     const data = (await res.json()) as { items: SnapshotListItem[] };
     setList(data.items);
-  }, []);
+  }, [cycleId]);
 
   const loadOne = useCallback(async (id: string) => {
     setError(null);
@@ -266,7 +271,19 @@ export function SnapshotBuilder() {
   }, [success, error]);
 
   return (
-    <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+    <div>
+      <div className="mb-6">
+        <CycleFilter
+          value={cycleId}
+          onChange={(id) => {
+            setCycleId(id);
+            setList([]);
+          }}
+          showAllOption
+          id="snapshot-cycle-filter"
+        />
+      </div>
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
       {/* Sidebar */}
       <SnapshotSidebar
         list={list}
@@ -393,6 +410,7 @@ export function SnapshotBuilder() {
             <ChevronRightIcon />
           </button>
         </div>
+      </div>
       </div>
     </div>
   );

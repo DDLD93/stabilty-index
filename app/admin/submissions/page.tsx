@@ -13,15 +13,6 @@ export default function AdminSubmissionsPage() {
           { label: "Dashboard", href: "/admin" },
           { label: "Submissions" },
         ]}
-        actions={
-          <a
-            className="admin-btn-secondary"
-            href="/api/admin/submissions/export"
-            download
-          >
-            Export CSV
-          </a>
-        }
       />
 
       <SubmissionsTable />

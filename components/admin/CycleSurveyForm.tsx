@@ -34,6 +34,7 @@ export function CycleSurveyForm() {
   );
   const [submitState, setSubmitState] = useState<"idle" | "open" | "update" | "close" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [cycleName, setCycleName] = useState("");
 
   useEffect(() => {
     async function load() {
@@ -71,13 +72,15 @@ export function CycleSurveyForm() {
     setError(null);
     setSubmitState(action ?? "update");
     try {
+      const body: { surveyQuestions: SurveyQuestion[]; action?: "OPEN"; monthYear?: string } = {
+        surveyQuestions: questions,
+        ...(action === "OPEN" ? { action: "OPEN" } : {}),
+      };
+      if (cycleName.trim()) body.monthYear = cycleName.trim();
       const res = await fetch("/api/admin/cycle", {
         method: "PATCH",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          surveyQuestions: questions,
-          ...(action === "OPEN" ? { action: "OPEN" } : {}),
-        }),
+        body: JSON.stringify(body),
       });
       const data = (await res.json().catch(() => null)) as { error?: string; currentCycle?: Cycle } | null;
       if (!res.ok) {
@@ -159,7 +162,8 @@ export function CycleSurveyForm() {
         className="rounded-2xl border border-black/10 bg-white p-6 md:p-8"
         onSubmit={(e) => {
           e.preventDefault();
-          submitSurvey(cycle?.status !== "OPEN" ? "OPEN" : undefined);
+          const shouldOpen = cycle?.status !== "OPEN" && cycle?.status !== "ARCHIVED";
+          submitSurvey(shouldOpen ? "OPEN" : undefined);
         }}
       >
         <h2 className="text-sm font-semibold uppercase tracking-wide text-[color:var(--nsi-ink-soft)]">
@@ -168,6 +172,27 @@ export function CycleSurveyForm() {
         <p className="mt-2 max-w-xl text-sm text-[color:var(--nsi-ink-soft)]">
           Define the question text for each stability pillar. Respondents will answer with a radio scale from 1 to 5.
         </p>
+
+        {(cycle?.status !== "OPEN" || !cycle) && (
+          <div className="mt-6">
+            <label htmlFor="cycle-name" className="block text-sm font-medium text-[color:var(--nsi-ink)]">
+              Cycle name (optional)
+            </label>
+            <input
+              id="cycle-name"
+              type="text"
+              value={cycleName}
+              onChange={(e) => setCycleName(e.target.value)}
+              placeholder={cycle?.monthYear ?? new Intl.DateTimeFormat("en-NG", { month: "long", year: "numeric" }).format(new Date())}
+              className="mt-1.5 w-full max-w-xs rounded-xl border border-black/15 bg-white px-4 py-2.5 text-[color:var(--nsi-ink)] placeholder:text-black/40 focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-1 focus:ring-[color:var(--nsi-green)]"
+              aria-label="Cycle name"
+            />
+            <p className="mt-1 text-xs text-[color:var(--nsi-ink-soft)]">
+              Used when creating or opening a cycle (e.g. month and year). Leave blank to use the default.
+            </p>
+          </div>
+        )}
+
         <div className="mt-6 space-y-5">
           {PILLARS.map((pillar, idx) => (
             <div key={pillar.key}>
@@ -190,7 +215,12 @@ export function CycleSurveyForm() {
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {cycle?.status !== "OPEN" ? (
+          {cycle?.status === "ARCHIVED" && (
+            <p className="w-full text-sm text-[color:var(--nsi-ink-soft)]">
+              Archived cycles cannot be reopened. Create a new cycle from the dashboard instead.
+            </p>
+          )}
+          {cycle?.status !== "OPEN" && cycle?.status !== "ARCHIVED" ? (
             <button
               type="submit"
               className="rounded-xl bg-[color:var(--nsi-green)] px-4 py-2.5 text-sm font-medium text-white hover:opacity-95 disabled:opacity-60"
@@ -198,7 +228,7 @@ export function CycleSurveyForm() {
             >
               {submitState === "open" ? "Opening…" : "Open cycle"}
             </button>
-          ) : (
+          ) : cycle?.status === "OPEN" ? (
             <button
               type="submit"
               className="rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm font-medium hover:bg-black/[.03] disabled:opacity-60"
@@ -206,7 +236,7 @@ export function CycleSurveyForm() {
             >
               {submitState === "update" ? "Saving…" : "Update questions"}
             </button>
-          )}
+          ) : null}
           {cycle?.status === "OPEN" && (
             <button
               type="button"

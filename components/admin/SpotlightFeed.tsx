@@ -1,7 +1,8 @@
 "use client";
 
 import { NIGERIAN_STATES } from "@/lib/constants";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { CycleFilter } from "./CycleFilter";
 
 type Item = {
   id: string;
@@ -17,6 +18,7 @@ type Item = {
 
 export function SpotlightFeed() {
   const [stateFilter, setStateFilter] = useState<string>("");
+  const [cycleId, setCycleId] = useState<string | null>(null);
   const [items, setItems] = useState<Item[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -27,34 +29,37 @@ export function SpotlightFeed() {
     [stateFilter]
   );
 
-  async function load(cursor?: string | null) {
-    setError(null);
-    setLoading(true);
-    const url = new URL(window.location.origin + "/api/admin/spotlight");
-    url.searchParams.set("take", "60");
-    if (stateFilter) url.searchParams.set("state", stateFilter);
-    if (cursor) url.searchParams.set("cursor", cursor);
-    const res = await fetch(url.toString());
-    setLoading(false);
-    if (!res.ok) {
-      const data = (await res.json().catch(() => null)) as {
-        error?: string;
-      } | null;
-      setError(data?.error ?? "Failed to load.");
-      return;
-    }
-    const data = (await res.json()) as {
-      items: Item[];
-      nextCursor: string | null;
-    };
-    setItems((prev) => (cursor ? [...prev, ...data.items] : data.items));
-    setNextCursor(data.nextCursor);
-  }
+  const load = useCallback(
+    async (cursor?: string | null) => {
+      setError(null);
+      setLoading(true);
+      const url = new URL(window.location.origin + "/api/admin/spotlight");
+      url.searchParams.set("take", "60");
+      if (stateFilter) url.searchParams.set("state", stateFilter);
+      if (cursor) url.searchParams.set("cursor", cursor);
+      if (cycleId) url.searchParams.set("cycleId", cycleId);
+      const res = await fetch(url.toString());
+      setLoading(false);
+      if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        setError(data?.error ?? "Failed to load.");
+        return;
+      }
+      const data = (await res.json()) as {
+        items: Item[];
+        nextCursor: string | null;
+      };
+      setItems((prev) => (cursor ? [...prev, ...data.items] : data.items));
+      setNextCursor(data.nextCursor);
+    },
+    [stateFilter, cycleId]
+  );
 
   useEffect(() => {
     void load(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stateFilter]);
+  }, [load]);
 
   return (
     <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
@@ -65,6 +70,19 @@ export function SpotlightFeed() {
           : error
             ? `Error: ${error}`
             : `${items.length} spotlight entries loaded for ${label}`}
+      </div>
+
+      <div className="mb-6 flex flex-wrap items-end gap-4">
+        <CycleFilter
+          value={cycleId}
+          onChange={(id) => {
+            setCycleId(id);
+            setItems([]);
+            setNextCursor(null);
+          }}
+          showAllOption={false}
+          id="spotlight-cycle-filter"
+        />
       </div>
 
       <div className="flex flex-wrap items-end justify-between gap-4">

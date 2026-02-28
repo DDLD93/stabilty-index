@@ -6,6 +6,7 @@ import { requireAdminSession } from "@/lib/adminSession";
 const querySchema = z.object({
   take: z.coerce.number().int().min(1).max(100).default(25),
   cursor: z.string().optional(),
+  cycleId: z.string().optional(),
 });
 
 export async function GET(req: Request) {
@@ -16,14 +17,25 @@ export async function GET(req: Request) {
   const parsed = querySchema.safeParse({
     take: url.searchParams.get("take") ?? undefined,
     cursor: url.searchParams.get("cursor") ?? undefined,
+    cycleId: url.searchParams.get("cycleId") ?? undefined,
   });
   if (!parsed.success) return NextResponse.json({ error: "Invalid query." }, { status: 400 });
 
-  const { take, cursor } = parsed.data;
+  const { take, cursor, cycleId: queryCycleId } = parsed.data;
+
+  let cycleId = queryCycleId;
+  if (!cycleId) {
+    const current = await db.cycle.findFirst({
+      orderBy: { createdAt: "desc" },
+      select: { id: true },
+    });
+    cycleId = current?.id ?? "";
+  }
 
   const items = await db.submission.findMany({
     take: take + 1,
     ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+    where: cycleId ? { cycleId } : {},
     orderBy: { createdAt: "desc" },
     select: {
       id: true,
