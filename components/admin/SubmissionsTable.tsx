@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PILLARS } from "@/lib/constants";
-import { CycleFilter } from "./CycleFilter";
 
 type Item = {
   id: string;
@@ -18,28 +17,36 @@ type Item = {
   cycleId: string;
 };
 
-type Page = { items: Item[]; nextCursor: string | null };
+type PageResponse = { items: Item[]; totalCount: number };
 
-export function SubmissionsTable() {
+const PAGE_SIZE = 25;
+
+type SubmissionsTableProps = {
+  cycleId: string | null;
+};
+
+export function SubmissionsTable({ cycleId }: SubmissionsTableProps) {
   const [items, setItems] = useState<Item[]>([]);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showFlagged, setShowFlagged] = useState(false);
-  const [cycleId, setCycleId] = useState<string | null>(null);
 
   const filtered = useMemo(
     () => (showFlagged ? items : items.filter((i) => !i.isFlagged)),
     [items, showFlagged]
   );
 
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+
   const load = useCallback(
-    async (cursor?: string | null) => {
+    async (pageNum: number) => {
       setError(null);
       setLoading(true);
       const url = new URL(window.location.origin + "/api/admin/submissions");
-      url.searchParams.set("take", "25");
-      if (cursor) url.searchParams.set("cursor", cursor);
+      url.searchParams.set("take", String(PAGE_SIZE));
+      url.searchParams.set("page", String(pageNum));
       if (cycleId) url.searchParams.set("cycleId", cycleId);
       const res = await fetch(url.toString());
       setLoading(false);
@@ -48,16 +55,23 @@ export function SubmissionsTable() {
         setError(data?.error ?? "Failed to load.");
         return;
       }
-      const data = (await res.json()) as Page;
-      setItems((prev) => (cursor ? [...prev, ...data.items] : data.items));
-      setNextCursor(data.nextCursor);
+      const data = (await res.json()) as PageResponse;
+      setItems(data.items);
+      setTotalCount(data.totalCount);
     },
     [cycleId]
   );
 
   useEffect(() => {
-    void load(null);
-  }, [load]);
+    setPage(1);
+    void load(1);
+  }, [cycleId, load]);
+
+  useEffect(() => {
+    if (page > 1) void load(page);
+    // Omit `load` so cycle change only triggers load(1) from the effect above
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
 
   async function toggleFlag(id: string, flagged: boolean) {
     setError(null);
@@ -78,9 +92,13 @@ export function SubmissionsTable() {
     ? `/api/admin/submissions/export?cycleId=${encodeURIComponent(cycleId)}`
     : "/api/admin/submissions/export";
 
+  const goToPage = (p: number) => {
+    const next = Math.max(1, Math.min(p, totalPages));
+    setPage(next);
+  };
+
   return (
     <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
-      {/* Live region for screen reader announcements */}
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {loading
           ? "Loading submissions..."
@@ -90,21 +108,7 @@ export function SubmissionsTable() {
       </div>
 
       <div className="mb-6 flex flex-wrap items-end gap-4">
-        <CycleFilter
-          value={cycleId}
-          onChange={(id) => {
-            setCycleId(id);
-            setItems([]);
-            setNextCursor(null);
-          }}
-          showAllOption={false}
-          id="submissions-cycle-filter"
-        />
-        <a
-          href={exportHref}
-          download
-          className="admin-btn-secondary"
-        >
+        <a href={exportHref} download className="admin-btn-secondary">
           Export CSV
         </a>
       </div>
@@ -268,7 +272,7 @@ export function SubmissionsTable() {
         <button
           className="inline-flex items-center gap-2 rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm font-medium transition-colors hover:bg-black/[.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--nsi-gold)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           type="button"
-          onClick={() => void load(null)}
+          onClick={() => void load(page)}
           disabled={loading}
           aria-label="Refresh submissions list"
         >
@@ -277,18 +281,50 @@ export function SubmissionsTable() {
           ) : null}
           Refresh
         </button>
-        <button
-          className="inline-flex items-center gap-2 rounded-xl bg-[color:var(--nsi-green)] px-4 py-2.5 text-sm font-medium text-white shadow-md transition-colors hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--nsi-gold)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-          type="button"
-          onClick={() => void load(nextCursor)}
-          disabled={loading || !nextCursor}
-          aria-label={nextCursor ? "Load more submissions" : "All submissions loaded"}
-        >
-          {loading ? (
-            <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-          ) : null}
-          {loading ? "Loading…" : nextCursor ? "Load more" : "All loaded"}
-        </button>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-black/70">
+            Page <span className="tabular-nums font-medium">{page}</span> of{" "}
+            <span className="tabular-nums font-medium">{totalPages}</span>
+          </span>
+          <div className="flex gap-1">
+            <button
+              type="button"
+              className="rounded-xl border border-black/15 bg-white px-3 py-2 text-sm font-medium transition-colors hover:bg-black/[.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--nsi-gold)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              onClick={() => goToPage(1)}
+              disabled={loading || page <= 1}
+              aria-label="First page"
+            >
+              First
+            </button>
+            <button
+              type="button"
+              className="rounded-xl border border-black/15 bg-white px-3 py-2 text-sm font-medium transition-colors hover:bg-black/[.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--nsi-gold)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              onClick={() => goToPage(page - 1)}
+              disabled={loading || page <= 1}
+              aria-label="Previous page"
+            >
+              Previous
+            </button>
+            <button
+              type="button"
+              className="rounded-xl border border-black/15 bg-white px-3 py-2 text-sm font-medium transition-colors hover:bg-black/[.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--nsi-gold)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              onClick={() => goToPage(page + 1)}
+              disabled={loading || page >= totalPages}
+              aria-label="Next page"
+            >
+              Next
+            </button>
+            <button
+              type="button"
+              className="rounded-xl border border-black/15 bg-white px-3 py-2 text-sm font-medium transition-colors hover:bg-black/[.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--nsi-gold)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              onClick={() => goToPage(totalPages)}
+              disabled={loading || page >= totalPages}
+              aria-label="Last page"
+            >
+              Last
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
