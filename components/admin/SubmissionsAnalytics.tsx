@@ -10,6 +10,10 @@ type AnalyticsData = {
   oneWordCounts: { word: string; count: number }[];
   spotlightByState: Record<string, number>;
   spotlightByTag: Record<string, number>;
+  submissionCount?: number;
+  avgScoreByMood?: Record<string, number>;
+  avgScoreByState?: Record<string, number>;
+  scoreDistribution?: Record<string, number>;
 };
 
 type SubmissionsAnalyticsProps = {
@@ -95,12 +99,24 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
     Object.keys(data.moodDistribution).length > 0 ||
     data.oneWordCounts.length > 0 ||
     Object.keys(data.spotlightByState).length > 0 ||
-    Object.keys(data.spotlightByTag).length > 0;
+    Object.keys(data.spotlightByTag).length > 0 ||
+    (data.submissionCount ?? 0) > 0 ||
+    Object.keys(data.avgScoreByMood ?? {}).length > 0 ||
+    Object.keys(data.avgScoreByState ?? {}).length > 0 ||
+    Object.values(data.scoreDistribution ?? {}).some((v) => (v ?? 0) > 0);
 
   if (!hasAny) {
+    const reportHrefEmpty = `/api/admin/submissions/report?cycleId=${encodeURIComponent(cycleId)}`;
     return (
       <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
         <p className="text-sm text-black/60">No submissions for this cycle.</p>
+        <a
+          href={reportHrefEmpty}
+          download
+          className="admin-btn-secondary mt-4 inline-flex items-center gap-2"
+        >
+          Download PDF report
+        </a>
       </div>
     );
   }
@@ -122,8 +138,38 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
     .filter(([, c]) => c > 0)
     .sort((a, b) => b[1] - a[1]);
 
+  const scoreDist = data.scoreDistribution ?? {};
+  const distMax = Math.max(
+    scoreDist["1-3"] ?? 0,
+    scoreDist["4-6"] ?? 0,
+    scoreDist["7-10"] ?? 0,
+    1
+  );
+  const avgByMoodEntries = Object.entries(data.avgScoreByMood ?? {})
+    .filter(([, v]) => v > 0)
+    .sort((a, b) => b[1] - a[1]);
+  const avgByStateEntries = Object.entries(data.avgScoreByState ?? {})
+    .filter(([, v]) => v > 0)
+    .sort((a, b) => b[1] - a[1]);
+
+  const reportHref = `/api/admin/submissions/report?cycleId=${encodeURIComponent(cycleId)}`;
+
   return (
     <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-black/5 pb-4">
+        {data.submissionCount != null && (
+          <span className="text-sm text-black/60">
+            {data.submissionCount} submission{data.submissionCount === 1 ? "" : "s"}
+          </span>
+        )}
+        <a
+          href={reportHref}
+          download
+          className="admin-btn-secondary inline-flex items-center gap-2"
+        >
+          Download PDF report
+        </a>
+      </div>
       <div className="space-y-8">
         {/* Overall average score */}
         <section>
@@ -158,6 +204,80 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
             ))}
           </ul>
         </section>
+
+        {/* Score distribution */}
+        {(scoreDist["1-3"] ?? 0) + (scoreDist["4-6"] ?? 0) + (scoreDist["7-10"] ?? 0) > 0 && (
+          <section>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
+              Score distribution
+            </h3>
+            <ul className="mt-3 space-y-2">
+              {(["7-10", "4-6", "1-3"] as const).map((bucket) => {
+                const n = scoreDist[bucket] ?? 0;
+                const pct = distMax > 0 ? (n / distMax) * 100 : 0;
+                return (
+                  <li
+                    key={bucket}
+                    className="flex items-center gap-3 rounded-xl bg-[color:var(--nsi-paper)] px-4 py-2"
+                  >
+                    <span className="w-8 text-sm font-medium">{bucket}</span>
+                    <span className="tabular-nums text-sm text-black/60">{n}</span>
+                    <div className="min-w-[80px] flex-1 rounded-full bg-black/10">
+                      <div
+                        className="h-2 rounded-full bg-[color:var(--nsi-green)]"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+
+        {/* Score by mood */}
+        {avgByMoodEntries.length > 0 && (
+          <section>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
+              Average score by mood
+            </h3>
+            <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+              {avgByMoodEntries.map(([mood, avg]) => (
+                <li
+                  key={mood}
+                  className="flex items-center justify-between rounded-xl bg-[color:var(--nsi-paper)] px-4 py-2"
+                >
+                  <span className="text-sm font-medium">{mood}</span>
+                  <span className="tabular-nums font-semibold text-[color:var(--nsi-green)]">
+                    {avg.toFixed(2)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* Score by state */}
+        {avgByStateEntries.length > 0 && (
+          <section>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
+              Average score by state
+            </h3>
+            <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {avgByStateEntries.map(([state, avg]) => (
+                <li
+                  key={state}
+                  className="flex items-center justify-between rounded-xl bg-[color:var(--nsi-paper)] px-4 py-2"
+                >
+                  <span className="text-sm font-medium">{state}</span>
+                  <span className="tabular-nums font-semibold text-[color:var(--nsi-green)]">
+                    {avg.toFixed(2)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {/* Mood */}
         <section>
