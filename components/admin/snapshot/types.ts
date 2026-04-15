@@ -81,7 +81,7 @@ export const defaultSnapshot: SnapshotModel = {
   stateSpotlightContent: {
     state: "No StateSpotlight this round",
     score: 0,
-    keyPointsHtml: "",
+    keyPointsHtml: "<ul><li>No report on statespotlight</li></ul>",
   },
   institutionSpotlightContent: {
     institution: "",
