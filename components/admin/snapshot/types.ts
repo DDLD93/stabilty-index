@@ -79,9 +79,9 @@ export const defaultSnapshot: SnapshotModel = {
     ],
   },
   stateSpotlightContent: {
-    state: "Lagos",
-    score: 7.1,
-    keyPointsHtml: "<ul><li>Strongest in transportation</li><li>Top in public services delivery</li><li>Rising regional influence</li></ul>",
+    state: "No StateSpotlight this round",
+    score: 0,
+    keyPointsHtml: "",
   },
   institutionSpotlightContent: {
     institution: "",
