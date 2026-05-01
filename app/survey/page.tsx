@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { defaultMetadata } from "@/lib/metadata";
 import { SurveyWizard } from "@/components/public/SurveyWizard";
 
@@ -39,7 +40,15 @@ export default function SurveyPage() {
         <p className="mb-10 text-[color:var(--nsi-ink-soft)]">
           Your responses are anonymous and help us track how Nigeria is holding together across security, economy, governance, investor confidence, and social stability.
         </p>
-        <SurveyWizard />
+        <Suspense
+          fallback={
+            <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
+              <p className="text-[color:var(--nsi-ink-soft)]">Loading survey…</p>
+            </div>
+          }
+        >
+          <SurveyWizard />
+        </Suspense>
       </div>
     </main>
   );

@@ -28,10 +28,26 @@ model Cycle {
   @@index([monthYear])
 }
 
+model Agent {
+  id            String        @id @default(cuid())
+  name          String
+  email         String        @unique
+  phone         String
+  referrerCode  String        @unique
+  isActive      Boolean       @default(true)
+  submissions   Submission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Submission {
   id        String @id @default(cuid())
   cycleId   String
   cycle     Cycle  @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+
+  agentId String?
+  agent   Agent? @relation(fields: [agentId], references: [id], onDelete: SetNull)
 
   deviceHash String?
 
@@ -54,6 +70,7 @@ model Submission {
   @@index([cycleId, deviceHash])
   @@unique([cycleId, deviceHash])
   @@index([isFlagged])
+  @@index([agentId])
 }
 
 model Snapshot {

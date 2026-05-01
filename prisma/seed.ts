@@ -2,6 +2,7 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
+import { allocateUniqueReferrerCode } from "../lib/agentReferrerCode";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -37,10 +38,30 @@ async function seedAdmin() {
   console.log("Seeded admin user:", admin.email);
 }
 
+/** Optional demo agent for referral testing (`/survey?ref=<code>`). */
+async function seedDemoAgent() {
+  const email = "demo.agent@stability-index.local";
+  const existing = await prisma.agent.findUnique({ where: { email } });
+  if (existing) {
+    console.log("Demo agent already exists:", email, "code:", existing.referrerCode);
+    return;
+  }
+  const referrerCode = await allocateUniqueReferrerCode(prisma);
+  await prisma.agent.create({
+    data: {
+      name: "Demo Agent",
+      email,
+      phone: "+2348000000000",
+      referrerCode,
+    },
+  });
+  console.log("Seeded demo agent:", email, "referral /survey?ref=" + referrerCode);
+}
+
 async function main() {
   // await clearAllTables();
   await seedAdmin();
-  // Don't seed: seedAdmin() left available but not called.
+  // await seedDemoAgent();
 }
 
 main()

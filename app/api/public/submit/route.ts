@@ -2,6 +2,14 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { MOODS, NIGERIAN_STATES, PILLAR_KEYS, SPOTLIGHT_TAGS } from "@/lib/constants";
+import { isValidReferrerCodeFormat } from "@/lib/agentReferrerCode";
+
+const referrerCodeField = z
+  .string()
+  .trim()
+  .regex(/^\d{6}$/, "Referral code must be exactly 6 digits.")
+  .nullish()
+  .transform((v) => (v == null || v === "" ? undefined : v));
 
 const legacySchema = z.object({
   stabilityScore: z.number().int().min(1).max(10),
@@ -10,6 +18,7 @@ const legacySchema = z.object({
   spotlightState: z.enum(NIGERIAN_STATES).nullable().optional(),
   spotlightTags: z.array(z.enum(SPOTLIGHT_TAGS)).max(8).optional().default([]),
   spotlightComment: z.string().trim().max(600).nullable().optional(),
+  referrerCode: referrerCodeField,
 });
 
 const pillarResponsesSchema = z.record(z.string(), z.number().int().min(1).max(5)).refine(
@@ -32,6 +41,7 @@ const submitSchema = z.union([
     spotlightState: z.enum(NIGERIAN_STATES).nullable().optional(),
     spotlightTags: z.array(z.enum(SPOTLIGHT_TAGS)).max(8).optional().default([]),
     spotlightComment: z.string().trim().max(600).nullable().optional(),
+    referrerCode: referrerCodeField,
   }),
 ]);
 
@@ -46,6 +56,25 @@ function formatMonthYear(d: Date) {
   return new Intl.DateTimeFormat("en-NG", { month: "long", year: "numeric" }).format(d);
 }
 
+async function resolveAgentIdForSubmit(
+  referrerCode: string | undefined
+): Promise<{ agentId: string | undefined } | { error: string }> {
+  if (referrerCode == null || referrerCode === "") {
+    return { agentId: undefined };
+  }
+  if (!isValidReferrerCodeFormat(referrerCode)) {
+    return { error: "Invalid referral code format." };
+  }
+  const agent = await db.agent.findFirst({
+    where: { referrerCode, isActive: true },
+    select: { id: true },
+  });
+  if (!agent) {
+    return { error: "Invalid or inactive referral code." };
+  }
+  return { agentId: agent.id };
+}
+
 export async function POST(req: Request) {
   const json = await req.json().catch(() => null);
   const parsed = submitSchema.safeParse(json);
@@ -58,6 +87,12 @@ export async function POST(req: Request) {
 
   const data = parsed.data;
   const isPillarPayload = "pillarResponses" in data && data.pillarResponses != null;
+  const referrerCode = "referrerCode" in data ? data.referrerCode : undefined;
+  const agentResolve = await resolveAgentIdForSubmit(referrerCode);
+  if ("error" in agentResolve) {
+    return NextResponse.json({ error: agentResolve.error }, { status: 400 });
+  }
+  const { agentId } = agentResolve;
 
   let cycle = await db.cycle.findFirst({
     where: { status: "OPEN" },
@@ -116,6 +151,7 @@ export async function POST(req: Request) {
     await db.submission.create({
       data: {
         cycleId: cycle.id,
+        ...(agentId && { agentId }),
         ...(deviceHash && { deviceHash }),
         stabilityScore: clampedScore,
         mood: pillarData.mood ?? null,
@@ -129,7 +165,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const freeText = [data.oneWord, data.spotlightComment ?? ""].join(" ");
+  const legacy = data as z.infer<typeof legacySchema>;
+
+  const freeText = [legacy.oneWord, legacy.spotlightComment ?? ""].join(" ");
   if (looksLikePII(freeText)) {
     return NextResponse.json(
       { error: "Please remove personal info (emails/phone numbers) from your submission." },
@@ -140,12 +178,13 @@ export async function POST(req: Request) {
   await db.submission.create({
     data: {
       cycleId: cycle.id,
-      stabilityScore: data.stabilityScore,
-      mood: data.mood,
-      oneWord: data.oneWord,
-      spotlightState: data.spotlightState ?? null,
-      spotlightTags: data.spotlightTags ?? [],
-      spotlightComment: data.spotlightComment ?? null,
+      ...(agentId && { agentId }),
+      stabilityScore: legacy.stabilityScore,
+      mood: legacy.mood,
+      oneWord: legacy.oneWord,
+      spotlightState: legacy.spotlightState ?? null,
+      spotlightTags: legacy.spotlightTags ?? [],
+      spotlightComment: legacy.spotlightComment ?? null,
     },
   });
 

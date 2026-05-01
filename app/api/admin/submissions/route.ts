@@ -53,6 +53,9 @@ export async function GET(req: Request) {
         spotlightComment: true,
         isFlagged: true,
         cycleId: true,
+        agent: {
+          select: { name: true, referrerCode: true },
+        },
       },
     }),
   ]);

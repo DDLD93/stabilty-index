@@ -15,6 +15,7 @@ type Item = {
   spotlightComment: string | null;
   isFlagged: boolean;
   cycleId: string;
+  agent: { name: string; referrerCode: string } | null;
 };
 
 type PageResponse = { items: Item[]; totalCount: number };
@@ -160,6 +161,9 @@ export function SubmissionsTable({ cycleId }: SubmissionsTableProps) {
               <th scope="col" className="px-4 py-3">
                 Score
               </th>
+              <th scope="col" className="px-4 py-3">
+                Agent
+              </th>
               {PILLARS.map((p) => (
                 <th key={p.key} scope="col" className="px-4 py-3">
                   {p.label}
@@ -202,6 +206,16 @@ export function SubmissionsTable({ cycleId }: SubmissionsTableProps) {
                     <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--nsi-green)]/10 font-semibold text-[color:var(--nsi-green)]">
                       {s.stabilityScore}
                     </span>
+                  ) : (
+                    <span className="text-black/40">—</span>
+                  )}
+                </td>
+                <td className="max-w-[8rem] px-4 py-4 text-xs">
+                  {s.agent ? (
+                    <div>
+                      <div className="font-medium leading-tight">{s.agent.name}</div>
+                      <div className="font-mono text-black/60">{s.agent.referrerCode}</div>
+                    </div>
                   ) : (
                     <span className="text-black/40">—</span>
                   )}
@@ -255,7 +269,7 @@ export function SubmissionsTable({ cycleId }: SubmissionsTableProps) {
               <tr>
                 <td
                   className="px-4 py-12 text-center text-sm text-black/60"
-                  colSpan={6 + PILLARS.length}
+                  colSpan={7 + PILLARS.length}
                 >
                   <div className="flex flex-col items-center gap-2">
                     <span className="text-3xl">📭</span>

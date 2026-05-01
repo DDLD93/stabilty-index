@@ -19,6 +19,7 @@ import {
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: DashboardIcon },
   { href: "/admin/cycle", label: "Cycle survey", icon: DashboardIcon },
+  { href: "/admin/agents", label: "Agents", icon: DashboardIcon },
   { href: "/admin/submissions", label: "Submissions", icon: InboxIcon },
   { href: "/admin/snapshot", label: "Build snapshot", icon: CameraIcon },
   { href: "/admin/spotlight", label: "Spotlight", icon: SparklesIcon },

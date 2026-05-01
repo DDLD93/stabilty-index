@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { MOODS, PILLAR_KEYS, NIGERIAN_STATES, SPOTLIGHT_TAGS } from "@/lib/constants";
 import { getDeviceHash } from "@/lib/deviceHash";
+import { normalizeRefQueryParam } from "@/lib/agentReferrerCode";
 
 export type SurveyQuestion = {
   pillarKey: string;
@@ -32,6 +34,13 @@ function getPillarImage(pillarKey: string): string {
 }
 
 export function SurveyWizard() {
+  const searchParams = useSearchParams();
+  const refFromUrl = normalizeRefQueryParam(searchParams.get("ref"));
+  /** Only set when `/api/public/agent-by-code` confirms an active agent (used on submit). */
+  const [referrerCodeToSubmit, setReferrerCodeToSubmit] = useState<string | null>(null);
+  const [refLabel, setRefLabel] = useState<string | null>(null);
+  const [refCheckDone, setRefCheckDone] = useState(!refFromUrl);
+
   const [cycle, setCycle] = useState<Cycle | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +56,41 @@ export function SurveyWizard() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [deviceHash, setDeviceHash] = useState<string | null>(null);
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
+
+  useEffect(() => {
+    if (!refFromUrl) {
+      setRefLabel(null);
+      setReferrerCodeToSubmit(null);
+      setRefCheckDone(true);
+      return;
+    }
+    setRefCheckDone(false);
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/public/agent-by-code?code=${encodeURIComponent(refFromUrl)}`);
+        const data = (await res.json()) as { valid?: boolean; displayLabel?: string };
+        if (cancelled) return;
+        if (data.valid && data.displayLabel) {
+          setRefLabel(data.displayLabel);
+          setReferrerCodeToSubmit(refFromUrl);
+        } else {
+          setRefLabel(null);
+          setReferrerCodeToSubmit(null);
+        }
+      } catch {
+        if (!cancelled) {
+          setRefLabel(null);
+          setReferrerCodeToSubmit(null);
+        }
+      } finally {
+        if (!cancelled) setRefCheckDone(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [refFromUrl]);
 
   useEffect(() => {
     let cancelled = false;
@@ -112,6 +156,7 @@ export function SurveyWizard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...(deviceHash && { deviceHash }),
+          ...(referrerCodeToSubmit && { referrerCode: referrerCodeToSubmit }),
           pillarResponses,
           mood: mood || null,
           oneWord: oneWord.trim() || null,
@@ -215,6 +260,16 @@ export function SurveyWizard() {
           </span>
           <span className="text-xs text-[color:var(--nsi-ink-soft)]">{cycle.monthYear}</span>
         </div>
+        {refFromUrl && refCheckDone && refLabel && (
+          <p className="mt-2 text-xs text-[color:var(--nsi-ink-soft)]">
+            Referral link recognized — thank you for participating via <span className="font-medium text-[color:var(--nsi-ink)]">{refLabel}</span>.
+          </p>
+        )}
+        {refFromUrl && refCheckDone && !refLabel && (
+          <p className="mt-2 text-xs text-amber-800/90">
+            This referral link is not valid or is no longer active. You can still complete the survey; it will not be attributed to a referrer.
+          </p>
+        )}
       </div>
 
       <div className="p-6 sm:p-8">
