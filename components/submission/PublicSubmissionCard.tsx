@@ -1,5 +1,6 @@
 "use client";
 
+import { getClientDeviceInfo } from "@/lib/clientDeviceInfo";
 import { MOODS, NIGERIAN_STATES, PILLAR_KEYS, SPOTLIGHT_TAGS } from "@/lib/constants";
 import { useEffect, useMemo, useState } from "react";
 
@@ -75,7 +76,9 @@ export function PublicSubmissionCard() {
     e.preventDefault();
     setError(null);
     setStatus("submitting");
+    const deviceInfo = getClientDeviceInfo();
     const payload = {
+      ...(deviceInfo && { deviceInfo }),
       pillarResponses: { ...pillarValues },
       spotlightState: spotlightState.trim() || null,
       spotlightTags,
@@ -99,14 +102,16 @@ export function PublicSubmissionCard() {
     e.preventDefault();
     setError(null);
     setStatus("submitting");
-    const payload: LegacyPayload = {
+    const legacyDeviceInfo = getClientDeviceInfo();
+    const payload = {
       stabilityScore,
       mood,
       oneWord: oneWord.trim(),
       spotlightState: spotlightState.trim() ? spotlightState : null,
       spotlightTags,
       spotlightComment: spotlightComment.trim() ? spotlightComment.trim() : null,
-    };
+      ...(legacyDeviceInfo && { deviceInfo: legacyDeviceInfo }),
+    } satisfies LegacyPayload & { deviceInfo?: NonNullable<ReturnType<typeof getClientDeviceInfo>> };
     const res = await fetch("/api/public/submit", {
       method: "POST",
       headers: { "content-type": "application/json" },

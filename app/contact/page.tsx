@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ContactForm } from "@/components/public/ContactForm";
 import { defaultMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = {
@@ -44,17 +45,23 @@ export default function ContactPage() {
       <section className="mx-auto mt-20 w-full max-w-7xl px-6">
         <div className="nsi-card-soft p-8">
           <h2 className="font-serif text-xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-            Email
+            Send a message
           </h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-[color:var(--nsi-ink-soft)]">
+            Use the form below and we will get back to you. You can also email us
+            directly if you prefer your own mail app.
+          </p>
+          <ContactForm />
+          <p className="mt-10 text-sm font-medium text-[color:var(--nsi-ink)]">Email directly</p>
           <a
             href="mailto:contact@NigeriaStabilityIndex.com"
-            className="mt-3 inline-block text-[color:var(--nsi-green)] underline underline-offset-4 transition-colors hover:text-[color:var(--nsi-green-deep)]"
+            className="mt-2 inline-block text-[color:var(--nsi-green)] underline underline-offset-4 transition-colors hover:text-[color:var(--nsi-green-deep)]"
           >
             contact@NigeriaStabilityIndex.com
           </a>
           <p className="mt-4 text-sm leading-6 text-[color:var(--nsi-ink-soft)]">
-            For media or partnership enquiries, please use the same address and
-            include a brief subject line.
+            For media or partnership enquiries, please pick the matching subject in
+            the form or mention it in your email subject line.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link

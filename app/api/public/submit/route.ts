@@ -1,8 +1,10 @@
+import type { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { MOODS, NIGERIAN_STATES, PILLAR_KEYS, SPOTLIGHT_TAGS } from "@/lib/constants";
 import { isValidReferrerCodeFormat } from "@/lib/agentReferrerCode";
+import { deviceInfoPayloadSchema } from "@/lib/clientDeviceInfo";
 
 const referrerCodeField = z
   .string()
@@ -19,6 +21,7 @@ const legacySchema = z.object({
   spotlightTags: z.array(z.enum(SPOTLIGHT_TAGS)).max(8).optional().default([]),
   spotlightComment: z.string().trim().max(600).nullable().optional(),
   referrerCode: referrerCodeField,
+  deviceInfo: deviceInfoPayloadSchema.optional(),
 });
 
 const pillarResponsesSchema = z.record(z.string(), z.number().int().min(1).max(5)).refine(
@@ -42,6 +45,7 @@ const submitSchema = z.union([
     spotlightTags: z.array(z.enum(SPOTLIGHT_TAGS)).max(8).optional().default([]),
     spotlightComment: z.string().trim().max(600).nullable().optional(),
     referrerCode: referrerCodeField,
+    deviceInfo: deviceInfoPayloadSchema.optional(),
   }),
 ]);
 
@@ -147,12 +151,16 @@ export async function POST(req: Request) {
       spotlightState?: string | null;
       spotlightTags?: string[];
       spotlightComment?: string | null;
+      deviceInfo?: z.infer<typeof deviceInfoPayloadSchema>;
     };
+    const deviceInfoJson: Prisma.InputJsonValue | undefined =
+      pillarData.deviceInfo != null ? (pillarData.deviceInfo as Prisma.InputJsonValue) : undefined;
     await db.submission.create({
       data: {
         cycleId: cycle.id,
         ...(agentId && { agentId }),
         ...(deviceHash && { deviceHash }),
+        ...(deviceInfoJson != null && { deviceInfo: deviceInfoJson }),
         stabilityScore: clampedScore,
         mood: pillarData.mood ?? null,
         oneWord: pillarData.oneWord ?? null,
@@ -175,10 +183,14 @@ export async function POST(req: Request) {
     );
   }
 
+  const legacyDeviceInfo: Prisma.InputJsonValue | undefined =
+    legacy.deviceInfo != null ? (legacy.deviceInfo as Prisma.InputJsonValue) : undefined;
+
   await db.submission.create({
     data: {
       cycleId: cycle.id,
       ...(agentId && { agentId }),
+      ...(legacyDeviceInfo != null && { deviceInfo: legacyDeviceInfo }),
       stabilityScore: legacy.stabilityScore,
       mood: legacy.mood,
       oneWord: legacy.oneWord,
