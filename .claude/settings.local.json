@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\umarj\\\\react\\\\stabilty-index\" -Recurse -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -First 20)",
+      "Bash(grep *)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}
