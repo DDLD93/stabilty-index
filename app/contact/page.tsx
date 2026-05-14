@@ -54,10 +54,10 @@ export default function ContactPage() {
           <ContactForm />
           <p className="mt-10 text-sm font-medium text-[color:var(--nsi-ink)]">Email directly</p>
           <a
-            href="mailto:contact@NigeriaStabilityIndex.com"
+            href="mailto:info@nigeriastabilityIndex.ng"
             className="mt-2 inline-block text-[color:var(--nsi-green)] underline underline-offset-4 transition-colors hover:text-[color:var(--nsi-green-deep)]"
           >
-            contact@NigeriaStabilityIndex.com
+            info@nigeriastabilityIndex.ng
           </a>
           <p className="mt-4 text-sm leading-6 text-[color:var(--nsi-ink-soft)]">
             For media or partnership enquiries, please pick the matching subject in
