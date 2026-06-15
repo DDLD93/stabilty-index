@@ -208,7 +208,7 @@ export default async function Home() {
                   </div>
                 )}
               </div>
-              <h1 className="font-serif text-5xl font-bold leading-[1.1] tracking-tight text-[color:var(--nsi-ink)] lg:text-7xl drop-shadow-sm">
+              <h1 className="font-serif text-5xl font-bold leading-[1.1] tracking-tight text-[color:var(--nsi-ink)] lg:text-6xl drop-shadow-sm">
                 Tracking How Nigeria
                 <br />
                 <span className="text-[color:var(--nsi-green)]">Is Holding Together</span>
@@ -220,7 +220,7 @@ export default async function Home() {
                 {cycleOpen && (
                   <Link
                     href="/survey"
-                    className="inline-flex items-center rounded-xl bg-[color:var(--nsi-green)] px-8 py-4 text-lg font-bold text-white shadow-2xl transition-all hover:scale-105 hover:brightness-110"
+                    className="inline-flex items-center rounded-xl bg-[color:var(--nsi-green)] px-7 py-3 text-lg font-bold text-white shadow-2xl transition-all hover:scale-105 hover:brightness-110"
                   >
                     Take the survey
                   </Link>

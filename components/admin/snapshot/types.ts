@@ -79,7 +79,7 @@ export const defaultSnapshot: SnapshotModel = {
     ],
   },
   stateSpotlightContent: {
-    state: "No StateSpotlight this round",
+    state: "",
     score: 0,
     keyPointsHtml: "<ul><li>No report on statespotlight</li></ul>",
   },
