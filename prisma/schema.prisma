@@ -51,6 +51,9 @@ model Submission {
 
   deviceHash String?
 
+  /** Coarse client snapshot (timezone, screen, language, etc.) at submit. */
+  deviceInfo Json?
+
   stabilityScore Int?
   mood           String?
   oneWord        String?

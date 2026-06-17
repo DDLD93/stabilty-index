@@ -89,10 +89,10 @@ export default function PrivacyPage() {
             For privacy-related questions or to request removal of your data,
             contact us at{" "}
             <a
-              href="mailto:contact@NigeriaStabilityIndex.com"
+              href="mailto:info@nigeriastabilityIndex.ng"
               className="text-[color:var(--nsi-green)] underline underline-offset-4 hover:text-[color:var(--nsi-green-deep)]"
             >
-              contact@NigeriaStabilityIndex.com
+              info@nigeriastabilityIndex.ng
             </a>
             .
           </p>

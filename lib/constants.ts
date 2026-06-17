@@ -47,6 +47,7 @@ export const NIGERIAN_STATES = [
   "Yobe",
   "Zamfara",
   "FCT",
+  "Abuja",
   "N/A",
 ] as const;
 

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { MOODS, PILLAR_KEYS, NIGERIAN_STATES, SPOTLIGHT_TAGS } from "@/lib/constants";
+import { getClientDeviceInfo } from "@/lib/clientDeviceInfo";
 import { getDeviceHash } from "@/lib/deviceHash";
 import { normalizeRefQueryParam } from "@/lib/agentReferrerCode";
 
@@ -151,12 +152,14 @@ export function SurveyWizard() {
     setSubmitting(true);
     setSubmitError(null);
     try {
+      const deviceInfo = getClientDeviceInfo();
       const res = await fetch("/api/public/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...(deviceHash && { deviceHash }),
           ...(referrerCodeToSubmit && { referrerCode: referrerCodeToSubmit }),
+          ...(deviceInfo && { deviceInfo }),
           pillarResponses,
           mood: mood || null,
           oneWord: oneWord.trim() || null,

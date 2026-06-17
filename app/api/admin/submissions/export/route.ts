@@ -36,6 +36,7 @@ export async function GET(req: Request) {
       spotlightState: true,
       spotlightTags: true,
       spotlightComment: true,
+      deviceInfo: true,
       cycleId: true,
     },
   });
@@ -51,12 +52,15 @@ export async function GET(req: Request) {
     "spotlightState",
     "spotlightTags",
     "spotlightComment",
+    "deviceInfo",
   ].join(",");
 
   const body = rows
     .map((r) => {
       const pr = (r.pillarResponses ?? {}) as Record<string, number>;
       const pillarVals = pillarCols.map((k) => (pr[k] != null ? String(pr[k]) : ""));
+      const deviceJson =
+        r.deviceInfo != null ? JSON.stringify(r.deviceInfo as object) : "";
       return [
         csvEscape(r.createdAt.toISOString()),
         csvEscape(r.cycleId),
@@ -67,6 +71,7 @@ export async function GET(req: Request) {
         csvEscape(r.spotlightState ?? ""),
         csvEscape(r.spotlightTags.join("|")),
         csvEscape(r.spotlightComment ?? ""),
+        csvEscape(deviceJson),
       ].join(",");
     })
     .join("\n");

@@ -51,6 +51,7 @@ export async function GET(req: Request) {
         spotlightState: true,
         spotlightTags: true,
         spotlightComment: true,
+        deviceInfo: true,
         isFlagged: true,
         cycleId: true,
         agent: {

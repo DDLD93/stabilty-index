@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { formatDeviceInfoSummary } from "@/lib/clientDeviceInfo";
 import { PILLARS } from "@/lib/constants";
 
 type Item = {
@@ -13,6 +14,7 @@ type Item = {
   spotlightState: string | null;
   spotlightTags: string[];
   spotlightComment: string | null;
+  deviceInfo?: unknown | null;
   isFlagged: boolean;
   cycleId: string;
   agent: { name: string; referrerCode: string } | null;
@@ -164,6 +166,9 @@ export function SubmissionsTable({ cycleId }: SubmissionsTableProps) {
               <th scope="col" className="px-4 py-3">
                 Agent
               </th>
+              <th scope="col" className="px-4 py-3 max-w-[10rem]">
+                Device
+              </th>
               {PILLARS.map((p) => (
                 <th key={p.key} scope="col" className="px-4 py-3">
                   {p.label}
@@ -220,6 +225,9 @@ export function SubmissionsTable({ cycleId }: SubmissionsTableProps) {
                     <span className="text-black/40">—</span>
                   )}
                 </td>
+                <td className="max-w-[10rem] px-4 py-4 text-xs leading-snug text-black/70">
+                  {formatDeviceInfoSummary(s.deviceInfo)}
+                </td>
                 {PILLARS.map((p) => (
                   <td key={p.key} className="px-4 py-4">
                     {s.pillarResponses?.[p.key] != null ? (
@@ -269,7 +277,7 @@ export function SubmissionsTable({ cycleId }: SubmissionsTableProps) {
               <tr>
                 <td
                   className="px-4 py-12 text-center text-sm text-black/60"
-                  colSpan={7 + PILLARS.length}
+                  colSpan={8 + PILLARS.length}
                 >
                   <div className="flex flex-col items-center gap-2">
                     <span className="text-3xl">📭</span>
