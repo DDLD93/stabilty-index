@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { MOODS, NIGERIAN_STATES, PILLAR_KEYS, SPOTLIGHT_TAGS } from "@/lib/constants";
+import { MOODS, NIGERIAN_STATES, PILLAR_KEYS, SPOTLIGHT_TAGS, PILLARS } from "@/lib/constants";
 import { isValidReferrerCodeFormat } from "@/lib/agentReferrerCode";
 import { deviceInfoPayloadSchema } from "@/lib/clientDeviceInfo";
 
@@ -108,8 +108,17 @@ export async function POST(req: Request) {
     if (isPillarPayload) {
       return NextResponse.json({ error: "No open cycle with survey. Collection is closed or not set up." }, { status: 409 });
     }
+    const defaultQuestions = PILLARS.map((p) => ({
+      pillarKey: p.key,
+      pillarLabel: p.label,
+      questionText: `How stable is ${p.label} in Nigeria this month?`,
+    }));
     cycle = await db.cycle.create({
-      data: { status: "OPEN", monthYear: formatMonthYear(new Date()) },
+      data: {
+        status: "OPEN",
+        monthYear: formatMonthYear(new Date()),
+        surveyQuestions: defaultQuestions as unknown as Prisma.InputJsonValue,
+      },
       select: { id: true, status: true, surveyQuestions: true },
     });
   }

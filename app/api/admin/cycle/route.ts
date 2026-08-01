@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireAdminSession, getAuditAdminUserId } from "@/lib/adminSession";
-import { PILLAR_KEYS } from "@/lib/constants";
+import { PILLAR_KEYS, PILLARS } from "@/lib/constants";
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
 
@@ -128,11 +128,22 @@ export async function PATCH(req: Request) {
 
   const { action, monthYear: bodyMonthYear } = parsed.data;
   const defaultMonthYear = bodyMonthYear?.trim() ? bodyMonthYear.trim() : formatMonthYear(new Date());
+
+  const defaultQuestions = PILLARS.map((p) => ({
+    pillarKey: p.key,
+    pillarLabel: p.label,
+    questionText: `How stable is ${p.label} in Nigeria this month?`,
+  }));
+
   if (!currentCycle) {
     // Only one open cycle: close any other OPEN before creating
     await db.cycle.updateMany({ where: { status: "OPEN" }, data: { status: "CLOSED" } });
     const created = await db.cycle.create({
-      data: { status: "OPEN", monthYear: defaultMonthYear },
+      data: {
+        status: "OPEN",
+        monthYear: defaultMonthYear,
+        surveyQuestions: defaultQuestions as unknown as Prisma.InputJsonValue,
+      },
     });
     return NextResponse.json({ currentCycle: created });
   }
@@ -172,7 +183,11 @@ export async function PATCH(req: Request) {
   // Only one open cycle: ensure no other is OPEN before creating
   await db.cycle.updateMany({ where: { status: "OPEN" }, data: { status: "CLOSED" } });
   const created = await db.cycle.create({
-    data: { status: "OPEN", monthYear: defaultMonthYear },
+    data: {
+      status: "OPEN",
+      monthYear: defaultMonthYear,
+      surveyQuestions: defaultQuestions as unknown as Prisma.InputJsonValue,
+    },
   });
   await db.auditLog.create({
     data: {
