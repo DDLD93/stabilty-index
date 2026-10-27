@@ -145,7 +145,13 @@ export default function AboutPage() {
                 institutional leaders to track real trajectories over time.
               </p>
               <div className="mt-6 flex items-center gap-6 border-t border-[color:var(--nsi-rule)] pt-6">
-                <NigeriaMapSilhouette className="h-20 w-24 shrink-0" />
+                <Image
+                  src="/nsi-logo-full.webp"
+                  alt="Nigeria Stability Index Official Logo"
+                  width={132}
+                  height={90}
+                  className="h-20 w-auto shrink-0 object-contain"
+                />
                 <div>
                   <div className="font-mono text-xs font-bold uppercase tracking-wider text-[color:var(--nsi-gold-deep)]">
                     A Project Of

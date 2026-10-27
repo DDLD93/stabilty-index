@@ -51,8 +51,8 @@ function SignInInner() {
       <div className="mx-auto w-full max-w-md">
         <div className="overflow-hidden rounded-[4px] border border-[color:var(--nsi-rule-strong)] border-t-4 border-t-[color:var(--nsi-green)] bg-white shadow-md">
           <div className="border-b border-[color:var(--nsi-rule)] bg-[color:var(--nsi-green-deep)] px-8 py-6 text-white">
-            <div className="flex items-center gap-3">
-              <NSIShieldMark className="h-9 w-9 shrink-0" />
+            <div className="flex items-center gap-3.5">
+              <NSIShieldMark className="h-11 w-16 shrink-0" />
               <div>
                 <div className="font-mono text-[0.65rem] font-bold uppercase tracking-widest text-[color:var(--nsi-gold-light)]">
                   Authorized Personnel

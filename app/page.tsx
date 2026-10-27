@@ -328,9 +328,18 @@ export default async function Home() {
               <div className="overflow-hidden rounded-[4px] border border-white/20 bg-[#04170e]/90 shadow-2xl">
                 {/* Top Brass Header */}
                 <div className="flex items-center justify-between border-b border-white/15 bg-white/[0.04] px-6 py-3.5">
-                  <span className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.15em] text-[color:var(--nsi-gold-light)]">
-                    National Composite Index
-                  </span>
+                  <div className="flex items-center gap-2.5">
+                    <Image
+                      src="/nsi-emblem.webp"
+                      alt="NSI Emblem"
+                      width={36}
+                      height={24}
+                      className="h-6 w-9 object-contain"
+                    />
+                    <span className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.15em] text-[color:var(--nsi-gold-light)]">
+                      National Composite Index
+                    </span>
+                  </div>
                   <span className="font-mono text-[0.68rem] uppercase tracking-wider text-white/60">
                     {period}
                   </span>

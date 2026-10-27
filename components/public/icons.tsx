@@ -4,39 +4,24 @@ type IconProps = React.SVGProps<SVGSVGElement> & {
   title?: string;
 };
 
-export function NSIShieldMark({ title = "NSI", ...props }: IconProps) {
+export function NSIShieldMark({ title = "Nigeria Stability Index", className, ...props }: IconProps) {
   return (
     <svg
-      viewBox="0 0 64 64"
-      width="28"
-      height="28"
+      viewBox="0 0 1259 818"
+      width="48"
+      height="32"
+      className={className}
       aria-hidden={title ? undefined : true}
       role={title ? "img" : "presentation"}
       {...props}
     >
       {title ? <title>{title}</title> : null}
-      {/* Sovereign shield outer frame */}
-      <path
-        d="M32 4L56 12V30C56 45.5 45.8 55.8 32 60C18.2 55.8 8 45.5 8 30V12L32 4Z"
-        fill="#0b3b24"
-        stroke="#c88a2b"
-        strokeWidth="2.5"
+      <image
+        href="/nsi-emblem.webp"
+        width="1259"
+        height="818"
+        preserveAspectRatio="xMidYMid meet"
       />
-      {/* Inner Nigerian tripartite division (Green - White/Gold - Green) */}
-      <path
-        d="M32 9L51 15.5V29.5C51 42.2 42.8 50.8 32 54.5C21.2 50.8 13 42.2 13 29.5V15.5L32 9Z"
-        fill="#062315"
-        stroke="#c88a2b"
-        strokeWidth="1"
-        strokeOpacity="0.55"
-      />
-      {/* Vertical Meridian & Index Bar */}
-      <line x1="25" y1="14" x2="25" y2="50" stroke="#c88a2b" strokeWidth="1.5" strokeOpacity="0.6" />
-      <line x1="39" y1="14" x2="39" y2="50" stroke="#c88a2b" strokeWidth="1.5" strokeOpacity="0.6" />
-      <rect x="26.5" y="13" width="11" height="37" fill="#c88a2b" fillOpacity="0.16" />
-      {/* Equatorial Index Crossbar */}
-      <path d="M16 30H48" stroke="#c88a2b" strokeWidth="2.2" />
-      <circle cx="32" cy="30" r="3.5" fill="#c88a2b" />
     </svg>
   );
 }
@@ -430,54 +415,19 @@ export function NigeriaMapSilhouette({ className, ...props }: IconProps) {
 export function NSIBadgeLogo({ className, ...props }: IconProps) {
   return (
     <svg
-      viewBox="0 0 80 96"
+      viewBox="0 0 1259 818"
       className={className}
       role="img"
-      aria-label="NSI Institutional Crest"
+      aria-label="Nigeria Stability Index Official Emblem"
       {...props}
     >
       <title>Nigeria Stability Index</title>
-      <path
-        d="M40 4 L72 14 V44 C72 67 57 82 40 90 C23 82 8 67 8 44 V14 L40 4 Z"
-        fill="#062315"
-        stroke="#c88a2b"
-        strokeWidth="2.5"
+      <image
+        href="/nsi-emblem.webp"
+        width="1259"
+        height="818"
+        preserveAspectRatio="xMidYMid meet"
       />
-      <path
-        d="M40 10 L66 18.5 V43.5 C66 63 53 76 40 83 C27 76 14 63 14 43.5 V18.5 L40 10 Z"
-        fill="#0b3b24"
-        stroke="#c88a2b"
-        strokeWidth="1"
-        strokeOpacity="0.5"
-      />
-      {/* Tripartite Nigerian columns */}
-      <line x1="30" y1="16" x2="30" y2="75" stroke="#c88a2b" strokeWidth="1" strokeOpacity="0.35" />
-      <line x1="50" y1="16" x2="50" y2="75" stroke="#c88a2b" strokeWidth="1" strokeOpacity="0.35" />
-      <text
-        x="40"
-        y="48"
-        textAnchor="middle"
-        fontSize="19"
-        fontWeight="700"
-        fontFamily="Georgia, serif"
-        fill="#ffffff"
-        letterSpacing="2"
-      >
-        NSI
-      </text>
-      <line x1="22" y1="56" x2="58" y2="56" stroke="#c88a2b" strokeWidth="1.5" />
-      <text
-        x="40"
-        y="66"
-        textAnchor="middle"
-        fontSize="6.5"
-        fontWeight="700"
-        fontFamily="monospace"
-        fill="#e4b05a"
-        letterSpacing="1.5"
-      >
-        NIGERIA
-      </text>
     </svg>
   );
 }

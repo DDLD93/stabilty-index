@@ -54,7 +54,7 @@ export function Header() {
             href="/"
             className="group flex items-center gap-3.5 focus:outline-none"
           >
-            <NSIShieldMark className="h-10 w-10 shrink-0 transition-transform duration-200 group-hover:scale-[1.03]" />
+            <NSIShieldMark className="h-11 w-[4.2rem] shrink-0 drop-shadow-sm transition-transform duration-200 group-hover:scale-[1.03] sm:h-12 sm:w-[4.6rem]" />
             <div className="flex flex-col">
               <div className="flex items-baseline gap-2">
                 <span className="font-serif text-xl font-bold tracking-tight text-white sm:text-[1.35rem]">

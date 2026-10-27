@@ -44,7 +44,7 @@ export function AdminSidenav() {
           {mobileOpen ? <XIcon /> : <MenuIcon />}
         </button>
         <div className="flex items-center gap-2">
-          <NSIShieldMark className="h-5 w-5" />
+          <NSIShieldMark className="h-7 w-11" />
           <span className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-white">
             NSI Research Console
           </span>
@@ -67,7 +67,7 @@ export function AdminSidenav() {
         <div className="flex flex-1 flex-col gap-6 p-5 pt-6">
           {/* Logo and branding */}
           <div className="flex items-center gap-3 border-b border-white/15 pb-5 px-2">
-            <NSIShieldMark className="h-9 w-9 shrink-0" />
+            <NSIShieldMark className="h-11 w-16 shrink-0" />
             <div className="flex flex-col">
               <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[color:var(--nsi-gold-light)]">
                 Research Operations

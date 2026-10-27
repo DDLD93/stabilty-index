@@ -145,7 +145,7 @@ export function PublicationPoster({
         <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
           {/* Logo + Publication Identity */}
           <div className="flex items-start gap-5">
-            <NSIBadgeLogo className="h-20 w-16 shrink-0" />
+            <NSIBadgeLogo className="h-20 w-28 shrink-0 drop-shadow-md" />
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-[2px] border border-[color:var(--nsi-gold)]/50 bg-[color:var(--nsi-gold)]/15 px-2 py-0.5 font-mono text-[0.65rem] font-bold uppercase tracking-widest text-[color:var(--nsi-gold-light)]">
@@ -467,7 +467,7 @@ export function PublicationPoster({
       <footer className="nsi-band px-6 py-8 text-white sm:px-12">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <NSIBadgeLogo className="h-14 w-12 shrink-0" />
+            <NSIBadgeLogo className="h-14 w-20 shrink-0 drop-shadow-sm" />
             <div>
               <p className="font-serif text-lg font-bold">
                 Nigeria Stability Index (NSI)

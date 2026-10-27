@@ -28,7 +28,7 @@ export function SiteFooter() {
           {/* Column 1: Institutional Identity (5 cols) */}
           <div className="lg:col-span-5">
             <div className="flex items-center gap-3.5">
-              <NSIShieldMark className="h-10 w-10 shrink-0" />
+              <NSIShieldMark className="h-12 w-[4.6rem] shrink-0 drop-shadow-sm" />
               <div>
                 <div className="font-serif text-xl font-bold tracking-tight text-white">
                   Nigeria Stability Index (NSI)
