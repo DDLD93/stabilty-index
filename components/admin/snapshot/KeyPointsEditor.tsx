@@ -32,7 +32,7 @@ export function KeyPointsEditor({
       editorProps: {
         attributes: {
           class:
-            "min-h-[120px] w-full rounded-lg border border-black/15 bg-white px-3 py-2 text-sm text-[color:var(--nsi-ink)] focus-within:border-[color:var(--nsi-green)] focus-within:outline-none focus-within:ring-1 focus-within:ring-[color:var(--nsi-green)] prose prose-sm max-w-none",
+            "min-h-[120px] w-full rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-white px-3 py-2 text-sm text-[color:var(--nsi-ink)] focus-within:border-[color:var(--nsi-green)] focus-within:outline-none focus-within:ring-1 focus-within:ring-[color:var(--nsi-green)] prose prose-sm max-w-none",
         },
       },
     },
@@ -49,7 +49,7 @@ export function KeyPointsEditor({
     const current = editor.getHTML();
     const next = value?.trim() || emptyContent;
     if (next !== current) {
-      editor.commands.setContent(next, false);
+      editor.commands.setContent(next, { emitUpdate: false });
     }
   }, [editor, value]);
 

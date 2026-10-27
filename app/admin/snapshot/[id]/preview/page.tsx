@@ -16,10 +16,10 @@ export default async function AdminSnapshotPreviewPage({ params }: Props) {
 
   if (!snapshot) {
     return (
-      <div className="rounded-2xl border border-red-200 bg-red-50 p-8">
-        <p className="font-medium text-red-800">Snapshot not found.</p>
-        <Link href="/admin/snapshot" className="mt-4 inline-block text-sm text-red-600 hover:underline">
-          Back to Snapshot builder
+      <div className="rounded-[3px] border border-red-300 bg-red-50 p-8">
+        <p className="font-semibold text-red-900">Snapshot not found.</p>
+        <Link href="/admin/snapshot" className="mt-4 inline-block font-mono text-xs uppercase tracking-wider text-red-700 hover:underline">
+          ← Back to Snapshot Builder
         </Link>
       </div>
     );
@@ -29,15 +29,15 @@ export default async function AdminSnapshotPreviewPage({ params }: Props) {
 
   return (
     <div className="w-full">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-800">
-          {isDraft ? "Preview (draft)" : "Preview (published)"}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-[color:var(--nsi-rule-strong)] pb-4">
+        <div className="rounded-[2px] border border-amber-300 bg-amber-50 px-3.5 py-1.5 font-mono text-xs font-bold uppercase tracking-[0.14em] text-amber-900">
+          {isDraft ? "Editorial Preview · Draft State" : "Editorial Preview · Published Edition"}
         </div>
         <Link
-          href={`/admin/snapshot`}
-          className="text-sm font-medium text-[color:var(--nsi-green)] hover:underline"
+          href="/admin/snapshot"
+          className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-green)] hover:underline"
         >
-          ← Back to Snapshot builder
+          ← Back to Snapshot Builder
         </Link>
       </div>
       <PublicationDashboard snapshotId={id} />

@@ -11,43 +11,44 @@ type SnapshotOverviewProps = {
 export function SnapshotOverview({ model, setModel, locked }: SnapshotOverviewProps) {
   return (
     <div className="space-y-6">
-      {/* Score Display */}
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-[color:var(--nsi-green)]/20 bg-gradient-to-br from-[color:var(--nsi-green)]/5 to-transparent p-8">
-        <span className="text-sm font-medium uppercase tracking-wide text-[color:var(--nsi-ink-soft)]">
-          Overall Score
+      <div className="flex flex-col items-center justify-center rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-[color:var(--nsi-paper)] p-8">
+        <span className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--nsi-ink-muted)]">
+          National Composite Score
         </span>
         <div className="mt-2 flex items-baseline gap-1">
           <span className="font-serif text-6xl font-bold tabular-nums text-[color:var(--nsi-green)]">
             {model.overallScore.toFixed(1)}
           </span>
-          <span className="text-2xl text-[color:var(--nsi-ink-soft)]">/10</span>
+          <span className="font-mono text-xl text-[color:var(--nsi-ink-muted)]">/10</span>
         </div>
-        {/* Score Bar Visualization */}
-        <div className="mt-4 h-3 w-full max-w-xs overflow-hidden rounded-full bg-black/5">
+        <div className="mt-4 h-2.5 w-full max-w-xs overflow-hidden rounded-[1px] bg-black/10">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-[color:var(--nsi-green)] to-[color:var(--nsi-green-teal)] transition-all duration-500"
+            className="h-full rounded-[1px] bg-[color:var(--nsi-green)] transition-all duration-500"
             style={{ width: `${(model.overallScore / 10) * 100}%` }}
           />
         </div>
       </div>
 
-      {/* Form Fields */}
       <div className="grid gap-6 md:grid-cols-2">
         <label className="block">
-          <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Period</span>
-          <p className="mt-0.5 text-xs text-[color:var(--nsi-ink-soft)]">Month and year for this snapshot</p>
+          <span className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+            Edition Period
+          </span>
+          <p className="mt-0.5 text-xs text-[color:var(--nsi-ink-muted)]">Month and year for this snapshot</p>
           <input
             className="admin-input mt-2"
             value={model.period}
             onChange={(e) => setModel((m) => ({ ...m, period: e.target.value }))}
             disabled={locked}
-            placeholder="e.g., January 2026"
+            placeholder="e.g., October 2026"
           />
         </label>
 
         <label className="block">
-          <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Overall Score</span>
-          <p className="mt-0.5 text-xs text-[color:var(--nsi-ink-soft)]">Scale of 0 to 10</p>
+          <span className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+            Overall Score
+          </span>
+          <p className="mt-0.5 text-xs text-[color:var(--nsi-ink-muted)]">Scale of 0.0 to 10.0</p>
           <input
             className="admin-input mt-2"
             type="number"
@@ -62,12 +63,14 @@ export function SnapshotOverview({ model, setModel, locked }: SnapshotOverviewPr
       </div>
 
       <label className="block">
-        <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Overall Narrative</span>
-        <p className="mt-0.5 text-xs text-[color:var(--nsi-ink-soft)]">
-          A brief summary describing the overall stability assessment
+        <span className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+          Executive Narrative
+        </span>
+        <p className="mt-0.5 text-xs text-[color:var(--nsi-ink-muted)]">
+          Synthesis of the overall national stability assessment
         </p>
         <textarea
-          className="admin-input mt-2 min-h-[100px] resize-y"
+          className="admin-input mt-2 min-h-[120px] resize-y"
           value={model.overallNarrative}
           onChange={(e) => setModel((m) => ({ ...m, overallNarrative: e.target.value }))}
           disabled={locked}

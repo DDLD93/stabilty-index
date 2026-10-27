@@ -8,7 +8,7 @@ import {
 } from "@/lib/contactSubjects";
 
 const inputClass =
-  "mt-1 w-full rounded-xl border border-black/10 bg-white/70 px-4 py-3 text-[color:var(--nsi-ink)] outline-none ring-0 transition-all focus:border-[color:var(--nsi-green)] focus:bg-white";
+  "mt-1.5 w-full rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-[color:var(--nsi-paper)] px-4 py-3 text-sm text-[color:var(--nsi-ink)] outline-none transition-colors focus:border-[color:var(--nsi-green)] focus:bg-white";
 
 export function ContactForm() {
   const [name, setName] = useState("");
@@ -58,43 +58,52 @@ export function ContactForm() {
 
   if (done) {
     return (
-      <div className="rounded-xl border border-black/10 bg-white/70 px-6 py-5 text-sm text-[color:var(--nsi-ink)] shadow-sm">
-        Thank you — your message has been sent. We aim to reply within a few business days.
+      <div className="mt-6 rounded-[3px] border border-[color:var(--nsi-green)]/30 bg-[color:var(--nsi-emerald-tint)] px-6 py-5 text-sm font-medium text-[color:var(--nsi-green)]">
+        Thank you — your message has been sent to the NSI desk. We aim to reply
+        within a few business days.
       </div>
     );
   }
 
   return (
     <form className="mt-6 space-y-5" onSubmit={onSubmit}>
-      <label className="block">
-        <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Name</span>
-        <input
-          className={inputClass}
-          type="text"
-          name="name"
-          autoComplete="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={120}
-          required
-        />
-      </label>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <label className="block">
+          <span className="font-mono text-xs font-bold uppercase tracking-wider text-[color:var(--nsi-ink)]">
+            Name
+          </span>
+          <input
+            className={inputClass}
+            type="text"
+            name="name"
+            autoComplete="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={120}
+            required
+          />
+        </label>
+
+        <label className="block">
+          <span className="font-mono text-xs font-bold uppercase tracking-wider text-[color:var(--nsi-ink)]">
+            Email
+          </span>
+          <input
+            className={inputClass}
+            type="email"
+            name="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </label>
+      </div>
 
       <label className="block">
-        <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Email</span>
-        <input
-          className={inputClass}
-          type="email"
-          name="email"
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </label>
-
-      <label className="block">
-        <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Subject</span>
+        <span className="font-mono text-xs font-bold uppercase tracking-wider text-[color:var(--nsi-ink)]">
+          Subject
+        </span>
         <select
           className={inputClass}
           name="subject"
@@ -112,7 +121,9 @@ export function ContactForm() {
 
       {subject === "other" ? (
         <label className="block">
-          <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Please specify</span>
+          <span className="font-mono text-xs font-bold uppercase tracking-wider text-[color:var(--nsi-ink)]">
+            Please specify
+          </span>
           <input
             className={inputClass}
             type="text"
@@ -127,7 +138,9 @@ export function ContactForm() {
       ) : null}
 
       <label className="block">
-        <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Message</span>
+        <span className="font-mono text-xs font-bold uppercase tracking-wider text-[color:var(--nsi-ink)]">
+          Message
+        </span>
         <textarea
           className={`${inputClass} min-h-[140px] resize-y`}
           name="message"
@@ -139,7 +152,7 @@ export function ContactForm() {
       </label>
 
       {error ? (
-        <p className="text-sm text-red-700" role="alert">
+        <p className="text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       ) : null}
@@ -147,9 +160,9 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={loading}
-        className="rounded-xl bg-[color:var(--nsi-gold)] px-6 py-3 text-sm font-semibold text-[color:var(--nsi-ink)] transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+        className="btn-nsi-primary disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {loading ? "Sending…" : "Send message"}
+        {loading ? "Sending…" : "Send Message →"}
       </button>
     </form>
   );

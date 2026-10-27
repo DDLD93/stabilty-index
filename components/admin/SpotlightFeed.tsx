@@ -62,8 +62,7 @@ export function SpotlightFeed() {
   }, [load]);
 
   return (
-    <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
-      {/* Live region for screen reader announcements */}
+    <div className="admin-card md:p-8">
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {loading
           ? "Loading spotlight entries..."
@@ -85,19 +84,19 @@ export function SpotlightFeed() {
         />
       </div>
 
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-[color:var(--nsi-rule)] pb-5">
         <div className="w-full sm:w-auto">
           <label htmlFor="state-filter" className="block">
-            <span className="text-xs font-semibold uppercase tracking-wide text-black/60">
-              Filter by state
+            <span className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink-muted)]">
+              Filter by State / Territory
             </span>
             <select
               id="state-filter"
-              className="admin-select mt-2 w-full sm:w-72"
+              className="admin-select mt-1.5 w-full sm:w-72"
               value={stateFilter}
               onChange={(e) => setStateFilter(e.target.value)}
             >
-              <option value="">All states</option>
+              <option value="">All 36 States & FCT</option>
               {NIGERIAN_STATES.map((s) => (
                 <option key={s} value={s}>
                   {s}
@@ -107,19 +106,16 @@ export function SpotlightFeed() {
           </label>
         </div>
 
-        <div className="flex items-center gap-2 text-sm font-medium text-black/70">
-          {loading && (
-            <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black/20 border-t-black/70" />
-          )}
-          <span className="tabular-nums">{items.length}</span> spotlight entries
-          <span className="text-black/50">({label})</span>
+        <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+          <span className="tabular-nums text-[color:var(--nsi-green)]">{items.length}</span> spotlight entries
+          <span className="text-[color:var(--nsi-ink-muted)]">({label})</span>
         </div>
       </div>
 
       {error && (
         <div
           role="alert"
-          className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+          className="mt-6 rounded-[3px] border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900"
         >
           {error}
         </div>
@@ -136,17 +132,17 @@ export function SpotlightFeed() {
             key={item.id}
             aria-posinset={index + 1}
             aria-setsize={items.length}
-            className="rounded-2xl border border-black/10 bg-[color:var(--nsi-paper)] p-5 transition-colors hover:border-black/15 hover:bg-[color:var(--nsi-paper-2)]"
+            className="rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-[color:var(--nsi-paper)] p-5 transition-colors hover:bg-white"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="text-sm font-medium text-black">
-                <span className="font-semibold">
-                  {item.spotlightState ?? "Unknown state"}
+              <div className="text-sm text-[color:var(--nsi-ink)]">
+                <span className="font-serif font-bold">
+                  {item.spotlightState ?? "Unspecified State"}
                 </span>
                 <span className="mx-2 text-black/30">·</span>
                 <time
                   dateTime={item.createdAt}
-                  className="text-black/60"
+                  className="font-mono text-xs text-[color:var(--nsi-ink-muted)]"
                 >
                   {new Date(item.createdAt).toLocaleString("en-NG", {
                     dateStyle: "medium",
@@ -154,26 +150,26 @@ export function SpotlightFeed() {
                   })}
                 </time>
               </div>
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-3 py-1 text-xs">
-                <span className="text-black/60">Score:</span>
-                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[color:var(--nsi-green)]/10 font-semibold text-[color:var(--nsi-green)]">
+              <div className="inline-flex items-center gap-1.5 rounded-[2px] border border-[color:var(--nsi-rule-strong)] bg-white px-2.5 py-1 font-mono text-xs">
+                <span className="text-[color:var(--nsi-ink-muted)]">Score:</span>
+                <span className="font-bold text-[color:var(--nsi-green)]">
                   {item.stabilityScore ?? "—"}
                 </span>
               </div>
             </div>
 
-            <div className="mt-3 text-sm text-black/70">
-              <span className="font-semibold text-black">{item.oneWord ?? "—"}</span>
+            <div className="mt-2.5 text-sm text-[color:var(--nsi-ink-soft)]">
+              <span className="font-semibold text-[color:var(--nsi-ink)]">{item.oneWord ?? "—"}</span>
               <span className="mx-2 text-black/30">·</span>
               <span>{item.mood ?? "—"}</span>
             </div>
 
             {item.spotlightTags.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-3 flex flex-wrap gap-1.5">
                 {item.spotlightTags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full border border-[color:var(--nsi-green)]/20 bg-[color:var(--nsi-green)]/5 px-3 py-1 text-xs font-medium text-[color:var(--nsi-green)]"
+                    className="rounded-[2px] border border-[color:var(--nsi-green)]/25 bg-[color:var(--nsi-green)]/5 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-[color:var(--nsi-green)]"
                   >
                     {tag}
                   </span>
@@ -182,24 +178,21 @@ export function SpotlightFeed() {
             )}
 
             {item.spotlightComment && (
-              <blockquote className="mt-4 border-l-2 border-[color:var(--nsi-green)]/30 pl-4 text-sm leading-relaxed text-black/70">
-                {item.spotlightComment}
+              <blockquote className="mt-4 border-l-2 border-[color:var(--nsi-gold)] pl-4 font-serif text-sm italic leading-relaxed text-[color:var(--nsi-ink)]">
+                &ldquo;{item.spotlightComment}&rdquo;
               </blockquote>
             )}
           </article>
         ))}
 
         {!items.length && !loading && (
-          <div className="rounded-2xl border border-black/10 bg-white px-5 py-12 text-center text-sm text-black/60">
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-3xl">✨</span>
-              <span>No spotlight entries found for {label}.</span>
-            </div>
+          <div className="rounded-[3px] border border-[color:var(--nsi-rule)] bg-white px-5 py-12 text-center font-mono text-xs uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+            No citizen spotlight entries found for {label}.
           </div>
         )}
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-black/5 pt-6">
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[color:var(--nsi-rule)] pt-6">
         <button
           className="admin-btn-secondary"
           type="button"
@@ -207,10 +200,7 @@ export function SpotlightFeed() {
           disabled={loading}
           aria-label="Refresh spotlight entries"
         >
-          {loading && (
-            <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black/20 border-t-black/70" />
-          )}
-          Refresh
+          {loading ? "Refreshing…" : "Refresh Feed"}
         </button>
         <button
           className="admin-btn-primary"
@@ -221,10 +211,7 @@ export function SpotlightFeed() {
             nextCursor ? "Load more spotlight entries" : "All entries loaded"
           }
         >
-          {loading && (
-            <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-          )}
-          {loading ? "Loading…" : nextCursor ? "Load more" : "All loaded"}
+          {loading ? "Loading…" : nextCursor ? "Load More Entries" : "All Entries Loaded"}
         </button>
       </div>
     </div>

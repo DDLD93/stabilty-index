@@ -1,12 +1,13 @@
 import Link from "next/link";
 import {
+  NSIShieldMark,
   SocialInstagramIcon,
   SocialTikTokIcon,
   SocialXIcon,
 } from "@/components/public/icons";
 
 const SOCIAL = [
-  { href: "https://x.com/Nigeria_NSI", label: "X", Icon: SocialXIcon },
+  { href: "https://x.com/Nigeria_NSI", label: "X (Twitter)", Icon: SocialXIcon },
   {
     href: "https://www.instagram.com/nigeriastabilityindex",
     label: "Instagram",
@@ -21,47 +22,139 @@ const SOCIAL = [
 
 export function SiteFooter() {
   return (
-    <footer className="nsi-band mt-20 text-white">
-      <div className="mx-auto max-w-7xl px-6 py-12">
-        <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-[0.875rem] font-medium">
-              <Link className="opacity-80 hover:text-[color:var(--nsi-gold-light)] hover:opacity-100" href="/about">About</Link>
-              <Link className="opacity-80 hover:text-[color:var(--nsi-gold-light)] hover:opacity-100" href="/reports">Reports</Link>
-              <Link className="opacity-80 hover:text-[color:var(--nsi-gold-light)] hover:opacity-100" href="/privacy">Privacy</Link>
-              <Link className="opacity-80 hover:text-[color:var(--nsi-gold-light)] hover:opacity-100" href="/contact">Contact</Link>
+    <footer className="mt-24 border-t-4 border-[color:var(--nsi-gold)] bg-[color:var(--nsi-green-deep)] text-white">
+      <div className="mx-auto max-w-7xl px-6 py-16">
+        <div className="grid gap-12 border-b border-white/12 pb-12 md:grid-cols-2 lg:grid-cols-12">
+          {/* Column 1: Institutional Identity (5 cols) */}
+          <div className="lg:col-span-5">
+            <div className="flex items-center gap-3.5">
+              <NSIShieldMark className="h-10 w-10 shrink-0" />
+              <div>
+                <div className="font-serif text-xl font-bold tracking-tight text-white">
+                  Nigeria Stability Index (NSI)
+                </div>
+                <div className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-[color:var(--nsi-gold-light)]">
+                  Independent Civic Research &amp; Data Platform
+                </div>
+              </div>
             </div>
-
-            <div className="flex items-center gap-5">
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-white/75">
+              Tracking how Nigeria holds together through structured monthly
+              assessments across Security, FX &amp; Economy, Investor Confidence,
+              Governance, and Social Stability. Non-partisan, evidence-led, and
+              citizen-informed.
+            </p>
+            <div className="mt-6 flex items-center gap-3">
               {SOCIAL.map(({ href, label, Icon }) => (
                 <Link
                   key={label}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="opacity-70 transition-all hover:opacity-100 hover:scale-110"
+                  className="flex h-9 w-9 items-center justify-center rounded-[3px] border border-white/15 bg-white/5 text-white/80 transition-colors hover:border-[color:var(--nsi-gold)] hover:bg-[color:var(--nsi-gold)] hover:text-[color:var(--nsi-ink)]"
                   aria-label={label}
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-4 w-4" />
                 </Link>
               ))}
             </div>
           </div>
 
-          <div className="flex flex-col items-end gap-2 text-right">
-            <div className="text-[0.8125rem] font-medium opacity-60">A project of</div>
-            <div className="flex items-center gap-2">
-              <span className="font-serif text-lg font-bold">THE 24 Angels Initiative</span>
+          {/* Column 2: Publications & Data (2 cols) */}
+          <div className="lg:col-span-2">
+            <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-[color:var(--nsi-gold-light)]">
+              Publications
+            </h3>
+            <ul className="mt-4 space-y-2.5 text-sm text-white/80">
+              <li>
+                <Link className="transition-colors hover:text-white hover:underline" href="/reports">
+                  Reports Archive
+                </Link>
+              </li>
+              <li>
+                <Link className="transition-colors hover:text-white hover:underline" href="/spotlights">
+                  State &amp; Institution Spotlights
+                </Link>
+              </li>
+              <li>
+                <Link className="transition-colors hover:text-white hover:underline" href="/survey">
+                  Monthly Citizen Survey
+                </Link>
+              </li>
+              <li>
+                <Link className="transition-colors hover:text-white hover:underline" href="/subscribe">
+                  Executive Dispatch
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Governance & Framework (2 cols) */}
+          <div className="lg:col-span-2">
+            <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-[color:var(--nsi-gold-light)]">
+              Framework
+            </h3>
+            <ul className="mt-4 space-y-2.5 text-sm text-white/80">
+              <li>
+                <Link className="transition-colors hover:text-white hover:underline" href="/about">
+                  About the Index
+                </Link>
+              </li>
+              <li>
+                <Link className="transition-colors hover:text-white hover:underline" href="/methodology">
+                  Research Methodology
+                </Link>
+              </li>
+              <li>
+                <Link className="transition-colors hover:text-white hover:underline" href="/how-it-works">
+                  How NSI Works
+                </Link>
+              </li>
+              <li>
+                <Link className="transition-colors hover:text-white hover:underline" href="/privacy">
+                  Privacy &amp; Anonymity
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Institutional Attribution (3 cols) */}
+          <div className="lg:col-span-3">
+            <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-[color:var(--nsi-gold-light)]">
+              Institutional Desk
+            </h3>
+            <div className="mt-4 rounded-[4px] border border-white/12 bg-white/[0.04] p-4">
+              <div className="font-mono text-[0.65rem] uppercase tracking-widest text-white/55">
+                An Initiative Of
+              </div>
+              <div className="mt-1 font-serif text-lg font-bold text-white">
+                The 24 Angels Initiative
+              </div>
+              <p className="mt-2 text-xs leading-relaxed text-white/65">
+                Committed to calm, empirical public-interest reporting on Nigerian
+                institutional resilience and civic well-being.
+              </p>
+              <div className="mt-4 border-t border-white/10 pt-3">
+                <Link
+                  href="/contact"
+                  className="font-mono text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-gold-light)] hover:underline"
+                >
+                  Contact Research Desk →
+                </Link>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8 md:flex-row md:items-center md:justify-between">
-          <div className="text-[0.75rem] opacity-50">
-            © {new Date().getFullYear()} Nigeria Stability Index. All rights reserved.
+        {/* Bottom Colophon */}
+        <div className="mt-8 flex flex-col gap-4 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            © {new Date().getFullYear()} Nigeria Stability Index (NSI). All rights
+            reserved. Non-partisan · Non-advocacy.
           </div>
-          <div className="text-[0.75rem] font-medium tracking-wide opacity-50">
-            www.NigeriaStabilityIndex.org
+          <div className="flex flex-wrap items-center gap-6 font-mono text-[0.7rem]">
+            <span>WWW.NIGERIASTABILITYINDEX.ORG</span>
+            <span>ISSN-PENDING · NIGERIA</span>
           </div>
         </div>
       </div>

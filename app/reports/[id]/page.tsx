@@ -115,16 +115,18 @@ export default async function ReportDetailPage({
         />
       )}
       <main className="w-full pb-24">
-        {/* Breadcrumb nav */}
-        <div className="pt-20">
-          <div className="mx-auto w-full max-w-5xl px-6 pb-8">
+        <div className="pt-10">
+          <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 pb-6">
             <Link
               href="/reports"
-              className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-4 py-2 text-sm font-medium text-[color:var(--nsi-ink-soft)] backdrop-blur-sm transition-all hover:bg-white hover:text-[color:var(--nsi-ink)]"
+              className="inline-flex items-center gap-2 rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-white px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-[color:var(--nsi-ink)] transition-colors hover:border-[color:var(--nsi-green)] hover:text-[color:var(--nsi-green)]"
             >
               <span aria-hidden>←</span>
-              All Reports
+              All Reports Archive
             </Link>
+            <span className="font-mono text-xs uppercase tracking-widest text-[color:var(--nsi-ink-muted)]">
+              NSI Official Publication
+            </span>
           </div>
         </div>
 

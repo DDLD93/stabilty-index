@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { MOODS, PILLAR_KEYS, NIGERIAN_STATES, SPOTLIGHT_TAGS } from "@/lib/constants";
 import { getClientDeviceInfo } from "@/lib/clientDeviceInfo";
 import { getDeviceHash } from "@/lib/deviceHash";
 import { normalizeRefQueryParam } from "@/lib/agentReferrerCode";
+import { PillarEditorialGraphic, NSIShieldMark } from "@/components/public/icons";
 
 export type SurveyQuestion = {
   pillarKey: string;
@@ -21,18 +21,16 @@ export type Cycle = {
   surveyQuestions: SurveyQuestion[];
 };
 
-const SCALE = [1, 2, 3, 4, 5] as const;
+const SCALE = [
+  { value: 1, label: "Very Unstable" },
+  { value: 2, label: "Fragile" },
+  { value: 3, label: "Moderate" },
+  { value: 4, label: "Stable" },
+  { value: 5, label: "Very Stable" },
+] as const;
+
 const PILLAR_STEPS = 5;
 const TOTAL_STEPS = 6; // intro + 5 pillars + optional spotlight
-
-function getPillarImage(pillarKey: string): string {
-  const t = pillarKey.toLowerCase();
-  if (t.includes("security")) return "/pillars/security.png";
-  if (t.includes("econom")) return "/pillars/economy.png";
-  if (t.includes("invest")) return "/pillars/investor.png";
-  if (t.includes("govern")) return "/pillars/governance.png";
-  return "/pillars/social.png";
-}
 
 export function SurveyWizard() {
   const searchParams = useSearchParams();
@@ -183,29 +181,35 @@ export function SurveyWizard() {
 
   if (loading) {
     return (
-      <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
-        <p className="text-[color:var(--nsi-ink-soft)]">Loading survey…</p>
+      <div className="mx-auto w-full rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-white p-12 text-center shadow-sm">
+        <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-[2px] bg-[color:var(--nsi-paper-2)] text-[color:var(--nsi-green)]">
+          <NSIShieldMark className="h-5 w-5 animate-pulse" />
+        </div>
+        <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--nsi-ink-muted)]">
+          Loading active survey cycle…
+        </p>
       </div>
     );
   }
 
   if (alreadySubmitted) {
     return (
-      <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
-        <h2 className="font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">Already submitted</h2>
-        <p className="mt-4 text-[color:var(--nsi-ink-soft)]">You&apos;ve already submitted for this cycle.</p>
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <Link
-            href="/"
-            className="inline-flex rounded-xl bg-[color:var(--nsi-green)] px-6 py-3 text-sm font-semibold text-white transition-all hover:brightness-110"
-          >
-            Back to home
+      <div className="mx-auto w-full rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-white p-10 sm:p-12 text-center shadow-sm">
+        <span className="inline-block rounded-[2px] border border-[color:var(--nsi-gold)]/40 bg-[color:var(--nsi-gold-soft)] px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--nsi-ink)]">
+          Cycle Response Recorded
+        </span>
+        <h2 className="mt-4 font-serif text-2xl font-bold text-[color:var(--nsi-ink)]">
+          Already Submitted for This Cycle
+        </h2>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[color:var(--nsi-ink-soft)]">
+          Your device has already recorded a response for the active reporting cycle. Each device may submit once per monthly cycle to preserve statistical integrity.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link href="/" className="btn-nsi-primary">
+            Return to Dashboard
           </Link>
-          <Link
-            href="/reports"
-            className="inline-flex rounded-xl border border-black/15 bg-white px-6 py-3 text-sm font-semibold text-[color:var(--nsi-ink)] transition-all hover:bg-black/5"
-          >
-            View reports
+          <Link href="/reports" className="btn-nsi-outline">
+            Explore Published Reports
           </Link>
         </div>
       </div>
@@ -214,38 +218,43 @@ export function SurveyWizard() {
 
   if (error || !cycle) {
     return (
-      <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
-        <h2 className="font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">Survey is not available right now</h2>
-        <p className="mt-4 text-[color:var(--nsi-ink-soft)]">
-          {error ?? "Collection may be closed or the survey is still being set up. Check back later."}
+      <div className="mx-auto w-full rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-white p-10 sm:p-12 text-center shadow-sm">
+        <span className="inline-block rounded-[2px] border border-[color:var(--nsi-rule-strong)] bg-[color:var(--nsi-paper-2)] px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--nsi-ink-muted)]">
+          Collection Closed
+        </span>
+        <h2 className="mt-4 font-serif text-2xl font-bold text-[color:var(--nsi-ink)]">
+          Survey Instrument Not Currently Open
+        </h2>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[color:var(--nsi-ink-soft)]">
+          {error ?? "Field data collection for the current cycle may be closed for tabulation or the next cycle is being configured. Please check back shortly."}
         </p>
-        <Link
-          href="/"
-          className="mt-8 inline-flex rounded-xl bg-[color:var(--nsi-green)] px-6 py-3 text-sm font-semibold text-white transition-all hover:brightness-110"
-        >
-          Back to home
-        </Link>
+        <div className="mt-8 flex justify-center">
+          <Link href="/" className="btn-nsi-primary">
+            Return to Dashboard
+          </Link>
+        </div>
       </div>
     );
   }
 
   if (submitted) {
     return (
-      <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
-        <h2 className="font-serif text-2xl font-semibold text-[color:var(--nsi-ink)]">Thank you</h2>
-        <p className="mt-4 text-[color:var(--nsi-ink-soft)]">Your responses have been recorded and help shape the Nigeria Stability Index.</p>
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <Link
-            href="/"
-            className="inline-flex rounded-xl bg-[color:var(--nsi-green)] px-6 py-3 text-sm font-semibold text-white transition-all hover:brightness-110"
-          >
-            Back to home
+      <div className="mx-auto w-full rounded-[3px] border-t-4 border-t-[color:var(--nsi-green)] border border-[color:var(--nsi-rule-strong)] bg-white p-10 sm:p-12 text-center shadow-sm">
+        <span className="inline-block rounded-[2px] bg-[color:var(--nsi-green)]/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--nsi-green)]">
+          Submission Confirmed · {cycle.monthYear}
+        </span>
+        <h2 className="mt-4 font-serif text-3xl font-bold text-[color:var(--nsi-ink)]">
+          Thank You for Contributing
+        </h2>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[color:var(--nsi-ink-soft)]">
+          Your anonymous ratings have been logged into the national ledger for the <strong>{cycle.monthYear}</strong> edition of the Nigeria Stability Index.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link href="/" className="btn-nsi-primary">
+            Back to National Dashboard
           </Link>
-          <Link
-            href="/reports"
-            className="inline-flex rounded-xl border border-black/15 bg-white px-6 py-3 text-sm font-semibold text-[color:var(--nsi-ink)] transition-all hover:bg-black/5"
-          >
-            View reports
+          <Link href="/reports" className="btn-nsi-outline">
+            View Published Reports
           </Link>
         </div>
       </div>
@@ -255,123 +264,209 @@ export function SurveyWizard() {
   const questions = cycle.surveyQuestions;
 
   return (
-    <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white shadow-lg">
-      <div className="border-b border-black/5 bg-black/5 px-4 py-3 sm:px-6 sm:py-4">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
-            {step === 0 ? "Intro" : step <= PILLAR_STEPS ? `Step ${step} of ${TOTAL_STEPS}` : "Optional"}
+    <div className="mx-auto w-full overflow-hidden rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-white shadow-sm">
+      {/* Top Instrument Status Bar */}
+      <div className="border-b border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper-2)] px-5 py-4 sm:px-8">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5">
+            <span className="inline-block h-2 w-2 rounded-full bg-[color:var(--nsi-green)]" />
+            <span className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-[color:var(--nsi-ink)]">
+              {step === 0
+                ? "Instrument Briefing"
+                : step <= PILLAR_STEPS
+                ? `Pillar Assessment 0${step} / 0${PILLAR_STEPS}`
+                : "Sub-National & Sentiment Context (Optional)"}
+            </span>
+          </div>
+          <span className="rounded-[2px] border border-[color:var(--nsi-rule-strong)] bg-white px-2.5 py-0.5 font-mono text-[11px] font-bold text-[color:var(--nsi-green)]">
+            Cycle: {cycle.monthYear}
           </span>
-          <span className="text-xs text-[color:var(--nsi-ink-soft)]">{cycle.monthYear}</span>
         </div>
+
+        {/* Segmented Progress Bar */}
+        <div className="mt-3.5 grid grid-cols-6 gap-1.5" aria-hidden>
+          {Array.from({ length: TOTAL_STEPS }).map((_, idx) => {
+            const targetStep = idx + 1;
+            const isCompleted = step > targetStep || (step === targetStep && targetStep === TOTAL_STEPS);
+            const isCurrent = step === targetStep;
+            return (
+              <div
+                key={idx}
+                className={`h-1.5 rounded-[1px] transition-all ${
+                  isCurrent
+                    ? "bg-[color:var(--nsi-gold)]"
+                    : isCompleted || step > idx
+                    ? "bg-[color:var(--nsi-green)]"
+                    : "bg-black/10"
+                }`}
+              />
+            );
+          })}
+        </div>
+
         {refFromUrl && refCheckDone && refLabel && (
-          <p className="mt-2 text-xs text-[color:var(--nsi-ink-soft)]">
-            Referral link recognized — thank you for participating via <span className="font-medium text-[color:var(--nsi-ink)]">{refLabel}</span>.
+          <p className="mt-3 border-t border-[color:var(--nsi-rule)] pt-2.5 font-mono text-[11px] text-[color:var(--nsi-ink-soft)]">
+            Field Enumerator / Referrer Attributed:{" "}
+            <span className="font-bold text-[color:var(--nsi-green)]">{refLabel}</span>
           </p>
         )}
         {refFromUrl && refCheckDone && !refLabel && (
-          <p className="mt-2 text-xs text-amber-800/90">
-            This referral link is not valid or is no longer active. You can still complete the survey; it will not be attributed to a referrer.
+          <p className="mt-3 border-t border-[color:var(--nsi-rule)] pt-2.5 font-mono text-[11px] text-[color:var(--nsi-terracotta)]">
+            Note: Referral code is inactive. Your response will still be recorded anonymously in the national tally.
           </p>
         )}
       </div>
 
-      <div className="p-6 sm:p-8">
+      {/* Main Step Content */}
+      <div className="p-6 sm:p-10">
         {step === 0 && (
-          <>
-            <h2 className="font-serif text-2xl font-semibold text-[color:var(--nsi-ink)]">
-              Share how Nigeria feels to you
+          <div>
+            <p className="nsi-kicker">Field Survey Protocol</p>
+            <h2 className="mt-2 font-serif text-2xl font-bold text-[color:var(--nsi-ink)] sm:text-3xl">
+              Share How Nigeria Feels to You Today
             </h2>
-            <p className="mt-4 text-[color:var(--nsi-ink-soft)]">
-              One question per pillar — your voice shapes the index. You&apos;ll answer five short questions (scale 1–5), then optionally add a state or comment.
+            <p className="mt-4 text-base leading-relaxed text-[color:var(--nsi-ink-soft)]">
+              This monthly instrument measures public perception across the five core pillars of the Nigeria Stability Index. You will rate five concise questions on a <strong>1 to 5 stability scale</strong>, followed by an optional state-level field report.
             </p>
-            <div className="mt-10 flex justify-end">
+
+            <div className="mt-6 grid gap-3 rounded-[3px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] p-5 sm:grid-cols-3">
+              <div>
+                <div className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+                  01 / Structure
+                </div>
+                <div className="mt-1 text-sm font-semibold text-[color:var(--nsi-ink)]">
+                  5 Core Pillar Ratings
+                </div>
+              </div>
+              <div>
+                <div className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+                  02 / Duration
+                </div>
+                <div className="mt-1 text-sm font-semibold text-[color:var(--nsi-ink)]">
+                  Under 90 Seconds
+                </div>
+              </div>
+              <div>
+                <div className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+                  03 / Privacy
+                </div>
+                <div className="mt-1 text-sm font-semibold text-[color:var(--nsi-ink)]">
+                  100% Anonymous Ledger
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-end border-t border-[color:var(--nsi-rule)] pt-6">
               <button
                 type="button"
                 onClick={goNext}
-                className="rounded-xl bg-[color:var(--nsi-green)] px-8 py-3 text-sm font-semibold text-white transition-all hover:brightness-110"
+                className="btn-nsi-primary"
               >
-                Start
+                Begin Pillar Assessment →
               </button>
             </div>
-          </>
+          </div>
         )}
 
         {step >= 1 && step <= PILLAR_STEPS && questions[step - 1] && (() => {
           const q = questions[step - 1];
-          const pillarImage = getPillarImage(q.pillarKey);
+          const selectedVal = pillarResponses[q.pillarKey];
           return (
-          <>
-            <div className="overflow-hidden rounded-2xl border border-black/10 bg-[color:var(--nsi-paper-2)] shadow-inner">
-              <div className="relative flex h-40 w-full items-center justify-center px-6 py-8">
-                <Image
-                  src={pillarImage}
-                  alt={q.pillarLabel}
-                  fill
-                  className="object-contain p-6"
-                  sizes="(max-width: 448px) 100vw, 448px"
-                  priority
-                />
+            <div>
+              {/* Architectural Pillar Graphic Card */}
+              <div className="overflow-hidden rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-[color:var(--nsi-paper)]">
+                <div className="relative h-36 w-full border-b border-[color:var(--nsi-rule)]">
+                  <PillarEditorialGraphic
+                    title={q.pillarKey}
+                    score={selectedVal ? selectedVal * 2 : undefined}
+                  />
+                </div>
+                <div className="flex items-center justify-between bg-white px-5 py-3">
+                  <span className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-green)]">
+                    Pillar 0{step}: {q.pillarLabel}
+                  </span>
+                  <span className="font-mono text-[11px] text-[color:var(--nsi-ink-muted)]">
+                    Scale 1 (Least Stable) – 5 (Most Stable)
+                  </span>
+                </div>
               </div>
-              <div className="border-t border-black/5 px-6 py-4">
-                <span className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
-                  {q.pillarLabel}
-                </span>
+
+              <h2 className="mt-7 font-serif text-xl font-bold leading-snug text-[color:var(--nsi-ink)] sm:text-2xl">
+                {q.questionText}
+              </h2>
+              <p className="mt-1.5 text-sm text-[color:var(--nsi-ink-soft)]">
+                Select a score from 1 to 5 based on your direct observation and lived experience this month.
+              </p>
+
+              {/* 1–5 Rating Scale Buttons */}
+              <div className="mt-7 grid grid-cols-5 gap-2 sm:gap-3">
+                {SCALE.map(({ value: n, label }) => {
+                  const isSelected = selectedVal === n;
+                  return (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setPillar(q.pillarKey, n)}
+                      className={`group flex flex-col items-center justify-center rounded-[3px] border p-3 text-center transition-all sm:py-4 ${
+                        isSelected
+                          ? "border-[color:var(--nsi-green)] bg-[color:var(--nsi-green)] text-white shadow-sm"
+                          : "border-[color:var(--nsi-rule-strong)] bg-[color:var(--nsi-paper)] text-[color:var(--nsi-ink)] hover:border-[color:var(--nsi-green)] hover:bg-white"
+                      }`}
+                    >
+                      <span className="font-mono text-xl font-bold sm:text-2xl">{n}</span>
+                      <span
+                        className={`mt-1 hidden text-[10px] font-medium uppercase tracking-wider sm:block ${
+                          isSelected ? "text-white/85" : "text-[color:var(--nsi-ink-muted)]"
+                        }`}
+                      >
+                        {label}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
-            </div>
-            <h2 className="mt-8 font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">
-              {q.questionText}
-            </h2>
-            <p className="mt-1 text-sm text-[color:var(--nsi-ink-soft)]">
-              Choose 1 (least stable) to 5 (most stable).
-            </p>
-            <div className="mt-8 flex flex-nowrap gap-1 sm:gap-2 md:gap-3">
-              {SCALE.map((n) => (
+              <div className="mt-2 flex justify-between font-mono text-[10px] uppercase tracking-wider text-[color:var(--nsi-ink-muted)] sm:hidden">
+                <span>1 · Very Unstable</span>
+                <span>5 · Very Stable</span>
+              </div>
+
+              <div className="mt-9 flex items-center justify-between border-t border-[color:var(--nsi-rule)] pt-6">
                 <button
-                  key={n}
                   type="button"
-                  onClick={() => setPillar(questions[step - 1].pillarKey, n)}
-                  className={`flex-1 min-w-0 rounded-xl border-2 px-2 py-3 text-lg font-bold transition-all sm:px-4 sm:py-4 md:px-6 ${
-                    pillarResponses[questions[step - 1].pillarKey] === n
-                      ? "border-[color:var(--nsi-green)] bg-[color:var(--nsi-green)]/10 text-[color:var(--nsi-green)]"
-                      : "border-black/15 bg-white text-[color:var(--nsi-ink-soft)] hover:border-black/25 hover:bg-black/5"
-                  }`}
+                  onClick={goBack}
+                  className="btn-nsi-outline"
                 >
-                  {n}
+                  ← Previous
                 </button>
-              ))}
-            </div>
-            <div className="mt-10 flex justify-between">
-              <button
-                type="button"
-                onClick={goBack}
-                className="rounded-xl border border-black/15 px-6 py-2.5 text-sm font-medium text-[color:var(--nsi-ink)] transition-all hover:bg-black/5"
-              >
-                Back
-              </button>
-              {pillarResponses[questions[step - 1].pillarKey] != null && (
                 <button
                   type="button"
                   onClick={goNext}
-                  className="rounded-xl bg-[color:var(--nsi-green)] px-6 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
+                  disabled={selectedVal == null}
+                  className="btn-nsi-primary disabled:opacity-40"
                 >
-                  Next
+                  {step === PILLAR_STEPS ? "Continue to Context →" : "Next Pillar →"}
                 </button>
-              )}
+              </div>
             </div>
-          </>
           );
         })()}
 
         {step === TOTAL_STEPS && (
-          <>
-            <h2 className="font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">Anything else?</h2>
+          <div>
+            <p className="nsi-kicker">Final Step · Field Context</p>
+            <h2 className="mt-1 font-serif text-2xl font-bold text-[color:var(--nsi-ink)]">
+              National Mood & State Spotlight (Optional)
+            </h2>
             <p className="mt-2 text-sm text-[color:var(--nsi-ink-soft)]">
-              Optional: how you feel, one word, a state, tags, or a short comment.
+              Add your prevailing mood, a single word summary, or a state-specific field note to enrich qualitative analysis.
             </p>
-            <div className="mt-6 space-y-6">
+
+            <div className="mt-7 space-y-6">
               <div>
-                <label className="block text-sm font-medium text-[color:var(--nsi-ink)]">How are you feeling about Nigeria? (optional)</label>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <label className="block font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+                  How are you feeling about Nigeria right now? (Optional)
+                </label>
+                <div className="mt-2.5 flex flex-wrap gap-2">
                   {MOODS.map((m) => {
                     const active = m === mood;
                     return (
@@ -379,10 +474,10 @@ export function SurveyWizard() {
                         key={m}
                         type="button"
                         onClick={() => setMood(active ? null : m)}
-                        className={`rounded-xl px-4 py-2 text-sm font-medium transition-all ${
+                        className={`rounded-[2px] border px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] transition-all ${
                           active
-                            ? "bg-[color:var(--nsi-green)] text-white"
-                            : "border border-black/15 bg-white text-[color:var(--nsi-ink-soft)] hover:border-black/25 hover:bg-black/5"
+                            ? "border-[color:var(--nsi-green)] bg-[color:var(--nsi-green)] text-white"
+                            : "border-[color:var(--nsi-rule-strong)] bg-[color:var(--nsi-paper)] text-[color:var(--nsi-ink-soft)] hover:border-[color:var(--nsi-green)] hover:bg-white"
                         }`}
                       >
                         {m}
@@ -391,83 +486,110 @@ export function SurveyWizard() {
                   })}
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-[color:var(--nsi-ink)]">One word to describe Nigeria today (optional)</label>
-                <input
-                  type="text"
-                  value={oneWord}
-                  onChange={(e) => setOneWord(e.target.value.slice(0, 40))}
-                  maxLength={40}
-                  placeholder="e.g. steady, tense, hopeful…"
-                  className="mt-1.5 w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-[color:var(--nsi-ink)] placeholder:text-black/40 focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-1 focus:ring-[color:var(--nsi-green)]"
-                />
-                <p className="mt-1 text-xs text-[color:var(--nsi-ink-soft)]">{oneWord.length}/40</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[color:var(--nsi-ink)]">State</label>
-                <select
-                  value={spotlightState ?? ""}
-                  onChange={(e) => setSpotlightState(e.target.value || null)}
-                  className="mt-1.5 w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-[color:var(--nsi-ink)] focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-1 focus:ring-[color:var(--nsi-green)]"
-                >
-                  <option value="">— None —</option>
-                  {NIGERIAN_STATES.map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[color:var(--nsi-ink)]">Tags (optional, max 8)</label>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {SPOTLIGHT_TAGS.map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => toggleTag(tag)}
-                      className={`rounded-lg border px-3 py-1.5 text-sm transition-all ${
-                        spotlightTags.includes(tag)
-                          ? "border-[color:var(--nsi-green)] bg-[color:var(--nsi-green)]/10 text-[color:var(--nsi-green)]"
-                          : "border-black/15 text-[color:var(--nsi-ink-soft)] hover:bg-black/5"
-                      }`}
-                    >
-                      {tag}
-                    </button>
-                  ))}
+
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label className="block font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+                    One Word to Describe Nigeria Today
+                  </label>
+                  <input
+                    type="text"
+                    value={oneWord}
+                    onChange={(e) => setOneWord(e.target.value.slice(0, 40))}
+                    maxLength={40}
+                    placeholder="e.g. Resilient, Tense, Hopeful…"
+                    className="admin-input mt-2 w-full"
+                  />
+                  <p className="mt-1 font-mono text-[10px] text-[color:var(--nsi-ink-muted)]">
+                    {oneWord.length}/40 characters
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+                    State / Territory Focus
+                  </label>
+                  <select
+                    value={spotlightState ?? ""}
+                    onChange={(e) => setSpotlightState(e.target.value || null)}
+                    className="admin-select mt-2 w-full"
+                  >
+                    <option value="">— Select State (Optional) —</option>
+                    {NIGERIAN_STATES.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-[color:var(--nsi-ink)]">Comment (optional, max 600 chars)</label>
+                <label className="block font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+                  Thematic Tags (Optional, max 8)
+                </label>
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {SPOTLIGHT_TAGS.map((tag) => {
+                    const active = spotlightTags.includes(tag);
+                    return (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => toggleTag(tag)}
+                        className={`rounded-[2px] border px-3 py-1.5 text-xs font-medium transition-all ${
+                          active
+                            ? "border-[color:var(--nsi-gold)] bg-[color:var(--nsi-gold-soft)] font-semibold text-[color:var(--nsi-ink)]"
+                            : "border-[color:var(--nsi-rule-strong)] bg-white text-[color:var(--nsi-ink-soft)] hover:bg-[color:var(--nsi-paper)]"
+                        }`}
+                      >
+                        {tag}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+                  Field Observation / Comment (Optional, max 600 chars)
+                </label>
                 <textarea
                   value={spotlightComment}
                   onChange={(e) => setSpotlightComment(e.target.value.slice(0, 600))}
                   rows={3}
-                  className="mt-1.5 w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-[color:var(--nsi-ink)] placeholder:text-black/40 focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-1 focus:ring-[color:var(--nsi-green)]"
-                  placeholder="Any additional context…"
+                  className="admin-input mt-2 w-full"
+                  placeholder="Share any specific local context (please do not include personal names or phone numbers)…"
                 />
-                <p className="mt-1 text-xs text-[color:var(--nsi-ink-soft)]">{spotlightComment.length}/600</p>
+                <p className="mt-1 font-mono text-[10px] text-[color:var(--nsi-ink-muted)]">
+                  {spotlightComment.length}/600 characters
+                </p>
               </div>
             </div>
+
             {submitError && (
-              <p className="mt-4 text-sm text-red-600">{submitError}</p>
+              <div className="mt-5 rounded-[3px] border border-red-300 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
+                {submitError}
+              </div>
             )}
-            <div className="mt-10 flex justify-between">
+
+            <div className="mt-9 flex items-center justify-between border-t border-[color:var(--nsi-rule)] pt-6">
               <button
                 type="button"
                 onClick={goBack}
-                className="rounded-xl border border-black/15 px-6 py-2.5 text-sm font-medium text-[color:var(--nsi-ink)] transition-all hover:bg-black/5"
+                className="btn-nsi-outline"
               >
-                Back
+                ← Back
               </button>
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={submitting || !hasAllPillarAnswers}
-                className="rounded-xl bg-[color:var(--nsi-green)] px-8 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110 disabled:opacity-60"
+                className="btn-nsi-primary disabled:opacity-50"
               >
-                {submitting ? "Submitting…" : "Submit"}
+                {submitting ? "Recording Submission…" : "Submit Official Response"}
               </button>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>

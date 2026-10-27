@@ -15,26 +15,28 @@ export function NSIShieldMark({ title = "NSI", ...props }: IconProps) {
       {...props}
     >
       {title ? <title>{title}</title> : null}
-      <defs>
-        <linearGradient id="nsiShieldG" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="var(--nsi-gold)" stopOpacity="1" />
-          <stop offset="1" stopColor="var(--nsi-gold-deep)" stopOpacity="1" />
-        </linearGradient>
-        <linearGradient id="nsiShieldFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="oklch(0.38 0.06 164)" stopOpacity="1" />
-          <stop offset="1" stopColor="oklch(0.26 0.05 164)" stopOpacity="1" />
-        </linearGradient>
-      </defs>
+      {/* Sovereign shield outer frame */}
       <path
-        d="M32 6c10 7 18 6 24 6 0 28-9 38-24 46C17 50 8 40 8 12c6 0 14 1 24-6Z"
-        fill="url(#nsiShieldG)"
+        d="M32 4L56 12V30C56 45.5 45.8 55.8 32 60C18.2 55.8 8 45.5 8 30V12L32 4Z"
+        fill="#0b3b24"
+        stroke="#c88a2b"
+        strokeWidth="2.5"
       />
+      {/* Inner Nigerian tripartite division (Green - White/Gold - Green) */}
       <path
-        d="M32 11c8 5.6 14 5.1 19 5.2 0 23.5-7.2 31.7-19 38-11.8-6.3-19-14.5-19-38 5-.1 11 .4 19-5.2Z"
-        fill="url(#nsiShieldFill)"
+        d="M32 9L51 15.5V29.5C51 42.2 42.8 50.8 32 54.5C21.2 50.8 13 42.2 13 29.5V15.5L32 9Z"
+        fill="#062315"
+        stroke="#c88a2b"
+        strokeWidth="1"
+        strokeOpacity="0.55"
       />
-      <path d="M32 14v36" stroke="oklch(1 0 0 / 0.6)" strokeWidth="3.2" />
-      <path d="M18 30h28" stroke="oklch(1 0 0 / 0.6)" strokeWidth="3.2" />
+      {/* Vertical Meridian & Index Bar */}
+      <line x1="25" y1="14" x2="25" y2="50" stroke="#c88a2b" strokeWidth="1.5" strokeOpacity="0.6" />
+      <line x1="39" y1="14" x2="39" y2="50" stroke="#c88a2b" strokeWidth="1.5" strokeOpacity="0.6" />
+      <rect x="26.5" y="13" width="11" height="37" fill="#c88a2b" fillOpacity="0.16" />
+      {/* Equatorial Index Crossbar */}
+      <path d="M16 30H48" stroke="#c88a2b" strokeWidth="2.2" />
+      <circle cx="32" cy="30" r="3.5" fill="#c88a2b" />
     </svg>
   );
 }
@@ -51,12 +53,21 @@ function BasePillarIcon({ title, children, ...props }: IconProps & { children: R
 export function PillarSecurityIcon(props: IconProps) {
   return (
     <BasePillarIcon title="Security" {...props}>
+      <rect x="6" y="6" width="52" height="52" rx="4" fill="#0b3b24" fillOpacity="0.07" />
       <path
-        d="M32 7c10 6 18 5 22 5 0 25-8 34-22 41C18 46 10 37 10 12c4 0 12 1 22-5Z"
-        fill="var(--nsi-gold)"
+        d="M32 11L50 17.5V31C50 42.8 42.2 50.2 32 54C21.8 50.2 14 42.8 14 31V17.5L32 11Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinejoin="round"
       />
-      <path d="M32 14v31" stroke="oklch(0.25 0.05 164 / 0.55)" strokeWidth="3" />
-      <path d="M20 30h24" stroke="oklch(0.25 0.05 164 / 0.55)" strokeWidth="3" />
+      <path
+        d="M32 18V46M21 31H43"
+        stroke="#c88a2b"
+        strokeWidth="2.75"
+        strokeLinecap="round"
+      />
+      <circle cx="32" cy="31" r="4" fill="currentColor" />
     </BasePillarIcon>
   );
 }
@@ -64,33 +75,20 @@ export function PillarSecurityIcon(props: IconProps) {
 export function PillarEconomyIcon(props: IconProps) {
   return (
     <BasePillarIcon title="FX & Economy" {...props}>
-      <circle cx="26" cy="30" r="14" fill="var(--nsi-gold)" />
-      <circle cx="40" cy="34" r="14" fill="oklch(0.83 0.1 86)" opacity="0.95" />
+      <rect x="6" y="6" width="52" height="52" rx="4" fill="#0b3b24" fillOpacity="0.07" />
+      {/* Naira / Macro-economic bars */}
       <path
-        d="M23 22c3-2 9-2 12 0"
+        d="M21 46V18L43 46V18"
         fill="none"
-        stroke="oklch(0.25 0.05 164 / 0.65)"
-        strokeWidth="3"
+        stroke="currentColor"
+        strokeWidth="3.2"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
-        d="M23 30c3 2 9 2 12 0"
-        fill="none"
-        stroke="oklch(0.25 0.05 164 / 0.65)"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <path
-        d="M41 26v16"
-        stroke="oklch(0.25 0.05 164 / 0.65)"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <path
-        d="M47 28c-2-2-10-2-12 1"
-        fill="none"
-        stroke="oklch(0.25 0.05 164 / 0.65)"
-        strokeWidth="3"
+        d="M15 28H49M15 36H49"
+        stroke="#c88a2b"
+        strokeWidth="2.8"
         strokeLinecap="round"
       />
     </BasePillarIcon>
@@ -100,23 +98,31 @@ export function PillarEconomyIcon(props: IconProps) {
 export function PillarInvestorIcon(props: IconProps) {
   return (
     <BasePillarIcon title="Investor Confidence" {...props}>
-      <path d="M14 46h36" stroke="var(--nsi-gold)" strokeWidth="5" strokeLinecap="round" />
-      <path d="M16 44V22" stroke="var(--nsi-gold)" strokeWidth="5" strokeLinecap="round" />
+      <rect x="6" y="6" width="52" height="52" rx="4" fill="#0b3b24" fillOpacity="0.07" />
       <path
-        d="M18 40l12-10 10 6 10-16"
-        fill="none"
-        stroke="var(--nsi-gold)"
-        strokeWidth="5"
-        strokeLinejoin="round"
+        d="M14 48H50"
+        stroke="currentColor"
+        strokeWidth="3"
         strokeLinecap="round"
       />
+      <rect x="17" y="34" width="6" height="14" fill="currentColor" opacity="0.35" />
+      <rect x="29" y="27" width="6" height="21" fill="currentColor" opacity="0.65" />
+      <rect x="41" y="19" width="6" height="29" fill="currentColor" />
       <path
-        d="M50 20l-2 9-9-2"
+        d="M16 30L28 22L36 26L48 14"
         fill="none"
-        stroke="var(--nsi-gold)"
-        strokeWidth="5"
-        strokeLinejoin="round"
+        stroke="#c88a2b"
+        strokeWidth="3"
         strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M41 14H48V21"
+        fill="none"
+        stroke="#c88a2b"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </BasePillarIcon>
   );
@@ -125,12 +131,19 @@ export function PillarInvestorIcon(props: IconProps) {
 export function PillarGovernanceIcon(props: IconProps) {
   return (
     <BasePillarIcon title="Governance" {...props}>
-      <path d="M14 24h36L32 14 14 24Z" fill="var(--nsi-gold)" />
-      <path d="M18 26v22" stroke="var(--nsi-gold)" strokeWidth="5" strokeLinecap="round" />
-      <path d="M28 26v22" stroke="var(--nsi-gold)" strokeWidth="5" strokeLinecap="round" />
-      <path d="M38 26v22" stroke="var(--nsi-gold)" strokeWidth="5" strokeLinecap="round" />
-      <path d="M46 26v22" stroke="var(--nsi-gold)" strokeWidth="5" strokeLinecap="round" />
-      <path d="M16 48h32" stroke="var(--nsi-gold)" strokeWidth="6" strokeLinecap="round" />
+      <rect x="6" y="6" width="52" height="52" rx="4" fill="#0b3b24" fillOpacity="0.07" />
+      <path
+        d="M12 24L32 13L52 24H12Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinejoin="round"
+      />
+      <line x1="18" y1="24" x2="18" y2="44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <line x1="27" y1="24" x2="27" y2="44" stroke="#c88a2b" strokeWidth="3" strokeLinecap="round" />
+      <line x1="37" y1="24" x2="37" y2="44" stroke="#c88a2b" strokeWidth="3" strokeLinecap="round" />
+      <line x1="46" y1="24" x2="46" y2="44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <path d="M12 45H52M10 50H54" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
     </BasePillarIcon>
   );
 }
@@ -138,20 +151,162 @@ export function PillarGovernanceIcon(props: IconProps) {
 export function PillarSocialIcon(props: IconProps) {
   return (
     <BasePillarIcon title="Social Stability" {...props}>
-      <circle cx="22" cy="26" r="7" fill="var(--nsi-gold)" />
-      <circle cx="40" cy="26" r="7" fill="var(--nsi-gold)" />
+      <rect x="6" y="6" width="52" height="52" rx="4" fill="#0b3b24" fillOpacity="0.07" />
+      <circle cx="23" cy="23" r="6" fill="none" stroke="currentColor" strokeWidth="3" />
+      <circle cx="41" cy="23" r="6" fill="none" stroke="#c88a2b" strokeWidth="3" />
       <path
-        d="M10 50c2-10 10-16 20-16s18 6 20 16"
+        d="M12 46C13.8 38 19.5 34 27 34C34.5 34 40.2 38 42 46"
         fill="none"
-        stroke="var(--nsi-gold)"
-        strokeWidth="6"
+        stroke="currentColor"
+        strokeWidth="3"
         strokeLinecap="round"
       />
       <path
-        d="M48 22c4-4 10-1 10 4 0 7-10 12-10 12S38 33 38 26c0-5 6-8 10-4Z"
-        fill="oklch(0.84 0.1 86)"
+        d="M33 34.5C35.2 33.8 37.5 33.5 39.8 33.5C45.8 33.5 50.5 37.5 52 46"
+        fill="none"
+        stroke="#c88a2b"
+        strokeWidth="3"
+        strokeLinecap="round"
       />
     </BasePillarIcon>
+  );
+}
+
+/**
+ * Editorial Data-Infographic Emblem for Pillar Cards & Survey Wizard
+ * Replaces pixelated/text-baked raster icons with crisp vector editorial artwork.
+ */
+export function PillarEditorialGraphic({
+  title,
+  score,
+  className,
+}: {
+  title: string;
+  score?: number;
+  className?: string;
+}) {
+  const t = title.toLowerCase();
+  const isSecurity = t.includes("security");
+  const isEcon = t.includes("econom") || t.includes("fx");
+  const isInvest = t.includes("invest");
+  const isGov = t.includes("govern");
+
+  return (
+    <svg
+      viewBox="0 0 240 120"
+      className={className ?? "h-full w-full"}
+      role="img"
+      aria-label={title}
+    >
+      <defs>
+        <pattern id={`grid-${t.replace(/\s+/g, "")}`} width="16" height="16" patternUnits="userSpaceOnUse">
+          <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#0b3b24" strokeWidth="0.5" strokeOpacity="0.08" />
+        </pattern>
+      </defs>
+      <rect width="240" height="120" fill="#f6f4ee" />
+      <rect width="240" height="120" fill={`url(#grid-${t.replace(/\s+/g, "")})`} />
+
+      {/* Subtle architectural meridian lines */}
+      <line x1="0" y1="60" x2="240" y2="60" stroke="#0b3b24" strokeWidth="0.75" strokeOpacity="0.12" strokeDasharray="3 3" />
+      <line x1="120" y1="0" x2="120" y2="120" stroke="#0b3b24" strokeWidth="0.75" strokeOpacity="0.12" strokeDasharray="3 3" />
+
+      {isSecurity && (
+        <g transform="translate(120, 60)">
+          <circle r="44" fill="#0b3b24" fillOpacity="0.05" stroke="#0b3b24" strokeWidth="1" strokeOpacity="0.2" />
+          <circle r="32" fill="none" stroke="#c88a2b" strokeWidth="1" strokeDasharray="4 3" />
+          <path
+            d="M0 -28 L24 -19 V0 C24 16 14 26 0 32 C-14 26 -24 16 -24 0 V-19 Z"
+            fill="#0b3b24"
+            stroke="#c88a2b"
+            strokeWidth="2"
+          />
+          <path d="M0 -18 V20 M-14 -2 H14" stroke="#c88a2b" strokeWidth="2.2" strokeLinecap="round" />
+          <circle cx="0" cy="-2" r="3.5" fill="#ffffff" />
+        </g>
+      )}
+
+      {isEcon && (
+        <g transform="translate(120, 60)">
+          <circle r="44" fill="#0b3b24" fillOpacity="0.05" stroke="#0b3b24" strokeWidth="1" strokeOpacity="0.2" />
+          {/* Macro grid & Naira emblem */}
+          <rect x="-28" y="-26" width="56" height="52" rx="3" fill="#0b3b24" stroke="#c88a2b" strokeWidth="1.5" />
+          <path
+            d="M-12 16 V-16 L12 16 V-16"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="3.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path d="M-19 -5 H19 M-19 5 H19" stroke="#c88a2b" strokeWidth="2.5" strokeLinecap="round" />
+        </g>
+      )}
+
+      {isInvest && (
+        <g transform="translate(120, 60)">
+          <circle r="44" fill="#0b3b24" fillOpacity="0.05" stroke="#0b3b24" strokeWidth="1" strokeOpacity="0.2" />
+          <rect x="-26" y="4" width="10" height="20" fill="#0b3b24" fillOpacity="0.35" />
+          <rect x="-10" y="-4" width="10" height="28" fill="#0b3b24" fillOpacity="0.65" />
+          <rect x="6" y="-14" width="10" height="38" fill="#0b3b24" />
+          <rect x="22" y="-24" width="10" height="48" fill="#c88a2b" />
+          <path d="M-32 24 H38" stroke="#0b3b24" strokeWidth="2" />
+          <path
+            d="M-24 -6 L-6 -16 L8 -10 L26 -28"
+            fill="none"
+            stroke="#0b3b24"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+          />
+          <circle cx="26" cy="-28" r="3.5" fill="#c88a2b" stroke="#0b3b24" strokeWidth="1.5" />
+        </g>
+      )}
+
+      {isGov && (
+        <g transform="translate(120, 60)">
+          <circle r="44" fill="#0b3b24" fillOpacity="0.05" stroke="#0b3b24" strokeWidth="1" strokeOpacity="0.2" />
+          <path d="M-30 -10 L0 -26 L30 -10 Z" fill="#0b3b24" stroke="#c88a2b" strokeWidth="1.5" />
+          <rect x="-24" y="-8" width="6" height="26" fill="#0b3b24" />
+          <rect x="-10" y="-8" width="6" height="26" fill="#c88a2b" />
+          <rect x="4" y="-8" width="6" height="26" fill="#c88a2b" />
+          <rect x="18" y="-8" width="6" height="26" fill="#0b3b24" />
+          <rect x="-30" y="18" width="60" height="5" fill="#0b3b24" />
+          <rect x="-34" y="24" width="68" height="3" fill="#c88a2b" />
+        </g>
+      )}
+
+      {!isSecurity && !isEcon && !isInvest && !isGov && (
+        <g transform="translate(120, 60)">
+          <circle r="44" fill="#0b3b24" fillOpacity="0.05" stroke="#0b3b24" strokeWidth="1" strokeOpacity="0.2" />
+          <circle cx="-12" cy="-10" r="9" fill="#0b3b24" />
+          <circle cx="12" cy="-10" r="9" fill="#c88a2b" />
+          <path
+            d="M-28 22 C-26 8 -18 2 -6 2 C6 2 14 8 16 22"
+            fill="#0b3b24"
+          />
+          <path
+            d="M-2 22 C0 10 8 4 18 4 C26 4 32 10 34 22"
+            fill="#c88a2b"
+            fillOpacity="0.85"
+          />
+        </g>
+      )}
+
+      {/* Corner index notation */}
+      {typeof score === "number" && (
+        <text
+          x="228"
+          y="20"
+          textAnchor="end"
+          fontSize="11"
+          fontWeight="700"
+          fontFamily="monospace"
+          fill="#0b3b24"
+          opacity="0.55"
+        >
+          {score.toFixed(1)}/10
+        </text>
+      )}
+    </svg>
   );
 }
 
@@ -235,34 +390,39 @@ export function SocialTikTokIcon(props: IconProps) {
 export function NigeriaMapSilhouette({ className, ...props }: IconProps) {
   return (
     <svg
-      viewBox="0 0 200 200"
+      viewBox="0 0 240 200"
       className={className}
       role="img"
-      aria-label="Nigeria Map"
+      aria-label="Map of Nigeria across 6 Geopolitical Zones"
       {...props}
     >
-      <title>Nigeria</title>
-      <defs>
-        <linearGradient id="nigeriaMapGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="oklch(0.35 0.05 164)" />
-          <stop offset="100%" stopColor="oklch(0.28 0.04 164)" />
-        </linearGradient>
-      </defs>
-      {/* Simplified Nigeria map outline */}
+      <title>Federal Republic of Nigeria — 36 States &amp; FCT</title>
+      {/* Accurate stylized cartographic silhouette of Nigeria with Niger & Benue rivers */}
       <path
-        d="M60 30 L80 25 L100 28 L120 22 L140 30 L155 35 L165 50 L170 70 L175 90 L170 110 L165 130 L155 145 L145 155 L130 165 L115 170 L100 175 L85 172 L70 165 L55 155 L45 140 L40 120 L38 100 L40 80 L45 60 L50 45 L60 30 Z"
-        fill="url(#nigeriaMapGrad)"
-        stroke="var(--nsi-green)"
+        d="M36 58 L54 38 L78 32 L104 36 L134 28 L164 34 L196 26 L212 44 L208 72 L192 98 L184 126 L168 152 L144 162 L116 178 L92 176 L74 158 L46 152 L28 144 L24 112 L28 82 Z"
+        fill="#0b3b24"
+        fillOpacity="0.1"
+        stroke="#0b3b24"
         strokeWidth="2"
-        opacity="0.9"
       />
-      {/* Lagos marker */}
-      <circle cx="65" cy="145" r="6" fill="var(--nsi-gold)" />
-      <text x="75" y="148" fontSize="12" fill="var(--nsi-green-ink)" fontWeight="600">Lagos</text>
-      {/* Nigeria green stripe indicator */}
-      <rect x="85" y="85" width="8" height="30" fill="oklch(0.45 0.12 145)" rx="2" />
-      <rect x="95" y="85" width="8" height="30" fill="white" rx="2" />
-      <rect x="105" y="85" width="8" height="30" fill="oklch(0.45 0.12 145)" rx="2" />
+      {/* River Niger & River Benue Y-Confluence at Lokoja */}
+      <path
+        d="M38 78 C68 88 92 104 114 118 C138 112 166 102 194 92 M114 118 L112 174"
+        fill="none"
+        stroke="#c88a2b"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeDasharray="3 2"
+      />
+      {/* FCT Abuja & Lagos & Kano Geopolitical Nodes */}
+      <circle cx="116" cy="102" r="4.5" fill="#c88a2b" stroke="#0b3b24" strokeWidth="1.5" />
+      <text x="124" y="105" fontSize="9" fontFamily="monospace" fontWeight="700" fill="#0b3b24">FCT ABUJA</text>
+      <circle cx="42" cy="146" r="4" fill="#0b3b24" />
+      <text x="50" y="149" fontSize="8.5" fontFamily="monospace" fontWeight="600" fill="#0b3b24">LAGOS</text>
+      <circle cx="122" cy="54" r="3.5" fill="#0b3b24" />
+      <text x="130" y="57" fontSize="8.5" fontFamily="monospace" fontWeight="600" fill="#0b3b24">KANO</text>
+      <circle cx="106" cy="166" r="3.5" fill="#0b3b24" />
+      <text x="114" y="169" fontSize="8.5" fontFamily="monospace" fontWeight="600" fill="#0b3b24">PORT HARCOURT</text>
     </svg>
   );
 }
@@ -270,71 +430,53 @@ export function NigeriaMapSilhouette({ className, ...props }: IconProps) {
 export function NSIBadgeLogo({ className, ...props }: IconProps) {
   return (
     <svg
-      viewBox="0 0 80 100"
+      viewBox="0 0 80 96"
       className={className}
       role="img"
-      aria-label="NSI Badge"
+      aria-label="NSI Institutional Crest"
       {...props}
     >
-      <title>NSI</title>
-      <defs>
-        <linearGradient id="nsiBadgeGold" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--nsi-gold)" />
-          <stop offset="100%" stopColor="var(--nsi-gold-deep)" />
-        </linearGradient>
-        <linearGradient id="nsiBadgeGreen" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="oklch(0.38 0.06 164)" />
-          <stop offset="100%" stopColor="oklch(0.26 0.05 164)" />
-        </linearGradient>
-      </defs>
-      {/* Outer shield */}
+      <title>Nigeria Stability Index</title>
       <path
-        d="M40 5 C55 15 70 12 75 12 C75 55 60 75 40 90 C20 75 5 55 5 12 C10 12 25 15 40 5 Z"
-        fill="url(#nsiBadgeGold)"
-        stroke="var(--nsi-gold-deep)"
+        d="M40 4 L72 14 V44 C72 67 57 82 40 90 C23 82 8 67 8 44 V14 L40 4 Z"
+        fill="#062315"
+        stroke="#c88a2b"
+        strokeWidth="2.5"
+      />
+      <path
+        d="M40 10 L66 18.5 V43.5 C66 63 53 76 40 83 C27 76 14 63 14 43.5 V18.5 L40 10 Z"
+        fill="#0b3b24"
+        stroke="#c88a2b"
         strokeWidth="1"
+        strokeOpacity="0.5"
       />
-      {/* Inner shield */}
-      <path
-        d="M40 12 C52 20 63 18 67 18 C67 52 55 68 40 80 C25 68 13 52 13 18 C17 18 28 20 40 12 Z"
-        fill="url(#nsiBadgeGreen)"
-      />
-      {/* NSI text */}
+      {/* Tripartite Nigerian columns */}
+      <line x1="30" y1="16" x2="30" y2="75" stroke="#c88a2b" strokeWidth="1" strokeOpacity="0.35" />
+      <line x1="50" y1="16" x2="50" y2="75" stroke="#c88a2b" strokeWidth="1" strokeOpacity="0.35" />
       <text
         x="40"
-        y="38"
+        y="48"
         textAnchor="middle"
-        fontSize="18"
+        fontSize="19"
         fontWeight="700"
-        fontFamily="var(--font-serif)"
-        fill="var(--nsi-gold)"
-        letterSpacing="1"
+        fontFamily="Georgia, serif"
+        fill="#ffffff"
+        letterSpacing="2"
       >
-        N
+        NSI
       </text>
+      <line x1="22" y1="56" x2="58" y2="56" stroke="#c88a2b" strokeWidth="1.5" />
       <text
         x="40"
-        y="54"
+        y="66"
         textAnchor="middle"
-        fontSize="18"
+        fontSize="6.5"
         fontWeight="700"
-        fontFamily="var(--font-serif)"
-        fill="var(--nsi-gold)"
-        letterSpacing="1"
+        fontFamily="monospace"
+        fill="#e4b05a"
+        letterSpacing="1.5"
       >
-        S
-      </text>
-      <text
-        x="40"
-        y="70"
-        textAnchor="middle"
-        fontSize="18"
-        fontWeight="700"
-        fontFamily="var(--font-serif)"
-        fill="var(--nsi-gold)"
-        letterSpacing="1"
-      >
-        I
+        NIGERIA
       </text>
     </svg>
   );

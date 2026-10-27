@@ -9,8 +9,8 @@ import { CycleFilter } from "@/components/admin/CycleFilter";
 type TabId = "submissions" | "analytics";
 
 const tabs: { id: TabId; label: string }[] = [
-  { id: "submissions", label: "Submissions" },
-  { id: "analytics", label: "Analytics" },
+  { id: "submissions", label: "Submissions Ledger" },
+  { id: "analytics", label: "Statistical Breakdown" },
 ];
 
 export default function AdminSubmissionsPage() {
@@ -20,8 +20,8 @@ export default function AdminSubmissionsPage() {
   return (
     <>
       <AdminPageHeader
-        title="Submissions"
-        description="Review check-ins, flag entries, and export CSV (flagged entries excluded)."
+        title="Field Submissions Ledger"
+        description="Audit citizen check-ins, flag anomalous entries, and export clean CSV data (flagged entries excluded)."
         breadcrumb={[
           { label: "Dashboard", href: "/admin" },
           { label: "Submissions" },
@@ -41,7 +41,7 @@ export default function AdminSubmissionsPage() {
         <nav
           role="tablist"
           aria-label="Submissions view"
-          className="flex gap-1 overflow-x-auto rounded-xl border border-black/10 bg-white p-1.5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-black/10"
+          className="flex gap-1 overflow-x-auto rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-white p-1"
           onKeyDown={(e) => {
             const idx = tabs.findIndex((t) => t.id === activeTab);
             if (e.key === "ArrowRight" && idx < tabs.length - 1) {
@@ -60,10 +60,10 @@ export default function AdminSubmissionsPage() {
               aria-controls={`panel-${tab.id}`}
               tabIndex={activeTab === tab.id ? 0 : -1}
               onClick={() => setActiveTab(tab.id)}
-              className={`whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--nsi-gold)] focus-visible:ring-offset-1 ${
+              className={`whitespace-nowrap rounded-[2px] px-4 py-2 font-mono text-xs font-bold uppercase tracking-[0.14em] transition-all ${
                 activeTab === tab.id
-                  ? "bg-[color:var(--nsi-green)] text-white shadow-sm"
-                  : "text-[color:var(--nsi-ink-soft)] hover:bg-black/5 hover:text-[color:var(--nsi-ink)]"
+                  ? "bg-[color:var(--nsi-green)] text-white"
+                  : "text-[color:var(--nsi-ink-soft)] hover:bg-[color:var(--nsi-paper)] hover:text-[color:var(--nsi-ink)]"
               }`}
             >
               {tab.label}

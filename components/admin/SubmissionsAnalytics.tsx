@@ -55,29 +55,28 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
 
   if (!cycleId) {
     return (
-      <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
-        <p className="text-sm text-black/60">Select a cycle to view analytics.</p>
+      <div className="admin-card md:p-8">
+        <p className="text-sm text-[color:var(--nsi-ink-soft)]">Select a cycle to view statistical breakdown.</p>
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
-        <div className="flex items-center gap-2 text-sm text-black/60">
-          <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black/20 border-t-black/70" />
-          Loading analytics…
-        </div>
+      <div className="admin-card md:p-8">
+        <p className="font-mono text-xs uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+          Computing cycle analytics…
+        </p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
+      <div className="admin-card md:p-8">
         <div
           role="alert"
-          className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+          className="rounded-[3px] border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900"
         >
           {error}
         </div>
@@ -87,8 +86,8 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
 
   if (!data) {
     return (
-      <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
-        <p className="text-sm text-black/60">No analytics data.</p>
+      <div className="admin-card md:p-8">
+        <p className="text-sm text-[color:var(--nsi-ink-soft)]">No analytics data available.</p>
       </div>
     );
   }
@@ -108,22 +107,23 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
   if (!hasAny) {
     const reportHrefEmpty = `/api/admin/submissions/report?cycleId=${encodeURIComponent(cycleId)}`;
     return (
-      <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
-        <p className="text-sm text-black/60">No submissions for this cycle.</p>
+      <div className="admin-card md:p-8">
+        <p className="text-sm text-[color:var(--nsi-ink-soft)]">No submissions recorded for this cycle.</p>
         <a
           href={reportHrefEmpty}
           download
           className="admin-btn-secondary mt-4 inline-flex items-center gap-2"
         >
-          Download PDF report
+          Download PDF Report
         </a>
       </div>
     );
   }
 
-  const moodEntries = MOODS.map((m) => ({ mood: m, count: data.moodDistribution[m] ?? 0 })).filter(
-    (e) => e.count > 0
-  );
+  const moodEntries: { mood: string; count: number }[] = MOODS.map((m) => ({
+    mood: m,
+    count: data.moodDistribution[m] ?? 0,
+  })).filter((e) => e.count > 0);
   if (moodEntries.length === 0) {
     Object.entries(data.moodDistribution).forEach(([mood, count]) => {
       if (!MOODS.includes(mood as (typeof MOODS)[number])) moodEntries.push({ mood, count });
@@ -155,11 +155,11 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
   const reportHref = `/api/admin/submissions/report?cycleId=${encodeURIComponent(cycleId)}`;
 
   return (
-    <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-black/5 pb-4">
+    <div className="admin-card md:p-8">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-[color:var(--nsi-rule)] pb-4">
         {data.submissionCount != null && (
-          <span className="text-sm text-black/60">
-            {data.submissionCount} submission{data.submissionCount === 1 ? "" : "s"}
+          <span className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+            Sample Size: <span className="text-[color:var(--nsi-green)]">{data.submissionCount}</span> response{data.submissionCount === 1 ? "" : "s"}
           </span>
         )}
         <a
@@ -167,16 +167,16 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
           download
           className="admin-btn-secondary inline-flex items-center gap-2"
         >
-          Download PDF report
+          Download PDF Report
         </a>
       </div>
       <div className="space-y-8">
         {/* Overall average score */}
         <section>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
-            Overall average score
+          <h3 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+            Composite Mean Score
           </h3>
-          <p className="mt-2 text-3xl font-semibold text-[color:var(--nsi-green)]">
+          <p className="mt-2 font-serif text-4xl font-bold text-[color:var(--nsi-green)]">
             {data.overallAvgScore != null
               ? data.overallAvgScore.toFixed(2)
               : "—"}
@@ -185,17 +185,17 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
 
         {/* Average per pillar */}
         <section>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
-            Average score per pillar
+          <h3 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+            Mean Score by Pillar
           </h3>
-          <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
             {PILLARS.map((p) => (
               <li
                 key={p.key}
-                className="flex items-center justify-between rounded-xl bg-[color:var(--nsi-paper)] px-4 py-3"
+                className="flex items-center justify-between rounded-[2px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] px-4 py-3"
               >
-                <span className="text-sm font-medium text-black/80">{p.label}</span>
-                <span className="tabular-nums font-semibold text-[color:var(--nsi-green)]">
+                <span className="text-sm font-semibold text-[color:var(--nsi-ink)]">{p.label}</span>
+                <span className="font-mono font-bold tabular-nums text-[color:var(--nsi-green)]">
                   {(data.avgPerPillar[p.key] ?? 0) > 0
                     ? (data.avgPerPillar[p.key] ?? 0).toFixed(2)
                     : "—"}
@@ -208,8 +208,8 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
         {/* Score distribution */}
         {(scoreDist["1-3"] ?? 0) + (scoreDist["4-6"] ?? 0) + (scoreDist["7-10"] ?? 0) > 0 && (
           <section>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
-              Score distribution
+            <h3 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+              Score Band Distribution
             </h3>
             <ul className="mt-3 space-y-2">
               {(["7-10", "4-6", "1-3"] as const).map((bucket) => {
@@ -218,13 +218,13 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
                 return (
                   <li
                     key={bucket}
-                    className="flex items-center gap-3 rounded-xl bg-[color:var(--nsi-paper)] px-4 py-2"
+                    className="flex items-center gap-3 rounded-[2px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] px-4 py-2.5"
                   >
-                    <span className="w-8 text-sm font-medium">{bucket}</span>
-                    <span className="tabular-nums text-sm text-black/60">{n}</span>
-                    <div className="min-w-[80px] flex-1 rounded-full bg-black/10">
+                    <span className="w-10 font-mono text-xs font-bold">{bucket}</span>
+                    <span className="w-8 font-mono text-xs tabular-nums text-[color:var(--nsi-ink-soft)]">{n}</span>
+                    <div className="min-w-[80px] flex-1 rounded-[1px] bg-black/10">
                       <div
-                        className="h-2 rounded-full bg-[color:var(--nsi-green)]"
+                        className="h-2 rounded-[1px] bg-[color:var(--nsi-green)]"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -238,17 +238,17 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
         {/* Score by mood */}
         {avgByMoodEntries.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
-              Average score by mood
+            <h3 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+              Mean Score by National Mood
             </h3>
             <ul className="mt-3 grid gap-2 sm:grid-cols-2">
               {avgByMoodEntries.map(([mood, avg]) => (
                 <li
                   key={mood}
-                  className="flex items-center justify-between rounded-xl bg-[color:var(--nsi-paper)] px-4 py-2"
+                  className="flex items-center justify-between rounded-[2px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] px-4 py-2.5"
                 >
-                  <span className="text-sm font-medium">{mood}</span>
-                  <span className="tabular-nums font-semibold text-[color:var(--nsi-green)]">
+                  <span className="text-sm font-semibold">{mood}</span>
+                  <span className="font-mono font-bold tabular-nums text-[color:var(--nsi-green)]">
                     {avg.toFixed(2)}
                   </span>
                 </li>
@@ -260,17 +260,17 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
         {/* Score by state */}
         {avgByStateEntries.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
-              Average score by state
+            <h3 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+              Mean Score by State
             </h3>
             <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {avgByStateEntries.map(([state, avg]) => (
                 <li
                   key={state}
-                  className="flex items-center justify-between rounded-xl bg-[color:var(--nsi-paper)] px-4 py-2"
+                  className="flex items-center justify-between rounded-[2px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] px-4 py-2.5"
                 >
-                  <span className="text-sm font-medium">{state}</span>
-                  <span className="tabular-nums font-semibold text-[color:var(--nsi-green)]">
+                  <span className="text-sm font-semibold">{state}</span>
+                  <span className="font-mono font-bold tabular-nums text-[color:var(--nsi-green)]">
                     {avg.toFixed(2)}
                   </span>
                 </li>
@@ -281,20 +281,20 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
 
         {/* Mood */}
         <section>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
-            Mood
+          <h3 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+            Mood Frequency
           </h3>
           {moodEntries.length === 0 ? (
-            <p className="mt-2 text-sm text-black/50">No mood data.</p>
+            <p className="mt-2 text-sm text-[color:var(--nsi-ink-muted)]">No mood data.</p>
           ) : (
             <ul className="mt-3 space-y-2">
               {moodEntries.map(({ mood, count }) => (
                 <li
                   key={mood}
-                  className="flex items-center justify-between rounded-xl bg-[color:var(--nsi-paper)] px-4 py-2"
+                  className="flex items-center justify-between rounded-[2px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] px-4 py-2.5"
                 >
-                  <span className="text-sm font-medium">{mood}</span>
-                  <span className="tabular-nums text-sm text-black/60">{count}</span>
+                  <span className="text-sm font-semibold">{mood}</span>
+                  <span className="font-mono text-xs font-bold tabular-nums text-[color:var(--nsi-ink-soft)]">{count}</span>
                 </li>
               ))}
             </ul>
@@ -303,24 +303,24 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
 
         {/* One word */}
         <section>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
-            One word
+          <h3 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+            One-Word Descriptors
           </h3>
           {data.oneWordCounts.length === 0 ? (
-            <p className="mt-2 text-sm text-black/50">No one-word data.</p>
+            <p className="mt-2 text-sm text-[color:var(--nsi-ink-muted)]">No one-word data.</p>
           ) : (
             <ul className="mt-3 flex flex-wrap gap-2">
               {data.oneWordCounts.slice(0, 30).map(({ word, count }) => (
                 <li
                   key={word}
-                  className="rounded-lg bg-[color:var(--nsi-paper)] px-3 py-1.5 text-sm"
+                  className="rounded-[2px] border border-[color:var(--nsi-rule-strong)] bg-[color:var(--nsi-paper)] px-3 py-1.5 text-xs"
                 >
-                  <span className="font-medium">{word}</span>
-                  <span className="ml-1.5 tabular-nums text-black/60">({count})</span>
+                  <span className="font-semibold">{word}</span>
+                  <span className="ml-1.5 font-mono tabular-nums text-[color:var(--nsi-ink-muted)]">({count})</span>
                 </li>
               ))}
               {data.oneWordCounts.length > 30 && (
-                <li className="text-sm text-black/50">
+                <li className="text-xs text-[color:var(--nsi-ink-muted)]">
                   +{data.oneWordCounts.length - 30} more
                 </li>
               )}
@@ -330,20 +330,20 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
 
         {/* Spotlight by state */}
         <section>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
-            Spotlight by state
+          <h3 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+            Spotlight Volume by State
           </h3>
           {stateEntries.length === 0 ? (
-            <p className="mt-2 text-sm text-black/50">No spotlight state data.</p>
+            <p className="mt-2 text-sm text-[color:var(--nsi-ink-muted)]">No spotlight state data.</p>
           ) : (
             <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {stateEntries.map(([state, count]) => (
                 <li
                   key={state}
-                  className="flex items-center justify-between rounded-xl bg-[color:var(--nsi-paper)] px-4 py-2"
+                  className="flex items-center justify-between rounded-[2px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] px-4 py-2.5"
                 >
-                  <span className="text-sm font-medium">{state}</span>
-                  <span className="tabular-nums text-sm text-black/60">{count}</span>
+                  <span className="text-sm font-semibold">{state}</span>
+                  <span className="font-mono text-xs font-bold tabular-nums text-[color:var(--nsi-ink-soft)]">{count}</span>
                 </li>
               ))}
             </ul>
@@ -352,20 +352,20 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
 
         {/* Spotlight by tag */}
         <section>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
-            Spotlight by tag
+          <h3 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+            Spotlight Volume by Thematic Tag
           </h3>
           {tagEntries.length === 0 ? (
-            <p className="mt-2 text-sm text-black/50">No spotlight tag data.</p>
+            <p className="mt-2 text-sm text-[color:var(--nsi-ink-muted)]">No spotlight tag data.</p>
           ) : (
             <ul className="mt-3 flex flex-wrap gap-2">
               {tagEntries.map(([tag, count]) => (
                 <li
                   key={tag}
-                  className="rounded-lg bg-[color:var(--nsi-paper)] px-3 py-1.5 text-sm"
+                  className="rounded-[2px] border border-[color:var(--nsi-rule-strong)] bg-[color:var(--nsi-paper)] px-3 py-1.5 text-xs"
                 >
-                  <span className="font-medium">{tag}</span>
-                  <span className="ml-1.5 tabular-nums text-black/60">({count})</span>
+                  <span className="font-semibold">{tag}</span>
+                  <span className="ml-1.5 font-mono tabular-nums text-[color:var(--nsi-ink-muted)]">({count})</span>
                 </li>
               ))}
             </ul>

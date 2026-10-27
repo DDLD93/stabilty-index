@@ -70,7 +70,7 @@ export function CycleSurveyForm() {
 
   async function submitSurvey(action?: "OPEN") {
     setError(null);
-    setSubmitState(action ?? "update");
+    setSubmitState(action === "OPEN" ? "open" : "update");
     try {
       const body: { surveyQuestions: SurveyQuestion[]; action?: "OPEN"; monthYear?: string } = {
         surveyQuestions: questions,
@@ -125,8 +125,8 @@ export function CycleSurveyForm() {
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-black/10 bg-white p-8 text-center text-[color:var(--nsi-ink-soft)]">
-        Loading…
+      <div className="admin-card p-8 text-center text-[color:var(--nsi-ink-soft)]">
+        Loading cycle configuration…
       </div>
     );
   }
@@ -134,49 +134,50 @@ export function CycleSurveyForm() {
   return (
     <div className="space-y-6">
       {cycle && (
-        <div className="rounded-2xl border border-black/10 bg-white p-6">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-[color:var(--nsi-ink-soft)]">
-            Current cycle
-          </h2>
-          <p className="mt-2 font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">
-            {cycle.monthYear}
-          </p>
-          <p className="mt-1 text-sm text-[color:var(--nsi-ink-soft)]">
-            Status:{" "}
+        <div className="admin-card">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+                Current Cycle
+              </h2>
+              <p className="mt-1 font-serif text-2xl font-bold text-[color:var(--nsi-ink)]">
+                {cycle.monthYear}
+              </p>
+            </div>
             <span
-              className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${
+              className={`inline-flex rounded-[2px] border px-2.5 py-1 font-mono text-xs font-bold uppercase ${
                 cycle.status === "OPEN"
-                  ? "bg-emerald-100 text-emerald-800"
+                  ? "border-emerald-300 bg-emerald-50 text-emerald-900"
                   : cycle.status === "CLOSED"
-                    ? "bg-amber-100 text-amber-800"
-                    : "bg-gray-100 text-gray-700"
+                    ? "border-amber-300 bg-amber-50 text-amber-900"
+                    : "border-gray-300 bg-gray-100 text-gray-700"
               }`}
             >
               {cycle.status}
             </span>
-          </p>
+          </div>
         </div>
       )}
 
       <form
-        className="rounded-2xl border border-black/10 bg-white p-6 md:p-8"
+        className="admin-card md:p-8"
         onSubmit={(e) => {
           e.preventDefault();
           const shouldOpen = cycle?.status !== "OPEN" && cycle?.status !== "ARCHIVED";
           submitSurvey(shouldOpen ? "OPEN" : undefined);
         }}
       >
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-[color:var(--nsi-ink-soft)]">
-          Survey questions (one per pillar, scale 1–5)
+        <h2 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--nsi-ink)]">
+          Survey Instrument Questions (1–5 Rating Scale)
         </h2>
-        <p className="mt-2 max-w-xl text-sm text-[color:var(--nsi-ink-soft)]">
-          Define the question text for each stability pillar. Respondents will answer with a radio scale from 1 to 5.
+        <p className="mt-1.5 max-w-xl text-sm text-[color:var(--nsi-ink-soft)]">
+          Define the question prompt for each stability pillar. Respondents rate each prompt from 1 (least stable) to 5 (most stable).
         </p>
 
         {(cycle?.status !== "OPEN" || !cycle) && (
           <div className="mt-6">
-            <label htmlFor="cycle-name" className="block text-sm font-medium text-[color:var(--nsi-ink)]">
-              Cycle name (optional)
+            <label htmlFor="cycle-name" className="block font-mono text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+              Cycle Edition Title (Optional)
             </label>
             <input
               id="cycle-name"
@@ -184,11 +185,11 @@ export function CycleSurveyForm() {
               value={cycleName}
               onChange={(e) => setCycleName(e.target.value)}
               placeholder={cycle?.monthYear ?? new Intl.DateTimeFormat("en-NG", { month: "long", year: "numeric" }).format(new Date())}
-              className="mt-1.5 w-full max-w-xs rounded-xl border border-black/15 bg-white px-4 py-2.5 text-[color:var(--nsi-ink)] placeholder:text-black/40 focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-1 focus:ring-[color:var(--nsi-green)]"
+              className="admin-input mt-1.5 w-full max-w-xs"
               aria-label="Cycle name"
             />
-            <p className="mt-1 text-xs text-[color:var(--nsi-ink-soft)]">
-              Used when creating or opening a cycle (e.g. month and year). Leave blank to use the default.
+            <p className="mt-1 text-xs text-[color:var(--nsi-ink-muted)]">
+              Used when creating or opening a cycle (e.g. Month and Year). Leave blank to use the default.
             </p>
           </div>
         )}
@@ -198,23 +199,23 @@ export function CycleSurveyForm() {
             <div key={pillar.key}>
               <label
                 htmlFor={`q-${idx}`}
-                className="block text-sm font-medium text-[color:var(--nsi-ink)]"
+                className="block font-mono text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]"
               >
-                {pillar.label}
+                0{idx + 1} / {pillar.label}
               </label>
               <input
                 id={`q-${idx}`}
                 type="text"
                 value={questions[idx]?.questionText ?? ""}
                 onChange={(e) => updateQuestion(idx, e.target.value)}
-                className="mt-1.5 w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-[color:var(--nsi-ink)] placeholder:text-black/40 focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-1 focus:ring-[color:var(--nsi-green)]"
+                className="admin-input mt-1.5 w-full"
                 placeholder={defaultQuestionText(pillar.label)}
                 required
               />
             </div>
           ))}
         </div>
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap gap-3 border-t border-[color:var(--nsi-rule)] pt-6">
           {cycle?.status === "ARCHIVED" && (
             <p className="w-full text-sm text-[color:var(--nsi-ink-soft)]">
               Archived cycles cannot be reopened. Create a new cycle from the dashboard instead.
@@ -223,35 +224,35 @@ export function CycleSurveyForm() {
           {cycle?.status !== "OPEN" && cycle?.status !== "ARCHIVED" ? (
             <button
               type="submit"
-              className="rounded-xl bg-[color:var(--nsi-green)] px-4 py-2.5 text-sm font-medium text-white hover:opacity-95 disabled:opacity-60"
+              className="admin-btn-primary disabled:opacity-50"
               disabled={!!submitState}
             >
-              {submitState === "open" ? "Opening…" : "Open cycle"}
+              {submitState === "open" ? "Opening…" : "Open Cycle"}
             </button>
           ) : cycle?.status === "OPEN" ? (
             <button
               type="submit"
-              className="rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm font-medium hover:bg-black/[.03] disabled:opacity-60"
+              className="admin-btn-secondary disabled:opacity-50"
               disabled={!!submitState}
             >
-              {submitState === "update" ? "Saving…" : "Update questions"}
+              {submitState === "update" ? "Saving…" : "Update Questions"}
             </button>
           ) : null}
           {cycle?.status === "OPEN" && (
             <button
               type="button"
-              className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm font-medium text-amber-800 hover:bg-amber-100 disabled:opacity-60"
+              className="admin-btn-danger disabled:opacity-50"
               disabled={!!submitState}
               onClick={closeCycle}
             >
-              {submitState === "close" ? "Closing…" : "Close cycle"}
+              {submitState === "close" ? "Closing…" : "Close Cycle"}
             </button>
           )}
         </div>
       </form>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <div className="rounded-[3px] border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
           {error}
         </div>
       )}

@@ -38,104 +38,83 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
   --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  --radius-2xl: calc(var(--radius) + 6px);
+  --radius-3xl: calc(var(--radius) + 8px);
+  --radius-4xl: calc(var(--radius) + 10px);
 }
 
 :root {
-  --radius: 0.625rem;
-  /* Enhanced green palette - deeper, richer tones */
-  --nsi-green: oklch(0.30 0.07 164);
-  --nsi-green-deep: oklch(0.24 0.06 164);
-  --nsi-green-ink: oklch(0.20 0.05 164);
-  --nsi-green-teal: oklch(0.32 0.08 170);
-  --nsi-green-light: oklch(0.38 0.06 164);
-  /* Warmer, richer gold palette */
-  --nsi-gold: oklch(0.78 0.14 86);
-  --nsi-gold-deep: oklch(0.70 0.13 82);
-  --nsi-gold-warm: oklch(0.65 0.12 75);
-  --nsi-gold-light: oklch(0.82 0.11 88);
-  /* Paper and ink */
-  --nsi-paper: oklch(0.97 0.02 88);
-  --nsi-paper-2: oklch(0.955 0.02 88);
-  --nsi-ink: oklch(0.18 0.01 260);
-  --nsi-ink-soft: oklch(0.35 0.01 260);
-  /* Enhanced card styling */
-  --nsi-card: oklch(1 0 0 / 88%);
-  --nsi-card-border: oklch(0.3 0.02 164 / 0.18);
-  --nsi-shadow: 0 20px 40px -24px oklch(0.12 0.03 160 / 0.4);
-  --nsi-shadow-lg: 0 25px 50px -20px oklch(0.10 0.03 160 / 0.45);
+  /* Crisp editorial geometry inspired by Chatham House & BudgIT */
+  --radius: 0.25rem;
+
+  /* Sovereign Nigerian Forest & Institutional Slate-Green Palette */
+  --nsi-green: #0b3b24;
+  --nsi-green-deep: #062315;
+  --nsi-green-ink: #04170e;
+  --nsi-green-teal: #145335;
+  --nsi-green-light: #1d7a4c;
+  --nsi-emerald-tint: #eef5f0;
+
+  /* Afrobarometer & West African Brass / Ochre / Terracotta Accents */
+  --nsi-gold: #c88a2b;
+  --nsi-gold-deep: #9e6714;
+  --nsi-gold-warm: #b5761c;
+  --nsi-gold-light: #e4b05a;
+  --nsi-gold-tint: #fbf6ec;
+  --nsi-terracotta: #b84a27;
+  --nsi-terracotta-tint: #fdf2ee;
+
+  /* Editorial Newsprint / Warm Archival Paper & Charcoal Ink */
+  --nsi-paper: #f6f4ee;
+  --nsi-paper-2: #ece8df;
+  --nsi-paper-3: #e1dcd0;
+  --nsi-ink: #111613;
+  --nsi-ink-soft: #434d47;
+  --nsi-ink-muted: #6c7770;
+  --nsi-rule: rgba(17, 22, 19, 0.13);
+  --nsi-rule-strong: rgba(17, 22, 19, 0.24);
+
+  /* Card & Elevation Tokens */
+  --nsi-card: #ffffff;
+  --nsi-card-border: rgba(17, 22, 19, 0.13);
+  --nsi-shadow: 0 2px 6px -1px rgba(6, 35, 21, 0.06), 0 1px 2px -1px rgba(6, 35, 21, 0.04);
+  --nsi-shadow-lg: 0 12px 28px -8px rgba(6, 35, 21, 0.12), 0 4px 10px -4px rgba(6, 35, 21, 0.06);
 
   --background: var(--nsi-paper);
   --foreground: var(--nsi-ink);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
+  --card: #ffffff;
+  --card-foreground: var(--nsi-ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--nsi-ink);
   --primary: var(--nsi-green);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
+  --primary-foreground: #ffffff;
+  --secondary: var(--nsi-paper-2);
+  --secondary-foreground: var(--nsi-ink);
+  --muted: var(--nsi-paper-2);
+  --muted-foreground: var(--nsi-ink-soft);
   --accent: var(--nsi-gold);
-  --accent-foreground: oklch(0.18 0.01 260);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.705 0.015 286.067);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.21 0.006 285.885);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.705 0.015 286.067);
-}
-
-.dark {
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.92 0.004 286.32);
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.552 0.016 285.938);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.552 0.016 285.938);
+  --accent-foreground: var(--nsi-ink);
+  --destructive: #b91c1c;
+  --border: var(--nsi-rule);
+  --input: var(--nsi-rule-strong);
+  --ring: var(--nsi-green);
+  --chart-1: #0b3b24;
+  --chart-2: #c88a2b;
+  --chart-3: #1d7a4c;
+  --chart-4: #b84a27;
+  --chart-5: #2c5282;
+  --sidebar: var(--nsi-green-deep);
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: var(--nsi-gold);
+  --sidebar-primary-foreground: var(--nsi-ink);
+  --sidebar-accent: rgba(255, 255, 255, 0.08);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.12);
+  --sidebar-ring: var(--nsi-gold);
 }
 
 @layer base {
@@ -144,146 +123,239 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-sans);
+    font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
     background-color: var(--nsi-paper);
-    background-image:
-      /* Subtle paper texture - very light noise */
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-    background-attachment: fixed;
-    background-size: 256px 256px;
+    color: var(--nsi-ink);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
   h1,
   h2,
-  h3 {
-    font-family: var(--font-serif);
+  h3,
+  h4 {
+    font-family: var(--font-serif), Georgia, serif;
+    letter-spacing: -0.015em;
   }
 }
 
 @layer utilities {
-  /* Premium header/footer band with enhanced gradient */
+  /* Institutional Masthead & Band (Chatham House / Afrobarometer dark editorial header) */
   .nsi-band {
-    background: linear-gradient(180deg, 
-      rgba(15, 45, 35, 0.85) 0%, 
-      rgba(10, 30, 25, 0.95) 100%
-    );
-    backdrop-filter: blur(16px);
+    background-color: var(--nsi-green-deep);
+    background-image: linear-gradient(180deg, #082c1b 0%, #051d11 100%);
     border-bottom: 2px solid var(--nsi-gold);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
   }
 
-  /* Semi-transparent glass card */
+  /* Editorial Kicker / Overline Tag */
+  .nsi-kicker {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--nsi-green);
+  }
+
+  .nsi-kicker-light {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--nsi-gold-light);
+  }
+
+  /* Editorial Section Rule Header */
+  .nsi-section-rule {
+    border-top: 2px solid var(--nsi-ink);
+    padding-top: 1rem;
+  }
+
+  .nsi-section-rule-green {
+    border-top: 2px solid var(--nsi-green);
+    padding-top: 1rem;
+  }
+
+  /* Architectural Editorial Cards */
   .nsi-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 24px;
+    background-color: #ffffff;
+    border: 1px solid var(--nsi-rule);
+    border-radius: 4px;
+    box-shadow: var(--nsi-shadow);
   }
 
-  /* Solid white card - updated for dark theme */
   .nsi-card-solid {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(12px);
+    background-color: #ffffff;
+    border: 1px solid var(--nsi-rule);
+    border-radius: 4px;
   }
 
-  /* Score display styling */
   .nsi-score-display {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(20px);
+    background-color: var(--nsi-green-deep);
+    border: 1px solid rgba(200, 138, 43, 0.35);
+    border-top: 4px solid var(--nsi-gold);
+    border-radius: 4px;
+    box-shadow: var(--nsi-shadow-lg);
   }
 
-  /* Gold accent text */
   .nsi-gold-text {
     color: var(--nsi-gold);
   }
 
-  /* Green accent text */
   .nsi-green-text {
     color: var(--nsi-green);
   }
 
   .nsi-page {
-    @apply mx-auto w-full max-w-7xl px-6 pb-20 pt-10;
+    @apply mx-auto w-full max-w-7xl px-6 pb-24 pt-10;
   }
 
   .nsi-section-card {
-    @apply relative overflow-hidden rounded-[3rem] border border-black/10 bg-white/60 shadow-sm backdrop-blur-sm;
+    background-color: #ffffff;
+    border: 1px solid var(--nsi-rule);
+    border-top: 3px solid var(--nsi-green);
+    border-radius: 4px;
+    box-shadow: var(--nsi-shadow);
+    position: relative;
+    overflow: hidden;
   }
 
   .nsi-card-soft {
-    @apply rounded-2xl border border-black/10 bg-white/80 shadow-md;
+    background-color: #ffffff;
+    border: 1px solid var(--nsi-rule);
+    border-radius: 4px;
+    box-shadow: var(--nsi-shadow);
   }
 
   .nsi-pill {
-    @apply rounded-full border border-black/10 bg-white/70 px-4 py-2 text-sm font-medium text-[color:var(--nsi-ink)] backdrop-blur-sm transition-all hover:bg-white;
+    @apply inline-flex items-center gap-2 rounded-sm border px-3 py-1 text-xs font-semibold uppercase tracking-wider transition-colors;
+    border-color: var(--nsi-rule-strong);
+    background-color: var(--nsi-paper);
+    color: var(--nsi-ink);
   }
 
   .nsi-newsletter-section {
-    @apply relative overflow-hidden rounded-[3rem] border border-black/10;
+    background-color: var(--nsi-green-deep);
+    border: 1px solid var(--nsi-rule-strong);
+    border-top: 4px solid var(--nsi-gold);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
   }
 
-  /* Admin button utilities - consistent styling with focus rings */
+  /* Primary Public CTA Buttons (Chatham House / BudgIT precision) */
+  .btn-nsi-primary {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-[3px] px-6 py-3.5 text-sm font-semibold tracking-wide text-white transition-all;
+    background-color: var(--nsi-green);
+    border: 1px solid var(--nsi-green);
+    box-shadow: 0 1px 2px rgba(6, 35, 21, 0.15);
+  }
+  .btn-nsi-primary:hover {
+    background-color: var(--nsi-green-deep);
+    border-color: var(--nsi-green-deep);
+  }
+
+  .btn-nsi-gold {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-[3px] px-6 py-3.5 text-sm font-bold tracking-wide transition-all;
+    background-color: var(--nsi-gold);
+    color: var(--nsi-ink);
+    border: 1px solid var(--nsi-gold);
+  }
+  .btn-nsi-gold:hover {
+    background-color: var(--nsi-gold-light);
+    border-color: var(--nsi-gold-light);
+  }
+
+  .btn-nsi-outline {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-[3px] px-6 py-3.5 text-sm font-semibold tracking-wide transition-all;
+    background-color: transparent;
+    color: var(--nsi-ink);
+    border: 1px solid var(--nsi-rule-strong);
+  }
+  .btn-nsi-outline:hover {
+    background-color: var(--nsi-ink);
+    color: #ffffff;
+    border-color: var(--nsi-ink);
+  }
+
+  /* Admin button utilities - institutional sharp styling */
   .admin-btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all;
+    @apply inline-flex items-center justify-center gap-2 rounded-[4px] px-4 py-2.5 text-sm font-semibold transition-all;
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--nsi-gold)] focus-visible:ring-offset-2;
     @apply disabled:cursor-not-allowed disabled:opacity-60;
-    @apply bg-[color:var(--nsi-green)] text-white shadow-md;
-    @apply hover:brightness-110 active:brightness-95;
+    background-color: var(--nsi-green);
+    color: #ffffff;
+  }
+  .admin-btn-primary:hover:not(:disabled) {
+    background-color: var(--nsi-green-deep);
   }
 
   .admin-btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all;
+    @apply inline-flex items-center justify-center gap-2 rounded-[4px] px-4 py-2.5 text-sm font-semibold transition-all;
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--nsi-gold)] focus-visible:ring-offset-2;
     @apply disabled:cursor-not-allowed disabled:opacity-60;
-    @apply border border-black/15 bg-white text-[color:var(--nsi-ink)];
-    @apply hover:bg-[color:var(--nsi-paper)] active:bg-[color:var(--nsi-paper-2)];
+    border: 1px solid var(--nsi-rule-strong);
+    background-color: #ffffff;
+    color: var(--nsi-ink);
+  }
+  .admin-btn-secondary:hover:not(:disabled) {
+    background-color: var(--nsi-paper);
+    border-color: var(--nsi-ink);
   }
 
   .admin-btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all;
+    @apply inline-flex items-center justify-center gap-2 rounded-[4px] px-4 py-2.5 text-sm font-semibold transition-all;
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--nsi-gold)] focus-visible:ring-offset-2;
     @apply disabled:cursor-not-allowed disabled:opacity-60;
-    @apply text-[color:var(--nsi-ink-soft)];
-    @apply hover:bg-black/5 hover:text-[color:var(--nsi-ink)];
+    color: var(--nsi-ink-soft);
+  }
+  .admin-btn-ghost:hover:not(:disabled) {
+    background-color: var(--nsi-paper-2);
+    color: var(--nsi-ink);
   }
 
   .admin-btn-danger {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all;
+    @apply inline-flex items-center justify-center gap-2 rounded-[4px] px-4 py-2.5 text-sm font-semibold transition-all;
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--nsi-gold)] focus-visible:ring-offset-2;
     @apply disabled:cursor-not-allowed disabled:opacity-60;
-    @apply bg-red-600 text-white shadow-md;
-    @apply hover:bg-red-700 active:bg-red-800;
+    @apply bg-red-700 text-white hover:bg-red-800;
   }
 
   /* Admin input utilities */
   .admin-input {
-    @apply w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm;
+    @apply w-full rounded-[4px] bg-white px-3.5 py-2.5 text-sm transition-colors;
+    border: 1px solid var(--nsi-rule-strong);
+    color: var(--nsi-ink);
     @apply placeholder:text-black/40;
-    @apply focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-2 focus:ring-[color:var(--nsi-green)]/20;
+    @apply focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-2 focus:ring-[color:var(--nsi-green)]/15;
     @apply disabled:cursor-not-allowed disabled:bg-black/5 disabled:opacity-60;
   }
 
   .admin-select {
-    @apply w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm;
+    @apply w-full rounded-[4px] bg-white px-3.5 py-2.5 text-sm transition-colors;
+    border: 1px solid var(--nsi-rule-strong);
+    color: var(--nsi-ink);
     @apply placeholder:text-black/40;
-    @apply focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-2 focus:ring-[color:var(--nsi-green)]/20;
+    @apply focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-2 focus:ring-[color:var(--nsi-green)]/15;
     @apply disabled:cursor-not-allowed disabled:bg-black/5 disabled:opacity-60;
-    @apply appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23666%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem] bg-[right_0.75rem_center] bg-no-repeat pr-10;
+    @apply appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23111613%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.1rem] bg-[right_0.75rem_center] bg-no-repeat pr-10;
   }
 
   /* Admin card utilities */
   .admin-card {
-    @apply rounded-2xl border border-black/10 bg-white p-6 shadow-sm;
+    background-color: #ffffff;
+    border: 1px solid var(--nsi-rule);
+    border-radius: 4px;
+    padding: 1.5rem;
+    box-shadow: var(--nsi-shadow);
   }
 
   .admin-card-interactive {
-    @apply rounded-2xl border border-black/10 bg-white p-6 shadow-sm transition-all;
-    @apply hover:border-black/15 hover:shadow-md;
-    @apply focus-within:border-[color:var(--nsi-green)] focus-within:ring-2 focus-within:ring-[color:var(--nsi-green)]/20;
+    background-color: #ffffff;
+    border: 1px solid var(--nsi-rule);
+    border-radius: 4px;
+    padding: 1.5rem;
+    box-shadow: var(--nsi-shadow);
+    @apply transition-all hover:border-black/30;
+    @apply focus-within:border-[color:var(--nsi-green)] focus-within:ring-2 focus-within:ring-[color:var(--nsi-green)]/15;
   }
-
 }

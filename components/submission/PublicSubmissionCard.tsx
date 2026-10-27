@@ -128,8 +128,10 @@ export function PublicSubmissionCard() {
 
   if (cycle === "loading") {
     return (
-      <div className="rounded-3xl border border-black/10 bg-white p-8 shadow-sm">
-        <p className="text-[color:var(--nsi-ink-soft)]">Loading check-in…</p>
+      <div className="rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-white p-8 shadow-sm">
+        <p className="font-mono text-xs uppercase tracking-[0.16em] text-[color:var(--nsi-ink-muted)]">
+          Loading citizen check-in…
+        </p>
       </div>
     );
   }
@@ -137,28 +139,34 @@ export function PublicSubmissionCard() {
   if (surveyMode && cycle) {
     const questions = cycle.surveyQuestions as SurveyQuestion[];
     return (
-      <div className="rounded-3xl border border-black/10 bg-white p-8 shadow-sm">
-        <h2 className="font-serif text-2xl font-semibold tracking-tight text-[color:var(--nsi-green)]">
+      <div className="rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-white p-8 shadow-sm">
+        <p className="nsi-kicker">Citizen Check-In</p>
+        <h2 className="mt-1 font-serif text-2xl font-bold tracking-tight text-[color:var(--nsi-ink)]">
           How stable does Nigeria feel to you right now?
         </h2>
-        <p className="mt-2 text-sm text-black/65">
+        <p className="mt-2 text-sm text-[color:var(--nsi-ink-soft)]">
           Rate each pillar from 1 (very unstable) to 5 (very stable). This check-in stores{" "}
-          <span className="font-medium">no personal information</span>.
+          <span className="font-semibold text-[color:var(--nsi-ink)]">no personal information</span>.
         </p>
-        <form className="mt-8 space-y-6" onSubmit={submitSurvey}>
+        <form className="mt-8 space-y-5" onSubmit={submitSurvey}>
           {questions.map((q) => (
-            <fieldset key={q.pillarKey} className="rounded-2xl border border-black/10 bg-[color:var(--nsi-paper)] p-5">
-              <legend className="text-sm font-medium text-black/80">{q.questionText}</legend>
-              <div className="mt-3 flex flex-wrap gap-3">
+            <fieldset
+              key={q.pillarKey}
+              className="rounded-[3px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] p-5"
+            >
+              <legend className="px-1 text-sm font-semibold text-[color:var(--nsi-ink)]">
+                {q.questionText}
+              </legend>
+              <div className="mt-3 flex flex-wrap gap-2.5">
                 {[1, 2, 3, 4, 5].map((n) => {
                   const checked = pillarValues[q.pillarKey] === n;
                   return (
                     <label
                       key={n}
-                      className={`flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm transition ${
+                      className={`flex cursor-pointer items-center justify-center rounded-[2px] border px-4 py-2 font-mono text-sm font-bold transition ${
                         checked
                           ? "border-[color:var(--nsi-green)] bg-[color:var(--nsi-green)] text-white"
-                          : "border-black/15 bg-white hover:bg-black/[.03]"
+                          : "border-[color:var(--nsi-rule-strong)] bg-white text-[color:var(--nsi-ink)] hover:border-[color:var(--nsi-green)]"
                       }`}
                     >
                       <input
@@ -177,21 +185,21 @@ export function PublicSubmissionCard() {
             </fieldset>
           ))}
           {status === "success" ? (
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-800">
-              Thanks — your check-in has been recorded.
+            <div className="rounded-[3px] border border-emerald-300 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-900">
+              Thank you — your check-in has been recorded.
             </div>
           ) : null}
           {status === "error" && error ? (
-            <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-800">
+            <div className="rounded-[3px] border border-red-300 bg-red-50 px-5 py-4 text-sm font-medium text-red-900">
               {error}
             </div>
           ) : null}
           <button
-            className="rounded-xl bg-[color:var(--nsi-green)] px-6 py-3 text-sm font-medium text-white hover:opacity-95 disabled:opacity-60"
+            className="btn-nsi-primary disabled:opacity-60"
             type="submit"
             disabled={!canSubmitSurvey || status === "submitting"}
           >
-            {status === "submitting" ? "Submitting…" : "Submit check-in"}
+            {status === "submitting" ? "Submitting…" : "Submit Check-In"}
           </button>
         </form>
       </div>
@@ -199,25 +207,30 @@ export function PublicSubmissionCard() {
   }
 
   return (
-    <div className="rounded-3xl border border-black/10 bg-white p-8 shadow-sm">
-      <h2 className="font-serif text-2xl font-semibold tracking-tight text-[color:var(--nsi-green)]">
+    <div className="rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-white p-8 shadow-sm">
+      <p className="nsi-kicker">Citizen Check-In</p>
+      <h2 className="mt-1 font-serif text-2xl font-bold tracking-tight text-[color:var(--nsi-ink)]">
         How stable does Nigeria feel to you right now?
       </h2>
-      <p className="mt-2 text-sm text-black/65">
-        This check-in stores <span className="font-medium">no personal information</span>. Please do not include names,
+      <p className="mt-2 text-sm text-[color:var(--nsi-ink-soft)]">
+        This check-in stores <span className="font-semibold text-[color:var(--nsi-ink)]">no personal information</span>. Please do not include names,
         phone numbers, or addresses.
       </p>
 
-      <form className="mt-8 space-y-8" onSubmit={submitLegacy}>
-        <div className="rounded-2xl border border-black/10 bg-[color:var(--nsi-paper)] p-6">
+      <form className="mt-8 space-y-6" onSubmit={submitLegacy}>
+        <div className="rounded-[3px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] p-6">
           <div className="flex items-end justify-between gap-3">
             <div>
-              <div className="text-sm font-medium text-black/70">Stability score</div>
-              <div className="mt-1 text-xs text-black/55">1 = very unstable, 10 = very stable</div>
+              <div className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+                Stability Score
+              </div>
+              <div className="mt-1 text-xs text-[color:var(--nsi-ink-muted)]">
+                1 = very unstable, 10 = very stable
+              </div>
             </div>
-            <div className="text-3xl font-semibold text-[color:var(--nsi-green)]">
+            <div className="font-serif text-3xl font-bold text-[color:var(--nsi-green)]">
               {stabilityScore}
-              <span className="text-base text-black/50">/10</span>
+              <span className="font-mono text-sm text-[color:var(--nsi-ink-muted)]">/10</span>
             </div>
           </div>
           <input
@@ -231,8 +244,10 @@ export function PublicSubmissionCard() {
         </div>
 
         <div>
-          <div className="text-sm font-medium text-black/70">Mood</div>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+            National Mood
+          </div>
+          <div className="mt-2.5 flex flex-wrap gap-2">
             {MOODS.map((m) => {
               const active = m === mood;
               return (
@@ -241,10 +256,10 @@ export function PublicSubmissionCard() {
                   type="button"
                   onClick={() => setMood(m)}
                   className={[
-                    "rounded-full px-4 py-2 text-sm transition",
+                    "rounded-[2px] px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] transition",
                     active
                       ? "bg-[color:var(--nsi-green)] text-white"
-                      : "border border-black/15 bg-white hover:bg-black/[.03]",
+                      : "border border-[color:var(--nsi-rule-strong)] bg-white text-[color:var(--nsi-ink-soft)] hover:border-[color:var(--nsi-green)]",
                   ].join(" ")}
                 >
                   {m}
@@ -256,9 +271,11 @@ export function PublicSubmissionCard() {
 
         <div>
           <label className="block">
-            <span className="text-sm font-medium text-black/70">One word to describe Nigeria today</span>
+            <span className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+              One word to describe Nigeria today
+            </span>
             <input
-              className="mt-2 w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none focus:border-[color:var(--nsi-green)]"
+              className="admin-input mt-2 w-full"
               value={oneWord}
               onChange={(e) => setOneWord(e.target.value)}
               placeholder="e.g. steady, tense, hopeful…"
@@ -268,13 +285,17 @@ export function PublicSubmissionCard() {
           </label>
         </div>
 
-        <div className="rounded-2xl border border-black/10 bg-white p-6">
-          <div className="text-sm font-medium text-black/70">State spotlight (optional)</div>
+        <div className="rounded-[3px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] p-6">
+          <div className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-ink)]">
+            State Spotlight (Optional)
+          </div>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             <label className="block">
-              <span className="text-xs font-medium text-black/60">State</span>
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-[color:var(--nsi-ink-soft)]">
+                State
+              </span>
               <select
-                className="mt-1 w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none focus:border-[color:var(--nsi-green)]"
+                className="admin-select mt-1.5 w-full"
                 value={spotlightState}
                 onChange={(e) => setSpotlightState(e.target.value)}
               >
@@ -288,8 +309,10 @@ export function PublicSubmissionCard() {
             </label>
 
             <label className="block">
-              <span className="text-xs font-medium text-black/60">Tags</span>
-              <div className="mt-2 flex flex-wrap gap-2">
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-[color:var(--nsi-ink-soft)]">
+                Tags
+              </span>
+              <div className="mt-2 flex flex-wrap gap-1.5">
                 {SPOTLIGHT_TAGS.map((t) => {
                   const active = spotlightTags.includes(t);
                   return (
@@ -302,10 +325,10 @@ export function PublicSubmissionCard() {
                         )
                       }
                       className={[
-                        "rounded-full px-3 py-1.5 text-xs transition",
+                        "rounded-[2px] border px-3 py-1 text-xs font-medium transition",
                         active
-                          ? "bg-[color:var(--nsi-gold)] text-black"
-                          : "border border-black/15 bg-white hover:bg-black/[.03]",
+                          ? "border-[color:var(--nsi-gold)] bg-[color:var(--nsi-gold-soft)] font-semibold text-[color:var(--nsi-ink)]"
+                          : "border-[color:var(--nsi-rule-strong)] bg-white text-[color:var(--nsi-ink-soft)]",
                       ].join(" ")}
                     >
                       {t}
@@ -317,9 +340,11 @@ export function PublicSubmissionCard() {
           </div>
 
           <label className="mt-4 block">
-            <span className="text-xs font-medium text-black/60">Comment (optional)</span>
+            <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-[color:var(--nsi-ink-soft)]">
+              Comment (Optional)
+            </span>
             <textarea
-              className="mt-1 w-full resize-y rounded-xl border border-black/10 bg-white px-4 py-3 outline-none focus:border-[color:var(--nsi-green)]"
+              className="admin-input mt-1.5 w-full resize-y"
               value={spotlightComment}
               onChange={(e) => setSpotlightComment(e.target.value)}
               rows={3}
@@ -330,23 +355,23 @@ export function PublicSubmissionCard() {
         </div>
 
         {status === "success" ? (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-800">
-            Thanks — your check-in has been recorded.
+          <div className="rounded-[3px] border border-emerald-300 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-900">
+            Thank you — your check-in has been recorded.
           </div>
         ) : null}
 
         {status === "error" && error ? (
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-800">
+          <div className="rounded-[3px] border border-red-300 bg-red-50 px-5 py-4 text-sm font-medium text-red-900">
             {error}
           </div>
         ) : null}
 
         <button
-          className="rounded-xl bg-[color:var(--nsi-green)] px-6 py-3 text-sm font-medium text-white hover:opacity-95 disabled:opacity-60"
+          className="btn-nsi-primary disabled:opacity-60"
           type="submit"
           disabled={!canSubmitLegacy || status === "submitting"}
         >
-          {status === "submitting" ? "Submitting…" : "Submit check-in"}
+          {status === "submitting" ? "Submitting…" : "Submit Check-In"}
         </button>
       </form>
     </div>

@@ -40,11 +40,11 @@ export default async function AdminPage(props: PageProps) {
   return (
     <>
       <AdminPageHeader
-        title="Dashboard"
-        description="Manage the current cycle, submissions, and spotlights."
+        title="Editorial Command Dashboard"
+        description="Manage the active monthly survey cycle, field submissions ledger, and publication snapshots."
       />
 
-      <Suspense fallback={<div className="mb-4 h-10 animate-pulse rounded bg-black/5" />}>
+      <Suspense fallback={<div className="mb-4 h-10 animate-pulse rounded-[2px] bg-black/5" />}>
         <DashboardCycleFilter selectedCycleId={displayCycle?.id ?? null} />
       </Suspense>
 
@@ -52,39 +52,42 @@ export default async function AdminPage(props: PageProps) {
         {/* Current Cycle Card */}
         <section
           aria-labelledby="cycle-heading"
-          className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm lg:col-span-2 lg:p-8"
+          className="admin-card lg:col-span-2 lg:p-8"
         >
-          <h2
-            id="cycle-heading"
-            className="text-sm font-semibold uppercase tracking-wide text-[color:var(--nsi-ink-soft)]"
-          >
-            Cycle
-          </h2>
-          <div className="mt-3 font-serif text-3xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-            {displayCycle ? displayCycle.monthYear : "—"}
-          </div>
-          <div className="mt-4 flex items-center gap-3 text-sm text-[color:var(--nsi-ink-soft)]">
-            <span>Status:</span>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[color:var(--nsi-rule)] pb-4">
+            <h2
+              id="cycle-heading"
+              className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--nsi-ink-muted)]"
+            >
+              Active Survey Cycle
+            </h2>
             <span
-              className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+              className={`inline-flex items-center rounded-[2px] border px-2.5 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider ${
                 displayCycle?.status === "OPEN"
-                  ? "bg-emerald-100 text-emerald-800"
+                  ? "border-emerald-300 bg-emerald-50 text-emerald-900"
                   : displayCycle?.status === "CLOSED"
-                    ? "bg-amber-100 text-amber-800"
-                    : "bg-gray-100 text-gray-700"
+                    ? "border-amber-300 bg-amber-50 text-amber-900"
+                    : "border-gray-300 bg-gray-100 text-gray-700"
               }`}
             >
-              {displayCycle?.status ?? "NONE"}
+              Status: {displayCycle?.status ?? "NONE"}
             </span>
           </div>
 
-          <div className="mt-8 flex flex-wrap gap-3 border-t border-black/5 pt-6">
+          <div className="mt-5 font-serif text-3xl font-bold tracking-tight text-[color:var(--nsi-ink)] sm:text-4xl">
+            {displayCycle ? displayCycle.monthYear : "No Cycle Selected"}
+          </div>
+          <p className="mt-2 text-sm text-[color:var(--nsi-ink-soft)]">
+            Control public data collection status or define the 5 pillar survey questions for this reporting period.
+          </p>
+
+          <div className="mt-8 flex flex-wrap gap-3 border-t border-[color:var(--nsi-rule)] pt-6">
             <CycleControls cycleStatus={displayCycle?.status ?? null} />
             <Link
-              className="rounded-xl border border-black/15 bg-white px-4 py-2 text-sm font-medium hover:bg-black/[.03]"
+              className="admin-btn-secondary"
               href="/admin/cycle"
             >
-              Set up cycle / Define questions
+              Configure Pillar Questions →
             </Link>
           </div>
         </section>
@@ -92,42 +95,44 @@ export default async function AdminPage(props: PageProps) {
         {/* Quick Stats Card */}
         <section
           aria-labelledby="stats-heading"
-          className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm lg:p-8"
+          className="admin-card lg:p-8"
         >
           <h2
             id="stats-heading"
-            className="text-sm font-semibold uppercase tracking-wide text-[color:var(--nsi-ink-soft)]"
+            className="border-b border-[color:var(--nsi-rule)] pb-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--nsi-ink-muted)]"
           >
-            Submissions
+            Field Ledger Volume
           </h2>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="font-serif text-5xl font-semibold tabular-nums text-[color:var(--nsi-green)]">
+          <div className="mt-5 flex items-baseline gap-2.5">
+            <span className="font-serif text-5xl font-bold tabular-nums text-[color:var(--nsi-green)]">
               {total}
             </span>
-            <span className="text-sm text-[color:var(--nsi-ink-soft)]">total</span>
+            <span className="font-mono text-xs uppercase tracking-wider text-[color:var(--nsi-ink-muted)]">
+              recorded entries
+            </span>
           </div>
-          <div className="mt-2 text-sm text-[color:var(--nsi-ink-soft)]">
-            <span className="tabular-nums">{flagged}</span> flagged for review
+          <div className="mt-2 font-mono text-xs text-[color:var(--nsi-ink-soft)]">
+            <span className="font-bold tabular-nums text-[color:var(--nsi-terracotta)]">{flagged}</span> flagged for editorial review
           </div>
 
-          <nav aria-label="Quick actions" className="mt-8 flex flex-col gap-3">
+          <nav aria-label="Quick actions" className="mt-8 flex flex-col gap-2.5 border-t border-[color:var(--nsi-rule)] pt-6">
             <Link
               className="admin-btn-primary text-center"
               href="/admin/submissions"
             >
-              Review submissions
+              Audit Submissions Ledger
             </Link>
             <Link
               className="admin-btn-secondary text-center"
               href="/admin/snapshot"
             >
-              Build snapshot
+              Build Monthly Snapshot
             </Link>
             <Link
               className="admin-btn-secondary text-center"
               href="/admin/spotlight"
             >
-              Spotlight feed
+              Curate Citizen Spotlights
             </Link>
           </nav>
         </section>

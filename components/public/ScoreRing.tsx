@@ -19,7 +19,7 @@ export function ScoreRing({
 }) {
   const v = clamp(value, min, max);
   const t = (v - min) / (max - min);
-  const strokeWidth = Math.max(4, size * 0.12);
+  const strokeWidth = Math.max(4, size * 0.1);
   const r = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * r;
   const offset = circumference * (1 - t);
@@ -36,7 +36,7 @@ export function ScoreRing({
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="oklch(0.92 0.01 88)"
+          stroke="#e1dcd0"
           strokeWidth={strokeWidth}
         />
         <circle
@@ -44,15 +44,15 @@ export function ScoreRing({
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="var(--nsi-green)"
+          stroke="#0b3b24"
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          strokeLinecap="round"
+          strokeLinecap="butt"
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
       </svg>
-      <span className="mt-1 text-[0.8125rem] font-bold text-[color:var(--nsi-green)]">
+      <span className="mt-1 font-mono text-[0.8125rem] font-bold tabular-nums text-[color:var(--nsi-green)]">
         {v.toFixed(1)}
       </span>
     </div>

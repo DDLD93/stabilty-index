@@ -21,68 +21,72 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <main className="w-full pb-20">
-      <section className="relative overflow-hidden pt-20">
+    <main className="w-full pb-24">
+      <section className="border-b-2 border-[color:var(--nsi-ink)] bg-[color:var(--nsi-green-deep)] py-16 text-white">
         <div className="mx-auto w-full max-w-7xl px-6">
-          <div className="nsi-section-card px-8 py-10">
-            <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/60 px-4 py-1.5 text-sm font-medium text-[color:var(--nsi-ink)] backdrop-blur-md">
-                Contact
-              </div>
-              <h1 className="mt-6 font-serif text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)] lg:text-5xl">
-                Let&apos;s talk about NSI
-              </h1>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-[color:var(--nsi-ink-soft)]">
-                For general enquiries about the Nigeria Stability Index, our
-                methodology, or reports, please reach out via email. We aim to respond
-                within a few business days.
-              </p>
-            </div>
-          </div>
+          <p className="nsi-kicker-light">Correspondence · Research Desk</p>
+          <h1 className="mt-2 font-serif text-4xl font-bold tracking-tight text-white lg:text-5xl">
+            Let&apos;s talk about NSI
+          </h1>
+          <p className="mt-5 max-w-2xl border-l-2 border-[color:var(--nsi-gold)] pl-5 text-base leading-relaxed text-white/80">
+            For general enquiries about the Nigeria Stability Index, our
+            methodology, media briefings, or institutional reports, please reach
+            out below. We respond within a few business days.
+          </p>
         </div>
       </section>
 
-      <section className="mx-auto mt-20 w-full max-w-7xl px-6">
-        <div className="nsi-card-soft p-8">
-          <h2 className="font-serif text-xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-            Send a message
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-[color:var(--nsi-ink-soft)]">
-            Use the form below and we will get back to you. You can also email us
-            directly if you prefer your own mail app.
-          </p>
-          <ContactForm />
-          <p className="mt-10 text-sm font-medium text-[color:var(--nsi-ink)]">Email directly</p>
-          <a
-            href="mailto:info@nigeriastabilityIndex.ng"
-            className="mt-2 inline-block text-[color:var(--nsi-green)] underline underline-offset-4 transition-colors hover:text-[color:var(--nsi-green-deep)]"
-          >
-            info@nigeriastabilityIndex.ng
-          </a>
-          <p className="mt-4 text-sm leading-6 text-[color:var(--nsi-ink-soft)]">
-            For media or partnership enquiries, please pick the matching subject in
-            the form or mention it in your email subject line.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="/about"
-              className="rounded-xl border border-black/10 bg-white/70 px-5 py-2.5 text-sm font-medium text-[color:var(--nsi-ink)] backdrop-blur-sm transition-colors hover:bg-white"
-            >
-              About NSI
-            </Link>
-            <Link
-              href="/methodology"
-              className="rounded-xl border border-black/10 bg-white/70 px-5 py-2.5 text-sm font-medium text-[color:var(--nsi-ink)] backdrop-blur-sm transition-colors hover:bg-white"
-            >
-              Methodology
-            </Link>
-            <Link
-              href="/subscribe"
-              className="rounded-xl bg-[color:var(--nsi-gold)] px-5 py-2.5 text-sm font-semibold text-[color:var(--nsi-ink)] transition-all hover:brightness-105"
-            >
-              Subscribe
-            </Link>
+      <section className="mx-auto mt-16 w-full max-w-7xl px-6">
+        <div className="grid gap-10 lg:grid-cols-12">
+          <div className="nsi-section-card p-8 sm:p-10 lg:col-span-8">
+            <span className="nsi-kicker">01 / Direct Inquiry</span>
+            <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[color:var(--nsi-ink)]">
+              Send a message to the research desk
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[color:var(--nsi-ink-soft)]">
+              Complete the inquiry form below or write directly to our official
+              correspondence address.
+            </p>
+            <ContactForm />
           </div>
+
+          <aside className="space-y-6 lg:col-span-4">
+            <div className="rounded-[4px] border border-[color:var(--nsi-rule-strong)] bg-white p-6 sm:p-8">
+              <span className="nsi-kicker">02 / Direct Email</span>
+              <h3 className="mt-2 font-serif text-xl font-bold text-[color:var(--nsi-ink)]">
+                Official Correspondence
+              </h3>
+              <a
+                href="mailto:info@nigeriastabilityIndex.ng"
+                className="mt-3 inline-block font-mono text-sm font-bold text-[color:var(--nsi-green)] underline underline-offset-4 hover:text-[color:var(--nsi-green-deep)]"
+              >
+                info@nigeriastabilityIndex.ng
+              </a>
+              <p className="mt-4 text-xs leading-relaxed text-[color:var(--nsi-ink-soft)]">
+                For press, academic research citations, or institutional
+                partnership enquiries, select the corresponding subject in the
+                form or reference it in your email subject line.
+              </p>
+            </div>
+
+            <div className="rounded-[4px] border border-[color:var(--nsi-rule-strong)] bg-white p-6 sm:p-8">
+              <span className="nsi-kicker">03 / Reference Links</span>
+              <div className="mt-4 flex flex-col gap-2.5">
+                <Link href="/about" className="btn-nsi-outline justify-between py-2.5 text-xs">
+                  <span>About NSI</span>
+                  <span aria-hidden>→</span>
+                </Link>
+                <Link href="/methodology" className="btn-nsi-outline justify-between py-2.5 text-xs">
+                  <span>Methodology</span>
+                  <span aria-hidden>→</span>
+                </Link>
+                <Link href="/subscribe" className="btn-nsi-gold justify-between py-2.5 text-xs">
+                  <span>Subscribe to Dispatch</span>
+                  <span aria-hidden>→</span>
+                </Link>
+              </div>
+            </div>
+          </aside>
         </div>
       </section>
     </main>

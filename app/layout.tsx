@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
+import { Plus_Jakarta_Sans, JetBrains_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 import { ConditionalSiteChrome } from "@/components/layout/ConditionalSiteChrome";
 import { Header } from "@/components/public/Header";
@@ -7,22 +7,23 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { defaultMetadata } from "@/lib/metadata";
 import { getOrganizationSchema, getWebSiteSchema, renderJsonLd } from "@/lib/seo";
 
-const geistSans = Geist({
+const jakartaSans = Plus_Jakarta_Sans({
   variable: "--font-geist-sans",
   subsets: ["latin"],
   display: "swap",
   preload: true,
 });
 
-const geistMono = Geist_Mono({
+const jetbrainsMono = JetBrains_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
 });
 
-const nsiSerif = Playfair_Display({
+const nsiSerif = Newsreader({
   variable: "--font-nsi-serif",
   subsets: ["latin"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -33,8 +34,8 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#1a4d3a" },
-    { media: "(prefers-color-scheme: dark)", color: "#1a4d3a" },
+    { media: "(prefers-color-scheme: light)", color: "#062315" },
+    { media: "(prefers-color-scheme: dark)", color: "#062315" },
   ],
 };
 
@@ -65,7 +66,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${nsiSerif.variable} antialiased relative min-h-screen`}
+        className={`${jakartaSans.variable} ${jetbrainsMono.variable} ${nsiSerif.variable} antialiased relative min-h-screen selection:bg-[color:var(--nsi-green)] selection:text-white`}
       >
         <div className="relative flex min-h-screen flex-col text-[color:var(--nsi-ink)]">
           <ConditionalSiteChrome

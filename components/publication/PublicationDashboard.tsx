@@ -5,7 +5,6 @@ type Pillar = { title: string; score: number; summary?: string };
 type StateSpotlight = { state?: string; score?: number; bullets?: string[]; keyPointsHtml?: string };
 type InstitutionSpotlight = { institution?: string; summary?: string; bullets?: string[]; keyPointsHtml?: string };
 type StreetPulseSpotlight = { title?: string; summary?: string; keyPointsHtml?: string };
-type SourceRef = { label?: string; url?: string };
 type Sentiment = { topWords?: string[]; averagePublicScore?: number; topMood?: string };
 
 function safeArray<T>(v: unknown): T[] {
@@ -20,11 +19,13 @@ function safeNumber(v: unknown): number | null {
 export async function PublicationDashboard({ snapshotId }: { snapshotId: string | null }) {
   if (!snapshotId) {
     return (
-      <div className="rounded-3xl border border-black/10 bg-white p-8">
-        <h2 className="font-serif text-2xl font-semibold tracking-tight text-[color:var(--nsi-green)]">
-          Latest report
+      <div className="rounded-[4px] border border-[color:var(--nsi-rule-strong)] bg-white p-8">
+        <h2 className="font-serif text-2xl font-bold tracking-tight text-[color:var(--nsi-green)]">
+          Latest Report
         </h2>
-        <p className="mt-2 text-black/70">No published snapshot is available yet.</p>
+        <p className="mt-2 text-sm text-[color:var(--nsi-ink-soft)]">
+          No published snapshot is available yet.
+        </p>
       </div>
     );
   }
@@ -46,8 +47,8 @@ export async function PublicationDashboard({ snapshotId }: { snapshotId: string 
 
   if (!snapshot) {
     return (
-      <div className="rounded-3xl border border-black/10 bg-white p-8">
-        <p className="text-black/70">Snapshot not found.</p>
+      <div className="rounded-[4px] border border-[color:var(--nsi-rule-strong)] bg-white p-8">
+        <p className="text-sm text-[color:var(--nsi-ink-soft)]">Snapshot not found.</p>
       </div>
     );
   }
@@ -114,4 +115,3 @@ export async function PublicationDashboard({ snapshotId }: { snapshotId: string 
     />
   );
 }
-

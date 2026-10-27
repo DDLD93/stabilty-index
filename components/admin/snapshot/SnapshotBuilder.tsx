@@ -26,11 +26,11 @@ import { CycleFilter } from "../CycleFilter";
 type TabId = "overview" | "pillars" | "highlights" | "sentiment" | "sources";
 
 const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
-  { id: "overview", label: "Overview", icon: <OverviewIcon /> },
-  { id: "pillars", label: "Pillars", icon: <PillarsIcon /> },
-  { id: "highlights", label: "Spotlights", icon: <HighlightsIcon /> },
-  { id: "sentiment", label: "Sentiment", icon: <SentimentIcon /> },
-  { id: "sources", label: "Sources", icon: <SourcesIcon /> },
+  { id: "overview", label: "01 / Overview", icon: <OverviewIcon /> },
+  { id: "pillars", label: "02 / Pillars", icon: <PillarsIcon /> },
+  { id: "highlights", label: "03 / Spotlights", icon: <HighlightsIcon /> },
+  { id: "sentiment", label: "04 / Sentiment", icon: <SentimentIcon /> },
+  { id: "sources", label: "05 / Sources", icon: <SourcesIcon /> },
 ];
 
 export function SnapshotBuilder() {
@@ -46,7 +46,6 @@ export function SnapshotBuilder() {
   const locked = !!model.isLocked;
   const published = !!model.publishedAt;
 
-  // Validation & completion status (keyPointsHtml: treat as complete if it has any text content)
   const hasKeyPoints = (html: string) => (html || "").replace(/<[^>]+>/g, "").trim().length >= 1;
   const completionStatus = useMemo(() => {
     const checks = [
@@ -71,7 +70,6 @@ export function SnapshotBuilder() {
     );
   }, [model]);
 
-  // API functions
   const loadList = useCallback(async () => {
     const url = new URL(window.location.origin + "/api/admin/snapshot");
     url.searchParams.set("take", "20");
@@ -207,7 +205,7 @@ export function SnapshotBuilder() {
       return;
     }
 
-    setSuccess("Saved successfully.");
+    setSuccess("Draft saved.");
     if (hasSnapshot<{ id: string; publishedAt: string | null; isLocked: boolean }>(data)) {
       setModel((m) => ({
         ...m,
@@ -232,7 +230,7 @@ export function SnapshotBuilder() {
       setError(hasError(data) ? data.error : "Publish failed.");
       return;
     }
-    setSuccess("Published successfully.");
+    setSuccess("Snapshot published.");
     setModel((m) => ({
       ...m,
       publishedAt: hasSnapshot<{ publishedAt: string }>(data)
@@ -254,12 +252,11 @@ export function SnapshotBuilder() {
       setError(hasError(data) ? data.error : "Lock failed.");
       return;
     }
-    setSuccess("Locked (now immutable).");
+    setSuccess("Snapshot locked (immutable).");
     setModel((m) => ({ ...m, isLocked: true }));
     await loadList();
   }, [model.id, loadList]);
 
-  // Clear messages after 5 seconds
   useEffect(() => {
     if (success || error) {
       const timer = setTimeout(() => {
@@ -284,143 +281,136 @@ export function SnapshotBuilder() {
         />
       </div>
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
-      {/* Sidebar */}
-      <SnapshotSidebar
-        list={list}
-        selectedId={selectedId}
-        onSelect={setSelectedId}
-        model={model}
-        loading={loading}
-        locked={locked}
-        published={published}
-        canSave={canSave}
-        error={error}
-        success={success}
-        onSave={save}
-        onPublish={publish}
-        onLock={lock}
-        completionStatus={completionStatus}
-      />
+        <SnapshotSidebar
+          list={list}
+          selectedId={selectedId}
+          onSelect={setSelectedId}
+          model={model}
+          loading={loading}
+          locked={locked}
+          published={published}
+          canSave={canSave}
+          error={error}
+          success={success}
+          onSave={save}
+          onPublish={publish}
+          onLock={lock}
+          completionStatus={completionStatus}
+        />
 
-      {/* Main Content Area */}
-      <div className="min-w-0 flex-1">
-        {/* Tab Navigation */}
-        <nav
-          role="tablist"
-          aria-label="Snapshot sections"
-          className="mb-6 flex gap-1 overflow-x-auto rounded-xl border border-black/10 bg-white p-1.5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-black/10"
-          onKeyDown={(e) => {
-            const idx = tabs.findIndex((t) => t.id === activeTab);
-            if (e.key === "ArrowRight" && idx < tabs.length - 1) {
-              setActiveTab(tabs[idx + 1].id);
-            } else if (e.key === "ArrowLeft" && idx > 0) {
-              setActiveTab(tabs[idx - 1].id);
-            }
-          }}
-        >
-          {tabs.map((tab, idx) => (
+        <div className="min-w-0 flex-1">
+          <nav
+            role="tablist"
+            aria-label="Snapshot sections"
+            className="mb-6 flex gap-1 overflow-x-auto rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-white p-1"
+            onKeyDown={(e) => {
+              const idx = tabs.findIndex((t) => t.id === activeTab);
+              if (e.key === "ArrowRight" && idx < tabs.length - 1) {
+                setActiveTab(tabs[idx + 1].id);
+              } else if (e.key === "ArrowLeft" && idx > 0) {
+                setActiveTab(tabs[idx - 1].id);
+              }
+            }}
+          >
+            {tabs.map((tab, idx) => (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.id}
+                aria-controls={`panel-${tab.id}`}
+                tabIndex={activeTab === tab.id ? 0 : -1}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 whitespace-nowrap rounded-[2px] px-4 py-2 font-mono text-xs font-bold uppercase tracking-[0.12em] transition-all ${
+                  activeTab === tab.id
+                    ? "bg-[color:var(--nsi-green)] text-white"
+                    : "text-[color:var(--nsi-ink-soft)] hover:bg-[color:var(--nsi-paper)] hover:text-[color:var(--nsi-ink)]"
+                }`}
+              >
+                {tab.icon}
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="sm:hidden">{idx + 1}</span>
+              </button>
+            ))}
+          </nav>
+
+          <div
+            role="tabpanel"
+            id={`panel-${activeTab}`}
+            aria-labelledby={activeTab}
+            className="admin-card"
+          >
+            <div className="mb-6 border-b border-[color:var(--nsi-rule)] pb-4">
+              <h2 className="font-serif text-xl font-bold text-[color:var(--nsi-ink)]">
+                {tabs.find((t) => t.id === activeTab)?.label}
+              </h2>
+              <p className="mt-1 text-sm text-[color:var(--nsi-ink-soft)]">
+                {activeTab === "overview" && "Core composite score and executive narrative for this edition"}
+                {activeTab === "pillars" && "Define scores and summaries for each of the five stability pillars"}
+                {activeTab === "highlights" && "Featured state, institutional, and street pulse dossiers"}
+                {activeTab === "sentiment" && "Public mood, mean score, and top citizen descriptors"}
+                {activeTab === "sources" && "Verifiable empirical references and data sources"}
+              </p>
+            </div>
+
+            <div key={activeTab} className="animate-in fade-in duration-200">
+              {activeTab === "overview" && (
+                <SnapshotOverview model={model} setModel={setModel} locked={locked} />
+              )}
+              {activeTab === "pillars" && (
+                <SnapshotPillars model={model} setModel={setModel} locked={locked} />
+              )}
+              {activeTab === "highlights" && (
+                <SnapshotHighlights model={model} setModel={setModel} locked={locked} />
+              )}
+              {activeTab === "sentiment" && (
+                <SnapshotSentiment model={model} setModel={setModel} locked={locked} />
+              )}
+              {activeTab === "sources" && (
+                <SnapshotSources model={model} setModel={setModel} locked={locked} />
+              )}
+            </div>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between font-mono text-xs uppercase tracking-wider text-[color:var(--nsi-ink-soft)]">
             <button
-              key={tab.id}
               type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              aria-controls={`panel-${tab.id}`}
-              tabIndex={activeTab === tab.id ? 0 : -1}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--nsi-gold)] focus-visible:ring-offset-1 ${
-                activeTab === tab.id
-                  ? "bg-[color:var(--nsi-green)] text-white shadow-sm"
-                  : "text-[color:var(--nsi-ink-soft)] hover:bg-black/5 hover:text-[color:var(--nsi-ink)]"
-              }`}
+              onClick={() => {
+                const idx = tabs.findIndex((t) => t.id === activeTab);
+                if (idx > 0) setActiveTab(tabs[idx - 1].id);
+              }}
+              disabled={activeTab === tabs[0].id}
+              className="admin-btn-secondary px-3 py-1.5 text-xs disabled:opacity-40"
             >
-              {tab.icon}
-              <span className="hidden sm:inline">{tab.label}</span>
-              <span className="sm:hidden">{idx + 1}</span>
+              <ChevronLeftIcon />
+              Previous
             </button>
-          ))}
-        </nav>
-
-        {/* Tab Content */}
-        <div
-          role="tabpanel"
-          id={`panel-${activeTab}`}
-          aria-labelledby={activeTab}
-          className="admin-card"
-        >
-          <div className="mb-6 border-b border-black/5 pb-4">
-            <h2 className="font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">
-              {tabs.find((t) => t.id === activeTab)?.label}
-            </h2>
-            <p className="mt-1 text-sm text-[color:var(--nsi-ink-soft)]">
-              {activeTab === "overview" && "Basic information about this snapshot period"}
-              {activeTab === "pillars" && "Define scores for each stability pillar"}
-              {activeTab === "highlights" && "Featured state and institution analysis"}
-              {activeTab === "sentiment" && "Public mood and sentiment data"}
-              {activeTab === "sources" && "Verifiable references and data sources"}
-            </p>
-          </div>
-
-          {/* Tab content with fade animation */}
-          <div key={activeTab} className="animate-in fade-in duration-200">
-            {activeTab === "overview" && (
-              <SnapshotOverview model={model} setModel={setModel} locked={locked} />
-            )}
-            {activeTab === "pillars" && (
-              <SnapshotPillars model={model} setModel={setModel} locked={locked} />
-            )}
-            {activeTab === "highlights" && (
-              <SnapshotHighlights model={model} setModel={setModel} locked={locked} />
-            )}
-            {activeTab === "sentiment" && (
-              <SnapshotSentiment model={model} setModel={setModel} locked={locked} />
-            )}
-            {activeTab === "sources" && (
-              <SnapshotSources model={model} setModel={setModel} locked={locked} />
-            )}
+            <span>
+              Section {tabs.findIndex((t) => t.id === activeTab) + 1} of {tabs.length}
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                const idx = tabs.findIndex((t) => t.id === activeTab);
+                if (idx < tabs.length - 1) setActiveTab(tabs[idx + 1].id);
+              }}
+              disabled={activeTab === tabs[tabs.length - 1].id}
+              className="admin-btn-secondary px-3 py-1.5 text-xs disabled:opacity-40"
+            >
+              Next
+              <ChevronRightIcon />
+            </button>
           </div>
         </div>
-
-        {/* Navigation Hints */}
-        <div className="mt-4 flex items-center justify-between text-sm text-[color:var(--nsi-ink-soft)]">
-          <button
-            type="button"
-            onClick={() => {
-              const idx = tabs.findIndex((t) => t.id === activeTab);
-              if (idx > 0) setActiveTab(tabs[idx - 1].id);
-            }}
-            disabled={activeTab === tabs[0].id}
-            className="flex items-center gap-1 rounded-lg px-3 py-1.5 transition-colors hover:bg-black/5 disabled:opacity-40"
-          >
-            <ChevronLeftIcon />
-            Previous
-          </button>
-          <span>
-            {tabs.findIndex((t) => t.id === activeTab) + 1} of {tabs.length}
-          </span>
-          <button
-            type="button"
-            onClick={() => {
-              const idx = tabs.findIndex((t) => t.id === activeTab);
-              if (idx < tabs.length - 1) setActiveTab(tabs[idx + 1].id);
-            }}
-            disabled={activeTab === tabs[tabs.length - 1].id}
-            className="flex items-center gap-1 rounded-lg px-3 py-1.5 transition-colors hover:bg-black/5 disabled:opacity-40"
-          >
-            Next
-            <ChevronRightIcon />
-          </button>
-        </div>
-      </div>
       </div>
     </div>
   );
 }
 
-// Tab Icons
 function OverviewIcon() {
   return (
     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" />
     </svg>
   );
 }

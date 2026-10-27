@@ -1,12 +1,20 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { SafeHtml } from "@/components/ui/SafeHtml";
 import { getKeyPointsHtml } from "@/lib/spotlight";
+import {
+  PillarGovernanceIcon,
+  PillarSocialIcon,
+} from "@/components/public/icons";
 
-export type StateSpotlight = { state?: string; score?: number; bullets?: string[]; keyPointsHtml?: string };
+export type StateSpotlight = {
+  state?: string;
+  score?: number;
+  bullets?: string[];
+  keyPointsHtml?: string;
+};
 export type InstitutionSpotlight = {
   institution?: string;
   summary?: string;
@@ -44,7 +52,9 @@ export function SpotlightCard({
 }: SpotlightCardProps) {
   const stateHref = reportHref ? `${reportHref}#state-spotlight` : "/spotlights";
   const instHref = reportHref ? `${reportHref}#institution-spotlight` : "/spotlights";
-  const streetPulseHref = reportHref ? `${reportHref}#street-pulse-spotlight` : "/spotlights";
+  const streetPulseHref = reportHref
+    ? `${reportHref}#street-pulse-spotlight`
+    : "/spotlights";
 
   const stateKeyPointsHtml = getKeyPointsHtml(stateSpot);
   const instKeyPointsHtml = getKeyPointsHtml(instSpot);
@@ -58,195 +68,253 @@ export function SpotlightCard({
   const [expandedStreetPulse, setExpandedStreetPulse] = useState(false);
 
   const readMoreClass =
-    "mt-1 text-sm font-medium text-[color:var(--nsi-green)] hover:underline focus:outline-none focus:underline";
+    "mt-2 inline-flex items-center gap-1 font-mono text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-green)] hover:underline focus:outline-none";
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-black/10 bg-white shadow-lg">
-      <div className="nsi-band py-3 text-center text-sm font-bold text-white">
-        Monthly Spotlights
+    <div className="overflow-hidden rounded-[4px] border border-[color:var(--nsi-rule-strong)] bg-white shadow-sm">
+      {/* Institutional Dossier Header Band */}
+      <div className="nsi-band flex flex-col justify-between gap-2 px-6 py-4 text-white sm:flex-row sm:items-center sm:px-8">
+        <div className="flex items-center gap-3">
+          <span className="inline-block h-2 w-2 bg-[color:var(--nsi-gold)]" />
+          <span className="font-mono text-xs font-bold uppercase tracking-[0.15em] text-white">
+            Empirical Dossier · Monthly Spotlights
+          </span>
+        </div>
+        <span className="font-mono text-[0.68rem] uppercase tracking-wider text-white/65">
+          Evidence-Based Highlights · Not Endorsements
+        </span>
       </div>
-      <div className="grid md:grid-cols-3">
-        {/* State Spotlight */}
+
+      {/* 3-Column Ruled Grid (Chatham House / Afrobarometer style) */}
+      <div className="grid divide-y divide-[color:var(--nsi-rule)] md:grid-cols-3 md:divide-x md:divide-y-0">
+        {/* Column 1: State Spotlight */}
         <div
           id="state-spotlight"
-          className="flex flex-1 flex-col border-b border-black/5 p-6 scroll-mt-24 md:border-b-0 md:border-r md:border-black/5"
+          className="flex flex-col justify-between p-6 scroll-mt-24 sm:p-8"
         >
-          <div className="flex min-h-0 flex-1 items-start gap-4">
-            <div className="shrink-0 overflow-hidden rounded-xl border border-black/5 p-2">
-              <Image
-                src="/spotlights/state-spotlight-logo.png"
-                alt="State Spotlight"
-                width={56}
-                height={56}
-                className="object-contain"
-              />
+          <div>
+            <div className="flex items-center justify-between gap-2 border-b border-[color:var(--nsi-rule)] pb-3">
+              <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-green)]">
+                01 / Sub-National Focus
+              </span>
+              {showState && typeof stateSpot.score === "number" && (
+                <span className="rounded-[2px] border border-[color:var(--nsi-green)]/25 bg-[color:var(--nsi-emerald-tint)] px-2 py-0.5 font-mono text-xs font-bold tabular-nums text-[color:var(--nsi-green)]">
+                  {stateSpot.score.toFixed(1)} / 10
+                </span>
+              )}
             </div>
-            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-              <div className="min-h-0 flex-1">
-                <h3 className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
-                  State Spotlight
-                </h3>
-                {showState ? (
-                  <>
-                    <p className="mt-3 font-serif text-2xl font-semibold text-[color:var(--nsi-ink)]">
-                      {safeString(stateSpot.state) || "State Spotlight"}
-                    </p>
-                    {stateKeyPointsHtml && (
-                      <>
-                        <div
-                          className={`mt-4 text-sm leading-relaxed text-[color:var(--nsi-ink-soft)] [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mt-1 ${!expandedState ? "line-clamp-4" : ""}`}
-                        >
-                          <SafeHtml html={stateKeyPointsHtml} />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setExpandedState((e) => !e)}
-                          className={readMoreClass}
-                        >
-                          {expandedState ? "Read less" : "Read more"}
-                        </button>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <div className="mt-3 rounded-xl bg-[color:var(--nsi-paper-2)] p-6 text-center">
-                    <p className="text-sm text-[color:var(--nsi-ink-soft)]">
-                      Coming in this month&apos;s report.
-                    </p>
-                  </div>
-                )}
+
+            <div className="mt-5 flex items-start gap-3.5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[3px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] text-[color:var(--nsi-green)]">
+                <StateMapEmblem className="h-6 w-6" />
               </div>
-              <Link
-                href={stateHref}
-                className="mt-auto inline-flex shrink-0 rounded-xl bg-[color:var(--nsi-green)] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
-              >
-                {showState ? "Full spotlight" : "View spotlights"}
-              </Link>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-ink-muted)]">
+                  State Spotlight
+                </div>
+                <h3 className="mt-0.5 font-serif text-2xl font-bold leading-snug text-[color:var(--nsi-ink)]">
+                  {showState
+                    ? safeString(stateSpot.state) || "Featured State"
+                    : "Pending Release"}
+                </h3>
+              </div>
             </div>
+
+            {showState ? (
+              stateKeyPointsHtml ? (
+                <div className="mt-4">
+                  <div
+                    className={`text-sm leading-relaxed text-[color:var(--nsi-ink-soft)] [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mt-1.5 ${
+                      !expandedState ? "line-clamp-4" : ""
+                    }`}
+                  >
+                    <SafeHtml html={stateKeyPointsHtml} />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setExpandedState((e) => !e)}
+                    className={readMoreClass}
+                  >
+                    {expandedState ? "Collapse notes ↑" : "Expand notes ↓"}
+                  </button>
+                </div>
+              ) : null
+            ) : (
+              <div className="mt-5 rounded-[3px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] p-5">
+                <p className="text-sm text-[color:var(--nsi-ink-soft)]">
+                  Sub-national field data and state performance metrics will be
+                  published in this cycle&apos;s snapshot.
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-6 border-t border-[color:var(--nsi-rule)] pt-4">
+            <Link
+              href={stateHref}
+              className="inline-flex w-full items-center justify-between rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-[color:var(--nsi-paper)] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-[color:var(--nsi-ink)] transition-colors hover:border-[color:var(--nsi-green)] hover:bg-[color:var(--nsi-green)] hover:text-white"
+            >
+              <span>{showState ? "Examine State Dossier" : "View Spotlights"}</span>
+              <span aria-hidden>→</span>
+            </Link>
           </div>
         </div>
 
-        {/* Institution Spotlight */}
+        {/* Column 2: Institution Spotlight */}
         <div
           id="institution-spotlight"
-          className="flex flex-1 flex-col border-b border-black/5 p-6 scroll-mt-24 md:border-b-0 md:border-r md:border-black/5"
+          className="flex flex-col justify-between p-6 scroll-mt-24 sm:p-8"
         >
-          <div className="flex min-h-0 flex-1 items-start gap-4">
-            <div className="shrink-0 overflow-hidden rounded-xl border border-black/5 p-2">
-              <Image
-                src="/spotlights/institution-spotlight-logo.png"
-                alt="Institution Spotlight"
-                width={56}
-                height={56}
-                className="object-contain"
-              />
+          <div>
+            <div className="flex items-center justify-between gap-2 border-b border-[color:var(--nsi-rule)] pb-3">
+              <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-gold-deep)]">
+                02 / Institutional Focus
+              </span>
+              <span className="font-mono text-[0.65rem] uppercase tracking-wider text-[color:var(--nsi-ink-muted)]">
+                Public Mandate
+              </span>
             </div>
-            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-              <div className="min-h-0 flex-1">
-                <h3 className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
-                  Institution Spotlight
-                </h3>
-                {showInst ? (
-                  <>
-                    <p className="mt-3 font-serif text-2xl font-semibold text-[color:var(--nsi-ink)]">
-                      {safeString(instSpot.institution) || "Institution Spotlight"}
-                    </p>
-                    {(instSpot.summary || instKeyPointsHtml) && (
-                      <>
-                        <div
-                          className={`mt-3 text-sm leading-relaxed text-[color:var(--nsi-ink-soft)] [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mt-1 ${!expandedInst ? "line-clamp-4" : ""}`}
-                        >
-                          {instSpot.summary && <p className="mb-2">{instSpot.summary}</p>}
-                          {instKeyPointsHtml && (
-                            <SafeHtml html={instKeyPointsHtml} />
-                          )}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setExpandedInst((e) => !e)}
-                          className={readMoreClass}
-                        >
-                          {expandedInst ? "Read less" : "Read more"}
-                        </button>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <div className="mt-3 rounded-xl bg-[color:var(--nsi-paper-2)] p-6 text-center">
-                    <p className="text-sm text-[color:var(--nsi-ink-soft)]">
-                      To be published with the snapshot.
-                    </p>
-                  </div>
-                )}
+
+            <div className="mt-5 flex items-start gap-3.5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[3px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] text-[color:var(--nsi-green)]">
+                <PillarGovernanceIcon className="h-7 w-7" />
               </div>
-              <Link
-                href={instHref}
-                className="mt-auto inline-flex shrink-0 rounded-xl bg-[color:var(--nsi-green)] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
-              >
-                {showInst ? "Full spotlight" : "View spotlights"}
-              </Link>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-ink-muted)]">
+                  Institution Spotlight
+                </div>
+                <h3 className="mt-0.5 font-serif text-2xl font-bold leading-snug text-[color:var(--nsi-ink)]">
+                  {showInst
+                    ? safeString(instSpot.institution) || "Featured Institution"
+                    : "Pending Release"}
+                </h3>
+              </div>
             </div>
+
+            {showInst ? (
+              (instSpot.summary || instKeyPointsHtml) && (
+                <div className="mt-4">
+                  <div
+                    className={`text-sm leading-relaxed text-[color:var(--nsi-ink-soft)] [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mt-1.5 ${
+                      !expandedInst ? "line-clamp-4" : ""
+                    }`}
+                  >
+                    {instSpot.summary && (
+                      <p className="mb-2 font-medium text-[color:var(--nsi-ink)]">
+                        {instSpot.summary}
+                      </p>
+                    )}
+                    {instKeyPointsHtml && <SafeHtml html={instKeyPointsHtml} />}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setExpandedInst((e) => !e)}
+                    className={readMoreClass}
+                  >
+                    {expandedInst ? "Collapse notes ↑" : "Expand notes ↓"}
+                  </button>
+                </div>
+              )
+            ) : (
+              <div className="mt-5 rounded-[3px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] p-5">
+                <p className="text-sm text-[color:var(--nsi-ink-soft)]">
+                  Institutional governance and policy delivery analysis will be
+                  published with the monthly snapshot.
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-6 border-t border-[color:var(--nsi-rule)] pt-4">
+            <Link
+              href={instHref}
+              className="inline-flex w-full items-center justify-between rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-[color:var(--nsi-paper)] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-[color:var(--nsi-ink)] transition-colors hover:border-[color:var(--nsi-green)] hover:bg-[color:var(--nsi-green)] hover:text-white"
+            >
+              <span>
+                {showInst ? "Examine Institution Dossier" : "View Spotlights"}
+              </span>
+              <span aria-hidden>→</span>
+            </Link>
           </div>
         </div>
 
-        {/* On-Ground Street Pulse */}
+        {/* Column 3: On-Ground Street Pulse */}
         <div
           id="street-pulse-spotlight"
-          className="flex flex-1 flex-col p-6 scroll-mt-24"
+          className="flex flex-col justify-between p-6 scroll-mt-24 sm:p-8"
         >
-          <div className="flex min-h-0 flex-1 items-start gap-4">
-            <div className="shrink-0 overflow-hidden rounded-xl border border-black/5 p-2 bg-amber-500/5">
-              <div className="flex h-14 w-14 items-center justify-center text-amber-600">
-                <PulseIcon className="h-7 w-7" />
-              </div>
+          <div>
+            <div className="flex items-center justify-between gap-2 border-b border-[color:var(--nsi-rule)] pb-3">
+              <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.14em] text-[color:var(--nsi-terracotta)]">
+                03 / Citizen Field Pulse
+              </span>
+              <span className="font-mono text-[0.65rem] uppercase tracking-wider text-[color:var(--nsi-ink-muted)]">
+                Grassroots Signal
+              </span>
             </div>
-            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-              <div className="min-h-0 flex-1">
-                <h3 className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
+
+            <div className="mt-5 flex items-start gap-3.5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[3px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] text-[color:var(--nsi-green)]">
+                <PillarSocialIcon className="h-7 w-7" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-ink-muted)]">
                   On-Ground Street Pulse
+                </div>
+                <h3 className="mt-0.5 font-serif text-2xl font-bold leading-snug text-[color:var(--nsi-ink)]">
+                  {showStreetPulse
+                    ? safeString(streetPulseSpot?.title) || "Street Pulse"
+                    : "Pending Release"}
                 </h3>
-                {showStreetPulse ? (
-                  <>
-                    <p className="mt-3 font-serif text-2xl font-semibold text-[color:var(--nsi-ink)]">
-                      {safeString(streetPulseSpot?.title) || "Street Pulse"}
-                    </p>
-                    {(streetPulseSpot?.summary || streetPulseKeyPointsHtml) && (
-                      <>
-                        <div
-                          className={`mt-2 text-sm leading-relaxed text-[color:var(--nsi-ink-soft)] [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mt-1 ${!expandedStreetPulse ? "line-clamp-4" : ""}`}
-                        >
-                          {streetPulseSpot?.summary && (
-                            <p className="mb-2">{streetPulseSpot.summary}</p>
-                          )}
-                          {streetPulseKeyPointsHtml && (
-                            <SafeHtml html={streetPulseKeyPointsHtml} />
-                          )}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setExpandedStreetPulse((e) => !e)}
-                          className={readMoreClass}
-                        >
-                          {expandedStreetPulse ? "Read less" : "Read more"}
-                        </button>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <div className="mt-3 rounded-xl bg-[color:var(--nsi-paper-2)] p-6 text-center">
-                    <p className="text-sm text-[color:var(--nsi-ink-soft)]">
-                      Coming in this month&apos;s report.
-                    </p>
-                  </div>
-                )}
               </div>
-              <Link
-                href={streetPulseHref}
-                className="mt-auto inline-flex shrink-0 rounded-xl bg-[color:var(--nsi-green)] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
-              >
-                {showStreetPulse ? "Full spotlight" : "View spotlights"}
-              </Link>
             </div>
+
+            {showStreetPulse ? (
+              (streetPulseSpot?.summary || streetPulseKeyPointsHtml) && (
+                <div className="mt-4">
+                  <div
+                    className={`text-sm leading-relaxed text-[color:var(--nsi-ink-soft)] [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mt-1.5 ${
+                      !expandedStreetPulse ? "line-clamp-4" : ""
+                    }`}
+                  >
+                    {streetPulseSpot?.summary && (
+                      <p className="mb-2 font-medium text-[color:var(--nsi-ink)]">
+                        {streetPulseSpot.summary}
+                      </p>
+                    )}
+                    {streetPulseKeyPointsHtml && (
+                      <SafeHtml html={streetPulseKeyPointsHtml} />
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setExpandedStreetPulse((e) => !e)}
+                    className={readMoreClass}
+                  >
+                    {expandedStreetPulse ? "Collapse notes ↑" : "Expand notes ↓"}
+                  </button>
+                </div>
+              )
+            ) : (
+              <div className="mt-5 rounded-[3px] border border-[color:var(--nsi-rule)] bg-[color:var(--nsi-paper)] p-5">
+                <p className="text-sm text-[color:var(--nsi-ink-soft)]">
+                  Direct market, transit, and household sentiment synthesis will
+                  be published in this month&apos;s report.
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-6 border-t border-[color:var(--nsi-rule)] pt-4">
+            <Link
+              href={streetPulseHref}
+              className="inline-flex w-full items-center justify-between rounded-[3px] border border-[color:var(--nsi-rule-strong)] bg-[color:var(--nsi-paper)] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-[color:var(--nsi-ink)] transition-colors hover:border-[color:var(--nsi-green)] hover:bg-[color:var(--nsi-green)] hover:text-white"
+            >
+              <span>
+                {showStreetPulse ? "Examine Field Pulse" : "View Spotlights"}
+              </span>
+              <span aria-hidden>→</span>
+            </Link>
           </div>
         </div>
       </div>
@@ -254,10 +322,20 @@ export function SpotlightCard({
   );
 }
 
-function PulseIcon({ className }: { className?: string }) {
+function StateMapEmblem({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"
+      />
     </svg>
   );
 }
