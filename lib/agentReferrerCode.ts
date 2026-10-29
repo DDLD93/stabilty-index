@@ -1,4 +1,3 @@
-import { randomInt } from "node:crypto";
 import type { PrismaClient } from "@prisma/client";
 
 const CODE_LEN = 6;
@@ -15,9 +14,16 @@ export function isValidReferrerCodeFormat(code: string): boolean {
   return /^\d{6}$/.test(code);
 }
 
-/** Cryptographic 6-digit string (leading zeros). Caller must ensure uniqueness in DB. */
+/** 6-digit string (leading zeros). Caller must ensure uniqueness in DB. */
 export function randomSixDigitCode(): string {
-  return String(randomInt(0, 1_000_000)).padStart(CODE_LEN, "0");
+  if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    const n = array[0] % 1_000_000;
+    return String(n).padStart(CODE_LEN, "0");
+  }
+  const n = Math.floor(Math.random() * 1_000_000);
+  return String(n).padStart(CODE_LEN, "0");
 }
 
 export async function allocateUniqueReferrerCode(db: PrismaClient): Promise<string> {

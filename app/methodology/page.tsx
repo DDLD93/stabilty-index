@@ -2,18 +2,19 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { defaultMetadata } from "@/lib/metadata";
+import { NSIShieldMark } from "@/components/public/icons";
 
 export const metadata: Metadata = {
   ...defaultMetadata,
-  title: "Methodology",
+  title: "Methodological Framework | Sovereign Stability Observatory",
   description:
-    "Learn how the Nigeria Stability Index works. NSI runs in monthly cycles: collect public signals and verified sources, review and validate, then publish a stable monthly snapshot on the 11th.",
+    "Explore how the Nigeria Stability Index calculates its monthly composite score across 5 sovereign pillars, triangulating institutional data and grassroots citizen telemetry.",
   openGraph: {
     ...defaultMetadata.openGraph,
-    title: "Methodology | Nigeria Stability Index",
+    title: "Methodological Framework | Nigeria Stability Index",
     description:
-      "How NSI works: collect public signals and verified sources, review and validate, publish monthly snapshot on the 11th.",
-    url: `${defaultMetadata.metadataBase}methodology`,
+      "Mathematical weighting, data verification protocols, and monthly publication cycles of the NSI framework.",
+    url: `${defaultMetadata.metadataBase ?? ""}methodology`,
   },
   alternates: {
     canonical: "/methodology",
@@ -21,113 +22,142 @@ export const metadata: Metadata = {
 };
 
 export default function MethodologyPage() {
+  const PILLARS_BREAKDOWN = [
+    { title: "Security & Territorial Integrity", weight: "25%", color: "text-[#f43f5e]", desc: "Armed conflict incidents, territorial containment, border surveillance, and citizen physical safety perception." },
+    { title: "FX Liquidity & Macro-Economy", weight: "25%", color: "text-[#38bdf8]", desc: "Interbank foreign exchange liquidity, consumer price index (CPI), food inflation, and monetary policy transmission." },
+    { title: "Investor Confidence & Capital Flows", weight: "20%", color: "text-[#fbbf24]", desc: "Foreign direct investment (FDI), capital importation, sovereign bond yields, and commercial regulatory predictability." },
+    { title: "Governance & Institutional Trust", weight: "15%", color: "text-[#00f59b]", desc: "Judicial independence, public financial transparency, state executive performance, and inter-agency coherence." },
+    { title: "Social Stability & Cohesion", weight: "15%", color: "text-[#a78bfa]", desc: "Labor market stability, community resilience, educational continuity, and grassroots street sentiment." },
+  ];
+
   return (
-    <main className="w-full pb-20">
-      <section className="relative overflow-hidden pt-20">
-        <div className="mx-auto w-full max-w-7xl px-6">
-          <div className="nsi-section-card px-8 py-12">
-            <div className="absolute inset-0 -z-10 opacity-[0.12]">
-              <Image
-                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop"
-                alt="Data Synthesis"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/60 px-4 py-1.5 text-sm font-medium text-[color:var(--nsi-ink)] backdrop-blur-md">
-                Methodology
+    <main className="relative min-h-[90vh] w-full pb-24 pt-16 text-slate-100 overflow-hidden">
+      {/* Background Ambience */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute top-10 left-1/4 h-96 w-96 rounded-full bg-[#00f59b]/10 blur-[140px]" />
+        <div className="absolute top-1/2 right-1/4 h-80 w-80 rounded-full bg-[#38bdf8]/8 blur-[120px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#00f59b08_1px,transparent_1px),linear-gradient(to_bottom,#00f59b08_1px,transparent_1px)] bg-[size:3.5rem_3.5rem]" />
+      </div>
+
+      <div className="mx-auto w-full max-w-5xl px-6">
+        {/* Header Card */}
+        <div className="observatory-card p-8 sm:p-12 relative overflow-hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-[#00f59b]/15 pb-8">
+            <div className="flex items-center gap-4">
+              <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#00f59b]/40 bg-[#07190f] p-2 shadow-[0_0_20px_rgba(0,245,155,0.25)]">
+                <NSIShieldMark className="h-10 w-10 text-[#00f59b]" />
               </div>
-              <h1 className="mt-6 font-serif text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)] lg:text-5xl">
-                How NSI produces a monthly snapshot
-              </h1>
-              <p className="mt-5 max-w-3xl text-base leading-7 text-[color:var(--nsi-ink-soft)]">
-                The Nigeria Stability Index runs in monthly cycles. We collect public
-                signals and verified sources, review and validate inputs, then publish
-                a stable snapshot on the 11th of each month. Here is how it works.
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#38bdf8]">
+                    METHODOLOGICAL RUBRIC
+                  </span>
+                  <span className="rounded bg-[#38bdf8]/15 px-2 py-0.5 font-mono text-[10px] text-[#38bdf8] border border-[#38bdf8]/30">
+                    QUANTITATIVE CALIBRATION
+                  </span>
+                </div>
+                <h1 className="mt-1 font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white">
+                  The Science of National Observability
+                </h1>
+              </div>
+            </div>
+
+            <Link
+              href="/reports"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#00f59b] bg-[#00f59b] px-5 py-3 font-mono text-xs font-bold text-black shadow-[0_0_15px_rgba(0,245,155,0.3)] transition-all hover:bg-[#22ffb0] shrink-0"
+            >
+              <span>AUDIT REPORTS</span>
+              <span>→</span>
+            </Link>
+          </div>
+
+          <p className="mt-6 text-base sm:text-lg leading-relaxed text-slate-200">
+            The <strong>Nigeria Stability Index (NSI)</strong> runs on an autonomous, 30-day cyclical calendar. 
+            We combine high-frequency administrative disclosures with nationwide anonymous citizen sentiment, producing an unvarnished composite score between <strong>1.0 (Critical Fragility)</strong> and <strong>10.0 (Optimal Stability)</strong>.
+          </p>
+        </div>
+
+        {/* 3-Step Monthly Observability Cycle */}
+        <div className="mt-12">
+          <div className="font-mono text-xs font-bold uppercase tracking-wider text-[#00f59b] mb-4">
+            THE 30-DAY OPERATIONAL CADENCE
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            <div className="observatory-card p-6">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <span className="font-mono text-xs text-[#00f59b] font-bold">PHASE 01</span>
+                <span className="font-mono text-[10px] text-slate-500">DAYS 01 – 25</span>
+              </div>
+              <h3 className="mt-4 font-serif text-xl font-bold text-white">
+                Multi-Stream Ingestion
+              </h3>
+              <p className="mt-2 text-xs sm:text-sm text-slate-400 leading-relaxed">
+                Collection of nationwide citizen survey check-ins across 36 states and FCT, combined with high-frequency statistical reports from the CBN, NBS, and conflict monitors.
               </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  href="/reports"
-                  className="inline-flex items-center rounded-xl bg-[color:var(--nsi-green)] px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:brightness-110"
-                >
-                  View Reports Archive
-                </Link>
-                <Link
-                  href="/about"
-                  className="inline-flex items-center rounded-xl border border-black/10 bg-white/70 px-6 py-3 text-sm font-semibold text-[color:var(--nsi-ink)] backdrop-blur-sm transition-all hover:bg-white"
-                >
-                  About NSI
-                </Link>
+            </div>
+
+            <div className="observatory-card p-6">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <span className="font-mono text-xs text-[#fbbf24] font-bold">PHASE 02</span>
+                <span className="font-mono text-[10px] text-slate-500">DAYS 26 – 30</span>
               </div>
+              <h3 className="mt-4 font-serif text-xl font-bold text-white">
+                Triangulation & Audit
+              </h3>
+              <p className="mt-2 text-xs sm:text-sm text-slate-400 leading-relaxed">
+                Editorial and econometric review of raw data. Extreme outlier scrubbing, cross-validation with sub-national field bureaus, and final algorithm synthesis.
+              </p>
+            </div>
+
+            <div className="observatory-card p-6">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <span className="font-mono text-xs text-[#38bdf8] font-bold">PHASE 03</span>
+                <span className="font-mono text-[10px] text-slate-500">CALENDAR DAY 11</span>
+              </div>
+              <h3 className="mt-4 font-serif text-xl font-bold text-white">
+                Public Declassification
+              </h3>
+              <p className="mt-2 text-xs sm:text-sm text-slate-400 leading-relaxed">
+                Official release of the Monthly Stability Dossier, disaggregated pillar ratings, sub-national spotlights, and public open-access data download.
+              </p>
             </div>
           </div>
         </div>
-      </section>
 
-      <section className="mx-auto mt-12 grid w-full max-w-7xl gap-6 px-6 md:grid-cols-3">
-        <div className="nsi-card-soft p-8">
-          <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-ink-soft)]">
-            Step 1
+        {/* Five Pillar Weighting Breakdown */}
+        <div className="mt-12 observatory-card p-8 sm:p-10">
+          <div className="border-b border-[#00f59b]/15 pb-4 mb-6">
+            <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-[#00f59b]">
+              MATHEMATICAL PILLAR WEIGHTINGS
+            </h2>
+            <p className="mt-1 text-sm text-slate-400">
+              Composite stability score computation matrix: Score = Σ (Pillar_i × Weight_i)
+            </p>
           </div>
-          <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-            Collect public signals + verified sources
-          </h2>
-          <p className="mt-3 text-sm leading-6 text-[color:var(--nsi-ink-soft)]">
-            We gather anonymous public check-ins (stability score, mood,
-            one-word descriptor) and combine them with verified data sources
-            across security, economy, governance, investor confidence, and
-            social stability.
-          </p>
-        </div>
-        <div className="nsi-card-soft p-8">
-          <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-ink-soft)]">
-            Step 2
-          </div>
-          <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-            Review + validation
-          </h2>
-          <p className="mt-3 text-sm leading-6 text-[color:var(--nsi-ink-soft)]">
-            Inputs are reviewed, submissions can be flagged where appropriate,
-            and the editorial team prepares the official snapshot narrative,
-            pillar scores, and spotlights. No automated scoring alone — human
-            review is part of the process.
-          </p>
-        </div>
-        <div className="nsi-card-soft p-8">
-          <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--nsi-ink-soft)]">
-            Step 3
-          </div>
-          <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-            Publish monthly snapshot on the 11th
-          </h2>
-          <p className="mt-3 text-sm leading-6 text-[color:var(--nsi-ink-soft)]">
-            The snapshot is published and becomes the public report. Once
-            locked, it stays immutable. Each month we deliver a calm, stable
-            pulse on how Nigeria is holding together.
-          </p>
-        </div>
-      </section>
 
-      <section className="mx-auto mt-20 w-full max-w-7xl px-6">
-        <div className="nsi-card-soft p-8">
-          <h2 className="font-serif text-xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-          How we measure
-          </h2>
-          <p className="mt-4 max-w-3xl text-sm leading-6 text-[color:var(--nsi-ink-soft)]">
-            We use a mix of public check-ins and editorial analysis, summarized
-            into an overall score (1–10) and five pillar scores with short
-            narratives. We do not collect personal identifiers. Spotlights on
-            states or institutions are evidence-based and are not endorsements.
-          </p>
-          <Link
-            href="/reports"
-            className="mt-6 inline-flex rounded-xl bg-[color:var(--nsi-green)] px-6 py-3 text-sm font-semibold text-white transition-all hover:brightness-110"
-          >
-            View Reports Archive
-          </Link>
+          <div className="space-y-4">
+            {PILLARS_BREAKDOWN.map((p, i) => (
+              <div
+                key={i}
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-white/5 bg-black/40 p-5"
+              >
+                <div className="flex-1">
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-xs font-bold text-slate-500">0{i + 1}.</span>
+                    <h4 className="font-serif text-lg font-bold text-white">{p.title}</h4>
+                  </div>
+                  <p className="mt-1.5 text-xs text-slate-400 pl-7">{p.desc}</p>
+                </div>
+                <div className="flex items-baseline gap-2 pl-7 sm:pl-0">
+                  <span className={`font-mono text-2xl font-black ${p.color}`}>{p.weight}</span>
+                  <span className="font-mono text-[10px] text-slate-500 uppercase">WEIGHT</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </section>
+
+      </div>
     </main>
   );
 }

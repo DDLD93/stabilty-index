@@ -8,7 +8,7 @@ import {
 } from "@/lib/contactSubjects";
 
 const inputClass =
-  "mt-1 w-full rounded-xl border border-black/10 bg-white/70 px-4 py-3 text-[color:var(--nsi-ink)] outline-none ring-0 transition-all focus:border-[color:var(--nsi-green)] focus:bg-white";
+  "mt-2 w-full rounded-xl border border-[#00f59b]/25 bg-black/60 px-4 py-3 font-mono text-sm text-white placeholder:text-slate-600 outline-none transition-all focus:border-[#00f59b] focus:ring-1 focus:ring-[#00f59b]";
 
 export function ContactForm() {
   const [name, setName] = useState("");
@@ -39,7 +39,7 @@ export function ContactForm() {
       const data = (await res.json().catch(() => ({}))) as { error?: string };
 
       if (!res.ok) {
-        setError(data.error ?? "Something went wrong. Please try again.");
+        setError(data.error ?? "Transmission failed. Please try again.");
         setLoading(false);
         return;
       }
@@ -51,15 +51,16 @@ export function ContactForm() {
       setSubjectOther("");
       setMessage("");
     } catch {
-      setError("Network error. Please check your connection and try again.");
+      setError("Network interruption. Please check connection and try again.");
     }
     setLoading(false);
   }
 
   if (done) {
     return (
-      <div className="rounded-xl border border-black/10 bg-white/70 px-6 py-5 text-sm text-[color:var(--nsi-ink)] shadow-sm">
-        Thank you — your message has been sent. We aim to reply within a few business days.
+      <div className="rounded-xl border border-[#00f59b]/40 bg-[#07190f] p-6 text-center font-mono text-xs text-[#00f59b]">
+        <div className="text-2xl mb-2">✓</div>
+        Transmission logged successfully. An intelligence coordinator will respond to your registered dispatch within 48 business hours.
       </div>
     );
   }
@@ -67,7 +68,9 @@ export function ContactForm() {
   return (
     <form className="mt-6 space-y-5" onSubmit={onSubmit}>
       <label className="block">
-        <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Name</span>
+        <span className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-300">
+          Full Name / Official Affiliation
+        </span>
         <input
           className={inputClass}
           type="text"
@@ -76,12 +79,15 @@ export function ContactForm() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           maxLength={120}
+          placeholder="e.g. Dr. Ngozi Balogun"
           required
         />
       </label>
 
       <label className="block">
-        <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Email</span>
+        <span className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-300">
+          Official Email Address
+        </span>
         <input
           className={inputClass}
           type="email"
@@ -89,68 +95,76 @@ export function ContactForm() {
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          placeholder="analyst@institute.org or personal@email.com"
           required
         />
       </label>
 
       <label className="block">
-        <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Subject</span>
+        <span className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-300">
+          Dispatch Category
+        </span>
         <select
           className={inputClass}
           name="subject"
           value={subject}
           onChange={(e) => setSubject(e.target.value as ContactSubjectKey)}
-          required
         >
           {CONTACT_SUBJECT_KEYS.map((key) => (
-            <option key={key} value={key}>
+            <option key={key} value={key} className="bg-[#051109] text-white">
               {CONTACT_SUBJECT_LABELS[key]}
             </option>
           ))}
         </select>
       </label>
 
-      {subject === "other" ? (
+      {subject === "other" && (
         <label className="block">
-          <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Please specify</span>
+          <span className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-300">
+            Specify Custom Subject
+          </span>
           <input
             className={inputClass}
             type="text"
-            name="subjectOther"
             value={subjectOther}
             onChange={(e) => setSubjectOther(e.target.value)}
-            maxLength={200}
-            placeholder="Brief topic for your message"
+            maxLength={120}
             required
           />
         </label>
-      ) : null}
+      )}
 
       <label className="block">
-        <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Message</span>
+        <span className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-300">
+          Inquiry / Telemetry Details
+        </span>
         <textarea
-          className={`${inputClass} min-h-[140px] resize-y`}
+          className={`${inputClass} min-h-[130px] resize-y`}
           name="message"
+          rows={5}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          maxLength={4000}
+          maxLength={3000}
+          placeholder="Please outline your research inquiry, data verification request, or institutional feedback…"
           required
         />
       </label>
 
-      {error ? (
-        <p className="text-sm text-red-700" role="alert">
+      {error && (
+        <div className="rounded-lg border border-red-500/30 bg-red-950/40 p-3 font-mono text-xs text-red-400">
           {error}
-        </p>
-      ) : null}
+        </div>
+      )}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="rounded-xl bg-[color:var(--nsi-gold)] px-6 py-3 text-sm font-semibold text-[color:var(--nsi-ink)] transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {loading ? "Sending…" : "Send message"}
-      </button>
+      <div className="pt-2">
+        <button
+          type="submit"
+          disabled={loading}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#00f59b] bg-gradient-to-r from-[#00f59b] to-[#00d07e] py-3.5 font-mono text-xs font-bold text-black shadow-[0_0_20px_rgba(0,245,155,0.35)] transition-all hover:scale-[1.02] disabled:opacity-50"
+        >
+          {loading ? "TRANSMITTING DISPATCH…" : "SEND OFFICIAL TRANSMISSION →"}
+        </button>
+      </div>
     </form>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   NSIBadgeLogo,
   PillarEconomyIcon,
@@ -49,14 +50,16 @@ const SOCIAL = [
   { href: "https://www.tiktok.com/@nigeria_nsi", label: "TikTok", Icon: SocialTikTokIcon },
 ] as const;
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
+function SectionLabel({ children, accent = "emerald" }: { children: React.ReactNode; accent?: "emerald" | "amber" | "cyan" }) {
+  const colorClass =
+    accent === "amber" ? "text-[#fbbf24]" : accent === "cyan" ? "text-[#38bdf8]" : "text-[#00f59b]";
   return (
     <div className="mb-5 flex items-center gap-3">
-      <div className="h-px flex-1 bg-black/8" />
-      <h2 className="text-[0.6rem] font-bold uppercase tracking-widest text-[color:var(--nsi-green)]">
+      <div className="h-px flex-1 bg-white/10" />
+      <h2 className={`font-mono text-xs font-bold uppercase tracking-widest ${colorClass}`}>
         {children}
       </h2>
-      <div className="h-px flex-1 bg-black/8" />
+      <div className="h-px flex-1 bg-white/10" />
     </div>
   );
 }
@@ -64,7 +67,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 function CheckIcon() {
   return (
     <svg
-      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--nsi-green)]"
+      className="mt-0.5 h-4 w-4 shrink-0 text-[#00f59b]"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -124,111 +127,148 @@ export function PublicationPoster({
   const editionNum = editionMatch ? editionMatch[1].padStart(3, "0") : "001";
 
   return (
-    <article className="overflow-hidden rounded-[30px] border border-black/10 shadow-2xl">
-
-      {/* ── Hero Band ─────────────────────────────────────────────────── */}
-      <header className="nsi-band relative px-8 py-12 text-white sm:px-12">
+    <article className="observatory-card overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.85)]">
+      {/* Hero Band */}
+      <header className="relative border-b border-[#00f59b]/20 bg-gradient-to-r from-[#031109] via-[#071f13] to-[#041009] px-8 py-12 text-white sm:px-12">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
-
           {/* Logo + title */}
           <div className="flex items-center gap-5">
-            <NSIBadgeLogo className="h-20 w-16 shrink-0" />
+            <div className="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-[#00f59b]/40 bg-[#06190e] p-2 shadow-[0_0_25px_rgba(0,245,155,0.3)]">
+              <Image
+                src="/nsi-emblem.webp"
+                alt="NSI Emblem"
+                width={64}
+                height={64}
+                className="object-contain"
+              />
+            </div>
             <div>
-              <p className="text-[0.6rem] font-bold uppercase tracking-widest text-white/50">
-                Nigeria Stability Index
-              </p>
-              <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:text-3xl">
-                {period} Report
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#00f59b]">
+                  SOVEREIGN STABILITY OBSERVATORY
+                </span>
+                <span className="rounded bg-[#00f59b]/15 px-2 py-0.5 font-mono text-[10px] text-[#00f59b] border border-[#00f59b]/30">
+                  DECLASSIFIED DOSSIER
+                </span>
+              </div>
+              <h1 className="mt-1 font-serif text-3xl font-bold sm:text-4xl">
+                {period} National Snapshot
               </h1>
-              <p className="mt-1 text-sm text-white/50">Edition {editionNum}</p>
+              <p className="mt-1 font-mono text-xs text-slate-400">
+                OFFICIAL REPORT EDITION {editionNum} · REF NSI-PUB-{editionNum}
+              </p>
             </div>
           </div>
 
-          {/* Overall score */}
+          {/* Overall score dial */}
           <div className="flex flex-col items-start gap-1 sm:items-end">
-            <span className="text-[0.6rem] font-bold uppercase tracking-widest text-white/40">
-              Overall Score
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#00f59b]">
+              COMPOSITE CALIBRATION
             </span>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-6xl font-bold text-[color:var(--nsi-gold)] leading-none sm:text-7xl">
+            <div className="flex items-baseline gap-1.5 font-mono">
+              <span className="text-6xl font-black text-[#00f59b] leading-none drop-shadow-[0_0_25px_rgba(0,245,155,0.5)] sm:text-7xl">
                 {overallScore.toFixed(1)}
               </span>
-              <span className="text-2xl font-medium text-white/25">/10</span>
+              <span className="text-2xl font-semibold text-slate-500">/ 10</span>
             </div>
           </div>
         </div>
 
         {/* Narrative tagline */}
         {overallNarrative && (
-          <p className="mt-8 border-t border-white/10 pt-6 font-serif text-base italic leading-relaxed text-white/60 sm:text-lg">
-            &ldquo;{overallNarrative}&rdquo;
-          </p>
+          <div className="mt-8 border-t border-[#00f59b]/15 pt-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#fbbf24]/30 bg-[#2b1f09]/80 px-4 py-1.5 font-mono text-xs text-[#fbbf24]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#fbbf24] animate-ping" />
+              <span>CONSENSUS ASSESSMENT</span>
+            </div>
+            <p className="mt-3 font-serif text-xl italic leading-relaxed text-slate-200 sm:text-2xl">
+              &ldquo;{overallNarrative}&rdquo;
+            </p>
+          </div>
         )}
       </header>
 
-      {/* ── Pillar Scores Strip ──────────────────────────────────────── */}
-      <div className="border-b border-black/8 bg-white px-8 py-7 sm:px-12">
-        <p className="mb-5 text-[0.6rem] font-bold uppercase tracking-widest text-[color:var(--nsi-ink-soft)]">
-          Pillar Scores
-        </p>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-5">
+      {/* Pillar Scores Strip */}
+      <div className="border-b border-[#00f59b]/15 bg-[#040e08]/90 px-8 py-8 sm:px-12">
+        <div className="flex items-center justify-between mb-6">
+          <p className="font-mono text-xs font-bold uppercase tracking-widest text-[#00f59b]">
+            DISAGGREGATED PILLAR TELEMETRY
+          </p>
+          <span className="font-mono text-[11px] text-slate-400">AUTONOMOUS 1–10 METRIC</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
           {pillars.slice(0, 5).map((p) => {
             const Icon = iconFor(p.title);
             const pct = Math.min((p.score / 10) * 100, 100);
             return (
-              <div key={p.title} className="flex flex-col gap-2">
-                <div className="flex items-center justify-between gap-2">
-                  <Icon className="h-5 w-5 text-[color:var(--nsi-green)]" />
-                  <span className="text-sm font-bold text-[color:var(--nsi-green)]">
-                    {p.score.toFixed(1)}
-                  </span>
-                </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-black/8">
-                  <div
-                    className="h-full rounded-full bg-[color:var(--nsi-green)] transition-all"
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
-                <p className="text-[0.6rem] font-bold uppercase tracking-wider text-[color:var(--nsi-ink-soft)]">
-                  {p.title}
-                </p>
-                {p.summary && (
-                  <p className="line-clamp-2 text-[0.7rem] italic leading-relaxed text-black/45">
-                    {p.summary}
+              <div
+                key={p.title}
+                className="flex flex-col justify-between rounded-xl border border-white/5 bg-black/40 p-4 transition-all hover:border-[#00f59b]/30 hover:bg-[#081a10]"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2">
+                    <Icon className="h-5 w-5 text-[#00f59b]" />
+                    <span className="font-mono text-lg font-bold text-[#00f59b]">
+                      {p.score.toFixed(1)}
+                    </span>
+                  </div>
+                  <p className="mt-3 font-mono text-xs font-bold uppercase tracking-wider text-white">
+                    {p.title}
                   </p>
-                )}
+                  {p.summary && (
+                    <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-slate-400">
+                      {p.summary}
+                    </p>
+                  )}
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-white/5">
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-black/80">
+                    <div
+                      className="h-full bg-gradient-to-r from-[#00f59b] to-[#fbbf24]"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                </div>
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* ── Article Body ─────────────────────────────────────────────── */}
-      <div className="bg-[color:var(--nsi-paper)] px-8 py-10 sm:px-12">
-        <div className="grid gap-10 lg:grid-cols-3">
+      {/* Article Body */}
+      <div className="px-8 py-10 sm:px-12 bg-[#030a06]">
+        <div className="grid gap-10 lg:grid-cols-12">
 
           {/* Main content column */}
-          <div className="space-y-10 lg:col-span-2">
+          <div className="space-y-10 lg:col-span-8">
 
             {/* State Highlight */}
             <section>
-              <SectionLabel>Monthly State Highlight</SectionLabel>
-              <div className="rounded-2xl border border-black/8 bg-white p-7 sm:p-8">
+              <SectionLabel accent="cyan">Sub-National Regional Highlight</SectionLabel>
+              <div className="rounded-2xl border border-[#38bdf8]/20 bg-[#06161c]/80 p-7 sm:p-8 backdrop-blur-md">
                 <div className="flex flex-wrap items-start justify-between gap-4">
-                  <h3 className="font-serif text-2xl font-bold tracking-tight text-[color:var(--nsi-ink)] sm:text-3xl">
-                    {spotlight.state ? `${spotlight.state} State` : "State Spotlight"}
-                  </h3>
+                  <div>
+                    <span className="font-mono text-[10px] uppercase tracking-wider text-[#38bdf8]">
+                      REGIONAL JURISDICTION
+                    </span>
+                    <h3 className="font-serif text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                      {spotlight.state ? `${spotlight.state} State` : "Sub-National Corridor"}
+                    </h3>
+                  </div>
+
                   {spotlight.score != null && (
-                    <div className="flex shrink-0 items-baseline gap-0.5 rounded-xl border border-black/8 bg-[color:var(--nsi-paper)] px-4 py-2">
-                      <span className="text-xl font-bold text-[color:var(--nsi-green)]">
+                    <div className="flex shrink-0 items-baseline gap-1 rounded-xl border border-[#38bdf8]/30 bg-black/50 px-4 py-2 font-mono">
+                      <span className="text-2xl font-bold text-[#38bdf8]">
                         {spotlight.score.toFixed(1)}
                       </span>
-                      <span className="text-sm text-black/30">/10</span>
+                      <span className="text-xs text-slate-500">/ 10</span>
                     </div>
                   )}
                 </div>
 
-                <div className="mt-6 text-[0.9375rem] leading-7 text-black/70 [&_li]:flex [&_li]:items-start [&_li]:gap-3 [&_ul]:list-none [&_ul]:space-y-3">
+                <div className="mt-6 text-sm leading-relaxed text-slate-300 [&_li]:flex [&_li]:items-start [&_li]:gap-3 [&_ul]:list-none [&_ul]:space-y-3">
                   {stateKeyPointsHtml ? (
                     <SafeHtml html={stateKeyPointsHtml} />
                   ) : (
@@ -248,23 +288,30 @@ export function PublicationPoster({
             {/* Institution Highlight */}
             {inst.institution && (
               <section>
-                <SectionLabel>Institution Highlight</SectionLabel>
-                <div className="rounded-2xl border border-black/8 bg-white p-7 sm:p-8">
-                  <h3 className="font-serif text-xl font-bold tracking-tight text-[color:var(--nsi-ink)] sm:text-2xl">
+                <SectionLabel accent="emerald">Governance Apparatus Highlight</SectionLabel>
+                <div className="rounded-2xl border border-[#00f59b]/20 bg-[#05180f]/80 p-7 sm:p-8 backdrop-blur-md">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-[#00f59b]">
+                    REGULATORY DISCLOSURE
+                  </span>
+                  <h3 className="font-serif text-2xl font-bold tracking-tight text-white sm:text-3xl">
                     {inst.institution}
                   </h3>
+
                   {inst.summary && (
-                    <p className="mt-3 text-[1rem] leading-7 text-black/65">{inst.summary}</p>
+                    <p className="mt-3 text-sm sm:text-base leading-relaxed text-slate-200 font-medium">
+                      {inst.summary}
+                    </p>
                   )}
+
                   {(instKeyPointsHtml || (inst.bullets ?? []).length > 0) && (
-                    <div className="mt-6 text-[0.9375rem] leading-7 text-black/70 [&_li]:flex [&_li]:items-start [&_li]:gap-3 [&_ul]:grid [&_ul]:gap-3 [&_ul]:sm:grid-cols-2">
+                    <div className="mt-6 text-sm leading-relaxed text-slate-300 [&_li]:flex [&_li]:items-start [&_li]:gap-3 [&_ul]:grid [&_ul]:gap-3 [&_ul]:sm:grid-cols-2">
                       {instKeyPointsHtml ? (
                         <SafeHtml html={instKeyPointsHtml} />
                       ) : (
                         <ul className="grid gap-3 sm:grid-cols-2">
                           {inst.bullets!.map((b, i) => (
                             <li key={i} className="flex items-start gap-3">
-                              <div className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--nsi-green)]" />
+                              <div className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#00f59b]" />
                               <span>{b}</span>
                             </li>
                           ))}
@@ -279,20 +326,23 @@ export function PublicationPoster({
             {/* Street Pulse */}
             {hasStreetPulse && (
               <section id="street-pulse-spotlight" className="scroll-mt-24">
-                <SectionLabel>On-Ground Street Pulse</SectionLabel>
-                <div className="rounded-2xl border border-black/8 bg-white p-7 sm:p-8">
+                <SectionLabel accent="amber">On-Ground Street Pulse</SectionLabel>
+                <div className="rounded-2xl border border-[#f59e0b]/20 bg-[#171207]/80 p-7 sm:p-8 backdrop-blur-md">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-[#fbbf24]">
+                    COMMUNITY FEEDBACK AUDIT
+                  </span>
                   {streetPulse.title && (
-                    <h3 className="font-serif text-xl font-bold tracking-tight text-[color:var(--nsi-ink)]">
+                    <h3 className="font-serif text-2xl font-bold tracking-tight text-white">
                       {streetPulse.title}
                     </h3>
                   )}
                   {streetPulse.summary && (
-                    <p className="mt-3 text-[1rem] leading-7 text-black/65">
-                      {streetPulse.summary}
+                    <p className="mt-3 font-serif text-lg italic text-[#fbbf24] leading-relaxed">
+                      &ldquo;{streetPulse.summary}&rdquo;
                     </p>
                   )}
                   {streetPulseKeyPointsHtml && (
-                    <div className="mt-5 text-[0.9375rem] leading-7 text-black/70 [&_li]:mt-2 [&_ul]:list-disc [&_ul]:pl-5">
+                    <div className="mt-5 text-sm leading-relaxed text-slate-300 [&_li]:mt-2 [&_ul]:list-disc [&_ul]:pl-5">
                       <SafeHtml html={streetPulseKeyPointsHtml} />
                     </div>
                   )}
@@ -302,52 +352,50 @@ export function PublicationPoster({
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-8 lg:col-span-4">
 
             {/* Public Sentiment */}
             {hasSentiment && (
-              <div className="overflow-hidden rounded-2xl border border-black/8 bg-white">
-                <div className="border-b border-black/8 px-6 py-4">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
-                    Public Sentiment
+              <div className="rounded-2xl border border-[#00f59b]/20 bg-[#07160e]/90 p-6 backdrop-blur-md">
+                <div className="border-b border-[#00f59b]/15 pb-4">
+                  <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[#00f59b]">
+                    Nationwide Sentiment
                   </h3>
                 </div>
-                <div className="p-6">
+
+                <div className="pt-6">
                   {topWords.length > 0 && (
-                    <div className="mb-5 flex flex-wrap gap-2">
-                      {topWords.slice(0, 4).map((w) => (
+                    <div className="mb-6 flex flex-wrap gap-2">
+                      {topWords.slice(0, 5).map((w) => (
                         <span
                           key={w}
-                          className="rounded-full border border-black/8 bg-[color:var(--nsi-paper)] px-3 py-1 text-xs font-semibold text-[color:var(--nsi-ink-soft)]"
+                          className="rounded-lg border border-[#00f59b]/25 bg-[#0a2315] px-3 py-1 font-mono text-xs text-[#00f59b]"
                         >
-                          {w}
+                          #{w}
                         </span>
                       ))}
                     </div>
                   )}
+
                   {avg != null && (
-                    <>
-                      <div className="text-center">
-                        <p className="text-[0.6rem] font-bold uppercase tracking-widest text-black/35">
-                          Average Public Score
-                        </p>
-                        <div className="mt-2 flex items-baseline justify-center gap-1">
-                          <span className="text-4xl font-bold text-[color:var(--nsi-ink)]">
-                            {avg.toFixed(1)}
-                          </span>
-                          <span className="text-lg font-medium text-black/25">/10</span>
-                        </div>
+                    <div className="text-center rounded-xl border border-white/5 bg-black/40 p-4">
+                      <p className="font-mono text-[10px] uppercase tracking-wider text-slate-400">
+                        Citizen Average Rating
+                      </p>
+                      <div className="mt-2 flex items-baseline justify-center gap-1 font-mono">
+                        <span className="text-4xl font-extrabold text-[#00f59b]">
+                          {avg.toFixed(1)}
+                        </span>
+                        <span className="text-base text-slate-500">/ 10</span>
                       </div>
-                      <div className="mt-4 flex justify-center">
-                        <SemiGauge value={avg} label="Average public sentiment gauge" size={180} />
-                      </div>
-                    </>
+                    </div>
                   )}
+
                   {sentiment.topMood && (
-                    <p className="mt-3 text-center text-sm text-black/45">
-                      Top mood:{" "}
-                      <span className="font-semibold text-[color:var(--nsi-ink)]">
-                        {sentiment.topMood}
+                    <p className="mt-4 text-center font-mono text-xs text-slate-300">
+                      Prevailing Tone:{" "}
+                      <span className="font-bold text-[#fbbf24]">
+                        &ldquo;{sentiment.topMood}&rdquo;
                       </span>
                     </p>
                   )}
@@ -355,82 +403,80 @@ export function PublicationPoster({
               </div>
             )}
 
-            {/* Sources */}
-            {sources.length > 0 && (
-              <div className="overflow-hidden rounded-2xl border border-black/8 bg-white">
-                <div className="border-b border-black/8 px-6 py-4">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
-                    Sources & References
-                  </h3>
-                </div>
-                <div className="p-6">
-                  <ul className="space-y-4">
+            {/* Sources & Methodological Grounding */}
+            <div className="rounded-2xl border border-[#00f59b]/20 bg-[#07160e]/90 p-6 backdrop-blur-md">
+              <div className="border-b border-[#00f59b]/15 pb-4">
+                <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[#38bdf8]">
+                  Verified Data Sources
+                </h3>
+              </div>
+
+              <div className="pt-6">
+                {sources.length > 0 ? (
+                  <ul className="space-y-3">
                     {sources.map((s, i) => (
                       <li key={i}>
                         <a
                           href={s.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm font-semibold text-[color:var(--nsi-green)] hover:underline"
+                          className="group block rounded-lg border border-white/5 bg-black/30 p-3 transition-all hover:border-[#38bdf8]/40 hover:bg-[#0a1e28]"
                         >
-                          {s.label}
+                          <div className="flex items-center justify-between text-xs font-semibold text-slate-200 group-hover:text-white">
+                            <span>{s.label}</span>
+                            <span className="text-[#38bdf8]">↗</span>
+                          </div>
+                          <p className="mt-1 truncate font-mono text-[10px] text-slate-500">
+                            {s.url}
+                          </p>
                         </a>
-                        <p className="mt-0.5 line-clamp-1 break-all text-[0.65rem] text-black/30">
-                          {s.url}
-                        </p>
                       </li>
                     ))}
                   </ul>
-                </div>
+                ) : (
+                  <p className="font-mono text-xs text-slate-500">
+                    Sourced from NBS, CBN, ACLED, and nationwide citizen field returns.
+                  </p>
+                )}
               </div>
-            )}
+            </div>
 
-            {/* Empty sources placeholder */}
-            {sources.length === 0 && (
-              <div className="overflow-hidden rounded-2xl border border-black/8 bg-white">
-                <div className="border-b border-black/8 px-6 py-4">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
-                    Sources & References
-                  </h3>
-                </div>
-                <p className="p-6 text-center text-xs italic text-black/35">
-                  Sources pending.
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </div>
 
-      {/* ── Footer Band ──────────────────────────────────────────────── */}
-      <footer className="nsi-band px-8 py-9 text-white sm:px-12">
+      {/* Footer Band */}
+      <footer className="border-t border-[#00f59b]/15 bg-[#030906] px-8 py-8 text-white sm:px-12">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <NSIBadgeLogo className="h-16 w-14 shrink-0" />
+            <Image
+              src="/nsi-emblem.webp"
+              alt="NSI"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
             <div>
-              <p className="font-serif text-lg font-bold">Nigeria Stability Index (NSI)</p>
-              <p className="mt-0.5 text-sm text-white/55">
-                Tracking security, economy, governance.
+              <p className="font-serif text-base font-bold">Nigeria Stability Index (NSI)</p>
+              <p className="text-xs text-slate-400">
+                A non-partisan civic public good by The 24 Angels Initiative.
               </p>
             </div>
           </div>
 
-          <div className="flex flex-col items-start gap-3 sm:items-end">
-            <p className="text-sm font-medium text-white/60">www.NigeriaStabilityIndex.org</p>
-            <div className="flex items-center gap-5">
-              {SOCIAL.map(({ href, label, Icon }) => (
-                <Link
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="opacity-55 transition-all hover:scale-110 hover:opacity-100"
-                  aria-label={label}
-                >
-                  <Icon className="h-5 w-5" />
-                </Link>
-              ))}
-            </div>
+          <div className="flex items-center gap-5">
+            {SOCIAL.map(({ href, label, Icon }) => (
+              <Link
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-[#00f59b] transition-colors"
+                aria-label={label}
+              >
+                <Icon className="h-5 w-5" />
+              </Link>
+            ))}
           </div>
         </div>
       </footer>

@@ -2,90 +2,103 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { NSIShieldMark } from "@/components/public/icons";
 
 export default function SubscribePage() {
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
 
   return (
-    <main className="w-full pb-20">
-      <section className="relative overflow-hidden pt-20">
-        <div className="mx-auto w-full max-w-7xl px-6">
-          <div className="nsi-section-card px-8 py-10">
-            <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/60 px-4 py-1.5 text-sm font-medium text-[color:var(--nsi-ink)] backdrop-blur-md">
-                Subscribe
+    <main className="relative min-h-[90vh] w-full pb-24 pt-16 text-slate-100 overflow-hidden">
+      {/* Background Ambience */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute top-10 left-1/4 h-96 w-96 rounded-full bg-[#00f59b]/10 blur-[140px]" />
+        <div className="absolute top-1/2 right-1/4 h-80 w-80 rounded-full bg-[#f59e0b]/8 blur-[120px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#00f59b08_1px,transparent_1px),linear-gradient(to_bottom,#00f59b08_1px,transparent_1px)] bg-[size:3.5rem_3.5rem]" />
+      </div>
+
+      <div className="mx-auto w-full max-w-4xl px-6">
+        {/* Header Card */}
+        <div className="observatory-card p-8 sm:p-12 relative overflow-hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-[#00f59b]/15 pb-8">
+            <div className="flex items-center gap-4">
+              <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#00f59b]/40 bg-[#07190f] p-2 shadow-[0_0_20px_rgba(0,245,155,0.25)]">
+                <NSIShieldMark className="h-10 w-10 text-[#00f59b]" />
               </div>
-              <h1 className="mt-6 font-serif text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)] lg:text-5xl">
-                Monthly updates from the stability desk
-              </h1>
-              <p className="mt-5 max-w-3xl text-base leading-7 text-[color:var(--nsi-ink-soft)]">
-                Get monthly NSI updates and new report releases. We use your email
-                only to send these updates.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto mt-20 w-full max-w-7xl px-6">
-        <div className="nsi-newsletter-section p-12 md:p-20">
-          <div className="absolute inset-0 -z-10">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/70 to-[color:var(--nsi-paper)]/90" />
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-20 grayscale" />
-          </div>
-
-          <div className="grid gap-12 md:grid-cols-2 md:items-center">
-            <div>
-              <h2 className="text-4xl font-bold leading-tight text-[color:var(--nsi-ink)]">
-                Be part of Nigeria&apos;s <br />
-                <span className="text-[color:var(--nsi-green)]">stability check-in.</span>
-              </h2>
-              <p className="mt-6 text-xl text-[color:var(--nsi-ink-soft)]">
-                Get monthly updates and deep-dive reports directly to your inbox.
-              </p>
-            </div>
-
-            <div>
-              {done ? (
-                <div className="rounded-xl border border-black/10 bg-white/70 px-6 py-5 text-sm text-[color:var(--nsi-ink)] shadow-sm">
-                  Thanks — you&apos;re on the list. We&apos;ll send you updates when new snapshots are published.
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#fbbf24]">
+                    INTELLIGENCE DISPATCHES
+                  </span>
+                  <span className="rounded bg-[#fbbf24]/15 px-2 py-0.5 font-mono text-[10px] text-[#fbbf24] border border-[#fbbf24]/30">
+                    MONTHLY BRIEFINGS
+                  </span>
                 </div>
-              ) : (
-                <form
-                  className="flex flex-col gap-4 sm:flex-row"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    setDone(true);
-                  }}
-                >
-                  <input
-                    className="h-16 flex-1 rounded-xl border border-black/10 bg-white/70 px-6 text-[color:var(--nsi-ink)] placeholder:text-black/30 outline-none transition-all focus:border-[color:var(--nsi-green)] focus:bg-white"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                  <button
-                    className="h-16 rounded-xl bg-[color:var(--nsi-gold)] px-10 text-lg font-bold text-[color:var(--nsi-ink)] shadow-2xl transition-all hover:scale-105 hover:brightness-110"
-                    type="submit"
-                  >
-                    Join Us
-                  </button>
-                </form>
-              )}
+                <h1 className="mt-1 font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white">
+                  Executive Briefings & Data Feeds
+                </h1>
+              </div>
+            </div>
+
+            <div className="font-mono text-xs text-slate-400">
+              CADENCE: <span className="text-[#00f59b]">1ST OF MONTH</span>
             </div>
           </div>
-          <p className="mt-8 text-[0.8125rem] text-[color:var(--nsi-ink-soft)]">
-            We use your email only to send monthly updates. No spam. No sharing with third parties. Unsubscribe anytime via the link in our emails or by contacting us. See our{" "}
-            <Link href="/privacy" className="underline underline-offset-2 hover:text-[color:var(--nsi-green)]">
-              Privacy
-            </Link>{" "}
-            page for more.
+
+          <p className="mt-6 text-sm sm:text-base leading-relaxed text-slate-300">
+            Subscribe to receive direct PDF declassifications, sub-national data files, and geopolitical briefings 
+            delivered straight to your inbox each calendar cycle.
           </p>
         </div>
-      </section>
+
+        {/* Subscribe Action Box */}
+        <div className="mt-10 observatory-card p-8 sm:p-12">
+          {done ? (
+            <div className="rounded-xl border border-[#00f59b]/40 bg-[#07190f] p-8 text-center font-mono text-xs text-[#00f59b]">
+              <div className="text-3xl mb-3">✓</div>
+              <h3 className="text-lg font-serif font-bold text-white mb-2">Registration Confirmed</h3>
+              You have been enrolled in the Monthly Sovereign Intelligence Dispatch. Upcoming reports will transmit to <strong>{email}</strong>.
+            </div>
+          ) : (
+            <div>
+              <h2 className="font-serif text-2xl font-bold text-white">
+                Enter Your Delivery Coordinates
+              </h2>
+              <p className="mt-1 font-mono text-xs text-slate-400">
+                Institutional researchers, journalists, civic leaders, and sovereign analysts.
+              </p>
+
+              <form
+                className="mt-6 flex flex-col sm:flex-row gap-3"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setDone(true);
+                }}
+              >
+                <input
+                  className="h-14 flex-1 rounded-xl border border-[#00f59b]/25 bg-black/60 px-5 font-mono text-sm text-white placeholder:text-slate-600 outline-none transition-all focus:border-[#00f59b] focus:ring-1 focus:ring-[#00f59b]"
+                  type="email"
+                  placeholder="analyst@institution.ng or personal@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <button
+                  className="h-14 rounded-xl border border-[#00f59b] bg-[#00f59b] px-8 font-mono text-xs font-bold text-black shadow-[0_0_20px_rgba(0,245,155,0.35)] transition-all hover:bg-[#22ffb0] hover:scale-105 shrink-0"
+                  type="submit"
+                >
+                  ENROLL IN DISPATCH →
+                </button>
+              </form>
+
+              <p className="mt-6 text-xs text-slate-500 font-mono">
+                Strict privacy guarantee: Zero commercial tracking or data selling. One-click unsubscribe on any dispatch. 
+                Read our <Link href="/privacy" className="text-[#00f59b] hover:underline">Privacy Charter</Link>.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </main>
   );
 }

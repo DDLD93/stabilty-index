@@ -25,25 +25,31 @@ export function RulerGauge({
     <div className="w-full" role="img" aria-label={label ?? `Gauge showing ${v}`}>
       {/* Value display */}
       {showValue && (
-        <div className="mb-4 flex items-baseline justify-end gap-1">
-          <span className="text-[2.75rem] font-bold tracking-tight text-[color:var(--nsi-green)]">
-            {v.toFixed(1)}
+        <div className="mb-4 flex items-baseline justify-between">
+          <span className="font-mono text-xs uppercase tracking-widest text-[#00f59b]">
+            Empirical Composite Score
           </span>
+          <div className="flex items-baseline gap-1.5 font-mono">
+            <span className="text-4xl font-extrabold tracking-tight text-[#00f59b] drop-shadow-[0_0_12px_rgba(0,245,155,0.4)]">
+              {v.toFixed(1)}
+            </span>
+            <span className="text-lg text-slate-500">/ 10</span>
+          </div>
         </div>
       )}
 
       {/* Ruler container */}
       <div className="relative">
         {/* Background ruler */}
-        <div className="nsi-ruler relative h-11 w-full overflow-hidden rounded-md">
+        <div className="relative h-12 w-full overflow-hidden rounded-xl border border-[#00f59b]/25 bg-[#030d07] shadow-[inset_0_2px_8px_rgba(0,0,0,0.8)]">
           {/* Tick marks */}
-          <div className="absolute inset-0 flex items-end justify-between px-3">
+          <div className="absolute inset-0 flex items-center justify-between px-3">
             {ticks.map((tick) => {
               const isMajor = tick === min || tick === max || tick === 5;
               return (
                 <div key={tick} className="flex flex-col items-center">
                   <div
-                    className={`w-px ${isMajor ? "h-6 bg-black/35" : "h-4 bg-black/20"}`}
+                    className={`w-[1.5px] ${isMajor ? "h-6 bg-[#00f59b]/60" : "h-3.5 bg-slate-700/60"}`}
                   />
                 </div>
               );
@@ -52,36 +58,29 @@ export function RulerGauge({
 
           {/* Filled portion */}
           <div
-            className="absolute bottom-0 left-0 h-2.5 bg-[color:var(--nsi-green)]"
-            style={{ 
-              width: `${percentage}%`,
-              boxShadow: "0 -2px 8px -2px oklch(0.3 0.06 164 / 0.4)"
-            }}
+            className="absolute bottom-0 left-0 h-2 bg-gradient-to-r from-[#00f59b]/40 via-[#00f59b] to-[#fbbf24] shadow-[0_0_12px_rgba(0,245,155,0.7)]"
+            style={{ width: `${percentage}%` }}
           />
         </div>
 
         {/* Marker/needle */}
         <div
-          className="absolute -top-1.5 h-14 w-1 rounded-full bg-[color:var(--nsi-green-ink)] transition-all duration-300"
+          className="absolute -top-1.5 h-15 w-[3px] rounded-full bg-[#fbbf24] transition-all duration-500 shadow-[0_0_10px_#fbbf24]"
           style={{ 
             left: `${percentage}%`, 
             transform: "translateX(-50%)",
-            boxShadow: "0 2px 6px -1px oklch(0.2 0.05 164 / 0.4)"
           }}
         >
-          {/* Triangle marker at top */}
-          <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-            <div
-              className="h-0 w-0 border-x-[7px] border-t-[10px] border-x-transparent border-t-[color:var(--nsi-green-ink)]"
-              style={{ filter: "drop-shadow(0 1px 2px oklch(0.2 0.05 164 / 0.3))" }}
-            />
+          {/* Marker head */}
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+            <div className="h-3 w-3 rotate-45 border border-[#fbbf24] bg-[#f59e0b] shadow-[0_0_8px_#f59e0b]" />
           </div>
         </div>
 
         {/* Number labels */}
-        <div className="mt-3 flex justify-between px-2 text-[0.6875rem] font-medium text-black/45">
+        <div className="mt-3 flex justify-between px-2 font-mono text-[10px] font-semibold text-slate-400">
           {ticks.map((tick) => (
-            <span key={tick} className="w-4 text-center">
+            <span key={tick} className={`w-4 text-center ${tick === Math.round(v) ? "text-[#00f59b] font-bold" : ""}`}>
               {tick}
             </span>
           ))}
@@ -120,16 +119,17 @@ export function RulerGaugeSVG({
       viewBox={`0 0 ${width} ${height}`}
       role="img"
       aria-label={label ?? `Gauge showing ${v}`}
+      className="overflow-visible"
     >
       {/* Ruler background */}
       <rect
         x={padding}
-        y={20}
+        y={18}
         width={rulerWidth}
-        height={16}
-        rx={3}
-        fill="oklch(0.96 0.01 88)"
-        stroke="oklch(0.3 0.01 260 / 0.15)"
+        height={18}
+        rx={4}
+        fill="#041108"
+        stroke="rgba(0, 245, 155, 0.3)"
         strokeWidth={1}
       />
 
@@ -140,7 +140,7 @@ export function RulerGaugeSVG({
         width={rulerWidth * percentage}
         height={6}
         rx={2}
-        fill="var(--nsi-green)"
+        fill="#00f59b"
       />
 
       {/* Tick marks */}
@@ -151,18 +151,19 @@ export function RulerGaugeSVG({
           <g key={tick}>
             <line
               x1={x}
-              y1={20}
+              y1={18}
               x2={x}
-              y2={isMajor ? 32 : 28}
-              stroke="oklch(0.3 0.01 260 / 0.4)"
+              y2={isMajor ? 30 : 25}
+              stroke={isMajor ? "rgba(0, 245, 155, 0.7)" : "rgba(100, 116, 139, 0.6)"}
               strokeWidth={1}
             />
             <text
               x={x}
-              y={height - 4}
+              y={height - 2}
               textAnchor="middle"
-              fontSize={9}
-              fill="oklch(0.3 0.01 260 / 0.5)"
+              fontSize={8.5}
+              fontFamily="monospace"
+              fill={tick === Math.round(v) ? "#00f59b" : "rgba(148, 163, 184, 0.7)"}
             >
               {tick}
             </text>
@@ -174,15 +175,15 @@ export function RulerGaugeSVG({
       <g>
         <line
           x1={markerX}
-          y1={8}
+          y1={6}
           x2={markerX}
           y2={38}
-          stroke="var(--nsi-green-ink)"
+          stroke="#f59e0b"
           strokeWidth={2}
         />
         <polygon
-          points={`${markerX - 5},4 ${markerX + 5},4 ${markerX},12`}
-          fill="var(--nsi-green-ink)"
+          points={`${markerX - 4},4 ${markerX + 4},4 ${markerX},10`}
+          fill="#fbbf24"
         />
       </g>
     </svg>

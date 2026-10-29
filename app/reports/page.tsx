@@ -8,15 +8,15 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   ...defaultMetadata,
-  title: "Reports Archive",
+  title: "Intelligence Dossiers & Reports | Sovereign Observatory Archive",
   description:
-    "Browse monthly stability reports from the Nigeria Stability Index. View detailed snapshots of Nigeria's stability across security, economy, governance, investor confidence, and social stability.",
+    "Browse monthly stability reports from the Nigeria Stability Index. View detailed empirical snapshots across security, economy, governance, investor confidence, and social cohesion.",
   openGraph: {
     ...defaultMetadata.openGraph,
-    title: "Reports Archive | Nigeria Stability Index",
+    title: "Intelligence Dossiers & Reports | Nigeria Stability Index",
     description:
-      "Browse monthly stability reports from the Nigeria Stability Index. View detailed snapshots of Nigeria's stability.",
-    url: `${defaultMetadata.metadataBase}reports`,
+      "Explore comprehensive monthly stability intelligence across 36 states and FCT.",
+    url: `${defaultMetadata.metadataBase ?? ""}reports`,
   },
   alternates: {
     canonical: "/reports",
@@ -25,15 +25,15 @@ export const metadata: Metadata = {
 
 function ScoreDisplay({ score }: { score: number }) {
   return (
-    <div className="flex shrink-0 flex-col items-center gap-0.5">
-      <div className="flex items-baseline gap-0.5">
-        <span className="text-2xl font-bold text-[color:var(--nsi-green)]">
+    <div className="flex shrink-0 flex-col items-center gap-0.5 rounded-xl border border-[#00f59b]/25 bg-black/60 px-4 py-3 shadow-[0_0_15px_rgba(0,245,155,0.15)]">
+      <div className="flex items-baseline gap-1 font-mono">
+        <span className="text-3xl font-black text-[#00f59b] drop-shadow-[0_0_10px_rgba(0,245,155,0.4)]">
           {score.toFixed(1)}
         </span>
-        <span className="text-sm font-medium text-black/30">/10</span>
+        <span className="text-xs text-slate-500">/ 10</span>
       </div>
-      <span className="text-[0.6rem] font-semibold uppercase tracking-widest text-black/35">
-        Score
+      <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
+        COMPOSITE
       </span>
     </div>
   );
@@ -55,65 +55,92 @@ export default async function ReportsPage() {
   const [featured, ...rest] = reports;
 
   return (
-    <main className="w-full pb-24">
-      {/* Page header */}
-      <section className="relative overflow-hidden pt-20">
-        <div className="mx-auto w-full max-w-4xl px-6">
-          <div className="nsi-section-card px-8 py-10">
-            <div className="flex items-start gap-4">
-              <NSIShieldMark className="mt-1 h-9 w-9 shrink-0" />
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--nsi-green)]">
-                  NSI Publication
-                </p>
-                <h1 className="mt-1 font-serif text-4xl font-semibold tracking-tight text-[color:var(--nsi-ink)] lg:text-5xl">
-                  Reports Archive
-                </h1>
-                <p className="mt-3 max-w-xl text-sm leading-7 text-[color:var(--nsi-ink-soft)]">
-                  Monthly snapshots tracking Nigeria&apos;s stability across security,
-                  economy, governance, investor confidence, and social cohesion.
-                </p>
+    <main className="relative min-h-[90vh] w-full pb-24 pt-16 text-slate-100 overflow-hidden">
+      {/* Background Ambience */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute top-10 left-1/4 h-96 w-96 rounded-full bg-[#00f59b]/10 blur-[140px]" />
+        <div className="absolute top-1/2 right-1/4 h-80 w-80 rounded-full bg-[#f59e0b]/8 blur-[120px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#00f59b08_1px,transparent_1px),linear-gradient(to_bottom,#00f59b08_1px,transparent_1px)] bg-[size:3.5rem_3.5rem]" />
+      </div>
+
+      {/* Header section */}
+      <section className="relative">
+        <div className="mx-auto w-full max-w-5xl px-6">
+          <div className="observatory-card p-8 sm:p-12">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-[#00f59b]/15 pb-8">
+              <div className="flex items-center gap-4">
+                <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#00f59b]/40 bg-[#07190f] p-2 shadow-[0_0_20px_rgba(0,245,155,0.25)]">
+                  <NSIShieldMark className="h-10 w-10 text-[#00f59b]" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#00f59b]">
+                      OFFICIAL INTELLIGENCE ARCHIVE
+                    </span>
+                    <span className="rounded bg-[#00f59b]/15 px-2 py-0.5 font-mono text-[10px] text-[#00f59b] border border-[#00f59b]/30">
+                      PUBLIC DOSSIERS
+                    </span>
+                  </div>
+                  <h1 className="mt-1 font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white">
+                    Sovereign Stability Reports
+                  </h1>
+                </div>
               </div>
+
+              <Link
+                href="/survey"
+                className="inline-flex items-center gap-2 rounded-xl border border-[#00f59b] bg-[#00f59b] px-5 py-3 font-mono text-xs font-bold text-black shadow-[0_0_15px_rgba(0,245,155,0.3)] transition-all hover:bg-[#22ffb0] shrink-0"
+              >
+                <span>TAKE LIVE SURVEY</span>
+                <span>→</span>
+              </Link>
             </div>
+
+            <p className="mt-6 max-w-2xl text-sm sm:text-base leading-relaxed text-slate-300">
+              Monthly sovereign syntheses tracking Nigeria&apos;s macro-resilience across territorial defense, 
+              exchange rate liquidity, policy governance, investor sentiment, and civic street sentiment.
+            </p>
           </div>
         </div>
       </section>
 
-      {reports.length ? (
-        <div className="mx-auto mt-14 w-full max-w-4xl space-y-5 px-6">
+      {reports.length > 0 ? (
+        <div className="mx-auto mt-12 w-full max-w-5xl space-y-8 px-6">
           {/* Featured latest report */}
           {featured && (
             <Link href={`/reports/${featured.id}`} className="group block">
-              <article className="relative overflow-hidden rounded-3xl border border-black/10 bg-white shadow-md transition-all hover:-translate-y-0.5 hover:shadow-xl">
-                {/* Top accent line */}
-                <div className="h-1 bg-[color:var(--nsi-green)]" />
-                <div className="p-8 sm:p-10">
-                  <div className="flex flex-wrap items-start justify-between gap-6">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2.5">
-                        <span className="rounded-full bg-[color:var(--nsi-green)]/10 px-3 py-1 text-xs font-bold text-[color:var(--nsi-green)]">
-                          Latest Issue
-                        </span>
-                        <span className="text-sm font-medium text-[color:var(--nsi-ink-soft)]">
-                          {featured.period}
-                        </span>
-                      </div>
-                      <h2 className="mt-4 font-serif text-2xl font-bold tracking-tight text-[color:var(--nsi-ink)] sm:text-3xl">
-                        Nigeria Stability Index Report
-                      </h2>
-                      {featured.overallNarrative && (
-                        <p className="mt-3 line-clamp-3 text-base leading-7 text-[color:var(--nsi-ink-soft)]">
-                          {featured.overallNarrative}
-                        </p>
-                      )}
-                      <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--nsi-green)] transition-all group-hover:gap-3">
-                        Read full report <span aria-hidden>→</span>
+              <article className="observatory-card relative overflow-hidden p-8 sm:p-10 transition-all duration-300 hover:border-[#00f59b]/60 hover:shadow-[0_0_35px_rgba(0,245,155,0.2)]">
+                {/* Glowing top line */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#00f59b] via-[#38bdf8] to-[#f59e0b]" />
+
+                <div className="flex flex-wrap items-start justify-between gap-6">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="rounded-full border border-[#00f59b]/40 bg-[#00f59b]/15 px-3 py-1 font-mono text-xs font-bold text-[#00f59b]">
+                        LATEST PUBLISHED ISSUE
+                      </span>
+                      <span className="font-mono text-sm font-semibold text-[#fbbf24]">
+                        {featured.period}
                       </span>
                     </div>
-                    <div className="shrink-0 rounded-2xl border border-black/8 bg-[color:var(--nsi-paper)] px-6 py-5 text-center">
-                      <ScoreDisplay score={featured.overallScore} />
+
+                    <h2 className="mt-4 font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white group-hover:text-[#00f59b] transition-colors">
+                      Nigeria Stability Index Report — {featured.period}
+                    </h2>
+
+                    {featured.overallNarrative && (
+                      <p className="mt-3 line-clamp-3 text-sm sm:text-base leading-relaxed text-slate-300">
+                        &ldquo;{featured.overallNarrative}&rdquo;
+                      </p>
+                    )}
+
+                    <div className="mt-6 inline-flex items-center gap-2 font-mono text-xs font-bold text-[#00f59b] group-hover:translate-x-1 transition-transform">
+                      <span>OPEN COMPLETE INTELLIGENCE DOSSIER</span>
+                      <span>→</span>
                     </div>
                   </div>
+
+                  <ScoreDisplay score={featured.overallScore} />
                 </div>
               </article>
             </Link>
@@ -121,43 +148,40 @@ export default async function ReportsPage() {
 
           {/* Divider */}
           {rest.length > 0 && (
-            <div className="flex items-center gap-4 pt-2">
-              <div className="h-px flex-1 bg-black/8" />
-              <span className="text-[0.65rem] font-bold uppercase tracking-widest text-[color:var(--nsi-ink-soft)]">
-                Previous Issues
+            <div className="flex items-center gap-4 pt-4">
+              <div className="h-px flex-1 bg-[#00f59b]/15" />
+              <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#00f59b]">
+                HISTORICAL ISSUES ARCHIVE
               </span>
-              <div className="h-px flex-1 bg-black/8" />
+              <div className="h-px flex-1 bg-[#00f59b]/15" />
             </div>
           )}
 
-          {/* Previous reports — blog list style */}
-          <div className="space-y-3">
+          {/* Previous reports */}
+          <div className="space-y-4">
             {rest.map((r) => (
               <Link key={r.id} href={`/reports/${r.id}`} className="group block">
-                <article className="flex items-center gap-5 rounded-2xl border border-black/8 bg-white px-6 py-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-black/15 hover:shadow-md">
-                  {/* Left accent bar */}
-                  <div className="hidden h-10 w-1 shrink-0 rounded-full bg-[color:var(--nsi-green)]/20 transition-colors group-hover:bg-[color:var(--nsi-green)] sm:block" />
-
+                <article className="observatory-card flex items-center justify-between gap-5 p-6 transition-all duration-300 hover:border-[#00f59b]/40 hover:bg-[#081b10]">
                   <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2.5">
-                      <span className="text-sm font-semibold text-[color:var(--nsi-ink)]">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="font-mono text-sm font-bold text-white group-hover:text-[#00f59b] transition-colors">
                         {r.period}
                       </span>
-                      <span className="text-xs text-[color:var(--nsi-ink-soft)]">
-                        Nigeria Stability Snapshot
+                      <span className="font-mono text-xs text-slate-500">
+                        Monthly Snapshot
                       </span>
                     </div>
                     {r.overallNarrative && (
-                      <p className="mt-1 line-clamp-2 text-sm leading-6 text-[color:var(--nsi-ink-soft)]">
+                      <p className="mt-1.5 line-clamp-2 text-xs sm:text-sm text-slate-400">
                         {r.overallNarrative}
                       </p>
                     )}
                   </div>
 
-                  <div className="flex shrink-0 flex-col items-end gap-1">
+                  <div className="flex shrink-0 items-center gap-4">
                     <ScoreDisplay score={r.overallScore} />
-                    <span className="text-xs font-medium text-[color:var(--nsi-ink-soft)] transition-colors group-hover:text-[color:var(--nsi-green)]">
-                      Read →
+                    <span className="font-mono text-xs font-bold text-[#00f59b] group-hover:translate-x-1 transition-transform hidden sm:inline">
+                      →
                     </span>
                   </div>
                 </article>
@@ -166,14 +190,17 @@ export default async function ReportsPage() {
           </div>
         </div>
       ) : (
-        <div className="mx-auto mt-20 w-full max-w-4xl px-6">
-          <div className="nsi-card-soft p-8">
-            <p className="text-[color:var(--nsi-ink-soft)]">No published reports yet.</p>
+        <div className="mx-auto mt-16 w-full max-w-5xl px-6">
+          <div className="observatory-card p-10 text-center">
+            <h3 className="font-serif text-xl font-bold text-white">First Issue Finalizing</h3>
+            <p className="mt-2 text-sm text-slate-400">
+              The inaugural snapshot is currently undergoing methodological synthesis.
+            </p>
             <Link
               href="/"
-              className="mt-4 inline-block text-sm font-medium text-[color:var(--nsi-green)] hover:underline"
+              className="mt-6 inline-flex rounded-xl border border-[#00f59b] bg-[#00f59b] px-6 py-2.5 font-mono text-xs font-bold text-black"
             >
-              Back to Home
+              RETURN TO OBSERVATORY
             </Link>
           </div>
         </div>
