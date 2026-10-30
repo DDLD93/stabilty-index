@@ -44,3 +44,12 @@ next-env.d.ts
 
 # prisma
 prisma/migrations
+# agent skills: restore with `npx skills experimental_install` (skills-lock.json) and `npx impeccable install`
+.agents/
+.claude/skills/*
+!.claude/skills/impeccable/
+.claude/skills/impeccable/scripts/bin/
+# design tool scratch output
+.taste-skill/inspect/
+.taste-skill/before/
+.taste-skill/after/
