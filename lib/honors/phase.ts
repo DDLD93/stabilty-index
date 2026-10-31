@@ -55,7 +55,7 @@ export function formatLagos(d: Date | string | null, withTime = false): string |
   }).format(date);
 }
 
-export type TimelineStep = { key: string; label: string; when: string; state: "done" | "current" | "upcoming" };
+export type TimelineStep = { key: string; label: string; when: string; state: "done" | "current" | "upcoming"; status: string };
 
 const ORDER: EditionStatus[] = ["NOMINATIONS_OPEN", "SHORTLISTING", "VOTING_OPEN", "VOTING_CLOSED", "ANNOUNCED"];
 
@@ -78,12 +78,34 @@ export function getTimeline(e: EditionDates): TimelineStep[] {
     if (currentIndex >= first) return "current";
     return "upcoming";
   };
-  const steps: TimelineStep[] = [
+  const steps: Omit<TimelineStep, "status">[] = [
     { key: "nominate", label: "Public nominations", when: range(e.nominationsOpenAt, e.nominationsCloseAt), state: stateFor(["NOMINATIONS_OPEN"]) },
     { key: "shortlist", label: "Finalists announced", when: formatLagos(e.votingOpenAt) ? `By ${formatLagos(e.votingOpenAt)}` : tba, state: stateFor(["SHORTLISTING"]) },
     { key: "vote", label: "Public vote", when: range(e.votingOpenAt, e.votingCloseAt), state: stateFor(["VOTING_OPEN", "VOTING_CLOSED"]) },
     { key: "announce", label: "Winners announced", when: formatLagos(e.ceremonyAt) ?? tba, state: stateFor(["ANNOUNCED"]) },
   ];
-  // A finished stage with no date set reads "Completed", not "To be announced".
-  return steps.map((s) => (s.when === tba && (s.state === "done" || (s.key === "announce" && s.state === "current")) ? { ...s, when: "Completed" } : s));
+  const statusFor = (s: Omit<TimelineStep, "status">): string => {
+    if (s.state === "done") return "Done";
+    if (s.state === "upcoming") return "Coming up";
+    if (s.key === "vote" && e.status === "VOTING_CLOSED") return "Closed";
+    if (s.key === "shortlist") return "Under way";
+    if (s.key === "announce") return "Announced";
+    return "Open now";
+  };
+  return steps.map((raw) => {
+    const s = { ...raw } as Omit<TimelineStep, "status">;
+    if (s.when === tba) {
+      // A finished stage with no date reads "Completed"; a running one names the missing date.
+      if (s.state === "done" || (s.key === "announce" && s.state === "current")) s.when = "Completed";
+      else if (s.state === "current") {
+        s.when =
+          s.key === "vote" && e.status === "VOTING_CLOSED"
+            ? "Winners to be announced"
+            : s.key === "shortlist"
+              ? "Announcement date to be confirmed"
+              : "Closing date to be announced";
+      }
+    }
+    return { ...s, status: statusFor(s) };
+  });
 }

@@ -64,7 +64,7 @@ export default async function Home() {
 
   return (
     <>
-      <Section className="pt-10 sm:pt-14 lg:pt-16">
+      <Section className="pt-8 pb-14 sm:pt-12 lg:pt-8 lg:pb-16">
         <Container>
           {editions.length > 0 ? (
             <EditionExplorer
@@ -234,9 +234,9 @@ export default async function Home() {
           alt=""
           fill
           sizes="100vw"
-          className="-z-10 object-cover opacity-70"
+          className="-z-10 object-cover"
         />
-        <div aria-hidden className="absolute inset-0 -z-10 bg-ink/55" />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-ink/60 lg:bg-[linear-gradient(90deg,rgb(20_33_27/0.85)_0%,rgb(20_33_27/0.6)_50%,rgb(20_33_27/0.2)_100%)]" />
         <Container className="py-section">
           <div className="max-w-2xl">
             <div aria-hidden className="h-1 w-16 bg-gold" />

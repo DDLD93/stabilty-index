@@ -14,7 +14,7 @@ import { PhotoCredit } from "@/components/ui/Figure";
 import { controlClass, Field, FormMessage } from "@/components/ui/Form";
 import { photos, pillarPhotos, type Photo } from "@/lib/photos";
 
-const introPhoto = photos.canoeLagoon;
+const introPhoto = photos.foodTrader;
 
 export type SurveyQuestion = {
   pillarKey: string;
@@ -522,7 +522,7 @@ export function SurveyWizard() {
       <div className="hidden lg:block">
         {photo ? (
           <div className="sticky top-28">
-            <div className="relative aspect-[4/5] w-full overflow-hidden bg-surface">
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface">
               <Image src={photo.src} alt="" fill sizes="(min-width: 1024px) 35vw, 0px" className="object-cover" />
             </div>
             <PhotoCredit photo={photo} className="mt-2" />

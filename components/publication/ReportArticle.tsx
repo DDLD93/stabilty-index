@@ -47,7 +47,7 @@ export function ReportArticle({ report, preview = false }: { report: Report; pre
     ...(report.institution ? [{ id: "institution-spotlight", label: "Institution spotlight" }] : []),
     ...(report.streetPulse ? [{ id: "street-pulse-spotlight", label: "Street pulse" }] : []),
     ...(report.sentiment ? [{ id: "what-people-said", label: "What people said" }] : []),
-    ...(report.sources.length ? [{ id: "sources", label: "Sources" }] : []),
+    { id: "sources", label: "Sources" },
     { id: "cite", label: "Cite this report" },
   ];
 
@@ -106,6 +106,12 @@ export function ReportArticle({ report, preview = false }: { report: Report; pre
               />
               <p className="mt-3 text-small">
                 {prev ? <ChangeText change={overallChange} since={prev.period} /> : <span className="text-ink-2">First published edition</span>}
+              </p>
+              <p className="mt-2 text-small text-ink-3">
+                From anonymous public check-ins, reviewed by editors.{" "}
+                <Link href="/methodology" className="text-brand underline underline-offset-[0.22em]">
+                  How the score is made
+                </Link>
               </p>
               {!preview ? (
                 <div className="mt-6">
@@ -196,20 +202,25 @@ export function ReportArticle({ report, preview = false }: { report: Report; pre
               </Section>
             ) : null}
 
-            {report.sources.length ? (
-              <Section id="sources" title="Sources">
-                <ol className="list-decimal space-y-2 pl-6 text-body">
-                  {report.sources.map((s) => (
-                    <li key={s.url}>
-                      <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-brand underline underline-offset-[0.22em]">
-                        {s.label}
-                      </a>{" "}
-                      <span className="text-small text-ink-3">({new URL(s.url).hostname.replace(/^www\./, "")})</span>
-                    </li>
-                  ))}
-                </ol>
-              </Section>
-            ) : null}
+            <Section id="sources" title="Sources">
+              {report.sources.length ? (
+                  <ol className="list-decimal space-y-2 pl-6 text-body">
+                    {report.sources.map((s) => (
+                      <li key={s.url}>
+                        <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-brand underline underline-offset-[0.22em]">
+                          {s.label}
+                        </a>{" "}
+                        <span className="text-small text-ink-3">({new URL(s.url).hostname.replace(/^www\./, "")})</span>
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                <p className="max-w-[68ch] text-body text-ink-2">
+                  No separate source list was attached to this edition. Figures quoted in the spotlights name their
+                  sources in the text above.
+                </p>
+              )}
+            </Section>
 
             <Section id="cite" title="Cite this report">
               <p className="max-w-[68ch] bg-surface px-5 py-4 text-small break-words text-ink-2 [overflow-wrap:anywhere]">

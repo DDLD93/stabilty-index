@@ -50,11 +50,11 @@ export function EditionExplorer({
 
   return (
     <>
-      <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16">
+      <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-stretch lg:gap-16">
         <div>
           {intro}
 
-          <div className="mt-8 border-t border-line pt-6" aria-live="polite">
+          <div className="mt-8 border-t border-line pt-6 lg:mt-6 lg:pt-5" aria-live="polite">
             <p className="text-meta text-ink-3">
               {current.period} · Edition {current.edition} · Published {formatDate(new Date(current.publishedAt))}
               {isLatest ? " · Latest" : null}
@@ -75,9 +75,15 @@ export function EditionExplorer({
                 <span className="text-ink-2">The first published edition.</span>
               )}
             </p>
+            <p className="mt-2 text-small text-ink-3">
+              From anonymous public check-ins, reviewed by editors.{" "}
+              <Link href="/methodology" className="text-brand underline underline-offset-[0.22em]">
+                How the score is made
+              </Link>
+            </p>
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 lg:mt-6">
             {actions}
             <Link
               href={`/reports/${current.id}`}
@@ -89,7 +95,7 @@ export function EditionExplorer({
           </div>
         </div>
 
-        <div className="border border-line bg-ground p-4 sm:p-6">
+        <div className="flex flex-col border border-line bg-ground p-4 sm:p-6">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <h2 className="font-sans text-body font-semibold">
               The index since {first.period}
@@ -98,6 +104,7 @@ export function EditionExplorer({
           </div>
           <TrendChart
             className="mt-4"
+            fill
             title={`Nigeria Stability Index by month, ${first.period} to ${editions.at(-1)!.period}`}
             points={editions.map((e) => ({
               id: e.id,
@@ -108,14 +115,20 @@ export function EditionExplorer({
             selectedId={selectedId}
             onSelect={setSelectedId}
           />
+          <p className="mt-3 border-t border-line pt-3 text-meta text-ink-3">
+            Source: NSI monthly reports.{" "}
+            <a href="/reports/data.csv" className="text-brand underline underline-offset-[0.22em]" download>
+              Download the data (CSV)
+            </a>
+          </p>
         </div>
       </div>
 
       {current.pillars.length > 0 ? (
-        <div className="mt-14 sm:mt-16">
+        <div className="mt-10 lg:mt-9">
           <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-ink pb-3">
             <h2 className="text-h3">The five pillars, {current.period}</h2>
-            <p className="text-meta text-ink-3">Average of public answers on a 1–5 scale. The black tick marks {previous ? monthOf(previous.period) : "the previous month"}.</p>
+            <p className="text-meta text-ink-3">Average of public answers on a 1–5 scale; the line under each pillar is the editors’ summary. The black tick marks {previous ? monthOf(previous.period) : "the previous month"}.</p>
           </div>
           <PillarTable
             pillars={current.pillars}

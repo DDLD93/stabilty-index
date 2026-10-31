@@ -58,7 +58,9 @@ check("transitions only move one stage at a time", () => {
 check("timeline says To be announced until dates are set", () => {
   const steps = getTimeline({ ...base, status: "NOMINATIONS_OPEN" });
   assert.equal(steps[0].state, "current");
-  assert.equal(steps[0].when, "To be announced");
+  assert.equal(steps[0].when, "Closing date to be announced");
+  assert.equal(steps[0].status, "Open now");
+  assert.equal(steps[2].when, "To be announced");
   assert.equal(steps[3].state, "upcoming");
   const done = getTimeline({ ...base, status: "VOTING_OPEN" });
   assert.equal(done[0].when, "Completed");

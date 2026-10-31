@@ -3,6 +3,12 @@ import { ScoreBar } from "@/components/data/ScoreBar";
 import { change, formatScore, PILLAR_MAX, PILLAR_MIN, type PillarScore } from "@/lib/reportFormat";
 import { cn } from "@/lib/utils";
 
+/** Editors' pillar notes arrive in mixed styles ("Tired", "Capital is cautious."): show them in one register. */
+function tidyNote(note: string): string {
+  const s = note.trim().replace(/[.;,\s]+$/, "");
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+}
+
 /**
  * The five pillar scores for one edition as a real table: name, score out of 5,
  * a bar on the 1–5 scale, and the change from the previous edition.
@@ -52,7 +58,12 @@ export function PillarTable({
             <tr key={p.title} className="border-b border-line align-top max-md:grid max-md:grid-cols-[1fr_auto] max-md:gap-x-4 max-md:gap-y-2 max-md:py-4">
               <th scope="row" className="py-4 pr-4 text-left font-semibold text-ink max-md:col-start-1 max-md:row-start-1 max-md:py-0">
                 {p.title}
-                {p.summary ? <span className="mt-1 block text-small font-normal text-ink-2">{p.summary}</span> : null}
+                {p.summary ? (
+                  <span className="mt-1 block text-small font-normal text-ink-2">
+                    <span className="sr-only">Editors’ note: </span>
+                    {tidyNote(p.summary)}
+                  </span>
+                ) : null}
               </th>
               <td className="py-5 pr-6 max-md:col-span-2 max-md:row-start-2 max-md:py-1">
                 <ScoreBar value={p.score} previous={prev} min={PILLAR_MIN} max={PILLAR_MAX} />

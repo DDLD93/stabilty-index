@@ -23,6 +23,15 @@ export const metadata: Metadata = {
   alternates: { canonical: "/honors" },
 };
 
+const STAGE_TEXT: Record<string, string> = {
+  nominate:
+    "Tell us who deserves recognition and why, with links to evidence such as news reports, official data or project pages. You can nominate in more than one category.",
+  shortlist:
+    "The NSI team checks every nomination against the category’s criteria and the evidence, and names the finalists for each award.",
+  vote: "Anyone can vote for one finalist per category. Votes count once they are confirmed by email, one per email address per category.",
+  announce: "The finalist with the most verified votes in each category wins. Results are published here with a short citation for each winner.",
+};
+
 const FAQ = [
   {
     q: "Who can nominate?",
@@ -90,8 +99,8 @@ export default async function HonorsPage() {
   return (
     <>
       <section className="relative isolate overflow-hidden bg-ink text-white">
-        <Image src={photos.durbar.src} alt="" fill priority sizes="100vw" className="-z-10 object-cover opacity-70" />
-        <div aria-hidden className="absolute inset-0 -z-10 bg-ink/60" />
+        <Image src={photos.durbar.src} alt="" fill priority sizes="100vw" className="-z-10 object-cover" />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-ink/55 lg:bg-[linear-gradient(90deg,rgb(20_33_27/0.82)_0%,rgb(20_33_27/0.55)_55%,rgb(20_33_27/0.25)_100%)]" />
         <Container className="pt-8 pb-14 sm:pb-20">
           <Breadcrumb
             items={[{ href: "/", label: "Home" }, { label: "NSI Honors" }]}
@@ -145,26 +154,26 @@ export default async function HonorsPage() {
               and who can be nominated.
             </p>
           </div>
-          <ul className="reveal-stagger mt-12 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="reveal-stagger mt-10 grid gap-x-8 gap-y-6 sm:mt-12 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-4">
             {(edition?.categories ?? []).map((c) => {
               const photo = categoryPhoto(c.slug);
               return (
                 <li key={c.id}>
-                  <Link href={`/honors/${c.slug}`} className="group flex h-full flex-col">
-                    <span className="relative block aspect-[3/2] overflow-hidden bg-surface">
+                  <Link href={`/honors/${c.slug}`} className="group grid h-full grid-cols-[5.5rem_minmax(0,1fr)] items-start gap-x-4 sm:flex sm:flex-col">
+                    <span className="relative row-span-2 block aspect-square overflow-hidden bg-surface sm:aspect-[3/2] sm:w-full">
                       <Image
                         src={photo.src}
                         alt=""
                         fill
-                        sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 100vw"
+                        sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 88px"
                         className="object-cover transition-transform duration-500 ease-[var(--ease-out-strong)] [@media(hover:hover)]:group-hover:scale-[1.03]"
                       />
                     </span>
-                    <span className="mt-4 font-serif text-h3 font-semibold group-hover:underline group-hover:underline-offset-[0.18em]">
+                    <span className="font-serif text-h3 font-semibold group-hover:underline group-hover:underline-offset-[0.18em] sm:mt-4">
                       {c.name}
                     </span>
-                    <span className="mt-2 text-small text-ink-2">{c.shortDescription}</span>
-                    <span className="mt-3 text-meta text-ink-3">
+                    <span className="mt-1 text-small text-ink-2 sm:mt-2">{c.shortDescription}</span>
+                    <span className="mt-3 hidden text-meta text-ink-3 sm:block">
                       Open to: {c.allowedNomineeTypes.map((t) => NOMINEE_TYPE_SHORT[t]).join(", ")}
                     </span>
                   </Link>
@@ -189,37 +198,7 @@ export default async function HonorsPage() {
               Four stages, in this order. Dates appear here as soon as they are set.
             </p>
           </div>
-          {edition ? <Timeline steps={getTimeline(edition)} className="mt-10 border border-line" /> : null}
-          <ol className="mt-10 grid gap-8 md:grid-cols-2">
-            <li className="max-w-[60ch]">
-              <h3 className="font-sans text-lead font-semibold">1. You nominate</h3>
-              <p className="mt-2 text-body text-ink-2">
-                Tell us who deserves recognition and why, with links to evidence such as news reports, official data or
-                project pages. You can nominate in more than one category.
-              </p>
-            </li>
-            <li className="max-w-[60ch]">
-              <h3 className="font-sans text-lead font-semibold">2. Finalists are shortlisted</h3>
-              <p className="mt-2 text-body text-ink-2">
-                The NSI team checks every nomination against the category’s criteria and the evidence, and names the
-                finalists for each award.
-              </p>
-            </li>
-            <li className="max-w-[60ch]">
-              <h3 className="font-sans text-lead font-semibold">3. The public votes</h3>
-              <p className="mt-2 text-body text-ink-2">
-                Anyone can vote for one finalist per category. Votes count once they are confirmed by email, one per
-                email address per category.
-              </p>
-            </li>
-            <li className="max-w-[60ch]">
-              <h3 className="font-sans text-lead font-semibold">4. Winners are announced</h3>
-              <p className="mt-2 text-body text-ink-2">
-                The finalist with the most verified votes in each category wins. Results are published here with a
-                short citation for each winner.
-              </p>
-            </li>
-          </ol>
+          {edition ? <Timeline steps={getTimeline(edition)} descriptions={STAGE_TEXT} className="mt-10 border border-line" /> : null}
         </Container>
       </Section>
 

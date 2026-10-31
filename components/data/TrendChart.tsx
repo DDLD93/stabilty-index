@@ -19,6 +19,7 @@ export function TrendChart({
   max = 10,
   className,
   title,
+  fill = false,
 }: {
   points: TrendPoint[];
   selectedId: string;
@@ -26,6 +27,8 @@ export function TrendChart({
   max?: number;
   className?: string;
   title: string;
+  /** Grow to fill the parent's height on wide screens. */
+  fill?: boolean;
 }) {
   const [hoverId, setHoverId] = useState<string | null>(null);
   const groupRef = useRef<HTMLDivElement>(null);
@@ -56,9 +59,9 @@ export function TrendChart({
   if (n === 0) return null;
 
   return (
-    <figure className={cn("select-none", className)}>
+    <figure className={cn("select-none", fill && "lg:flex lg:flex-1 lg:flex-col", className)}>
       <figcaption className="sr-only">{title}</figcaption>
-      <div className="relative h-56 sm:h-64 lg:h-72">
+      <div className={cn("relative h-56 sm:h-64 lg:h-72", fill && "lg:h-auto lg:min-h-72 lg:flex-1")}>
         {/* y axis labels and gridlines */}
         <div className="absolute inset-y-0 left-0 w-7 sm:w-8" aria-hidden>
           {TICKS.map((t) => (
