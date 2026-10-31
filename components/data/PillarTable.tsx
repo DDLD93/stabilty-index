@@ -60,7 +60,7 @@ export function PillarTable({
                 {p.title}
                 {p.summary ? (
                   <span className="mt-1 block text-small font-normal text-ink-2">
-                    <span className="sr-only">Editors’ note: </span>
+                    <span className="text-ink-3">Editors’ note: </span>
                     {tidyNote(p.summary)}
                   </span>
                 ) : null}

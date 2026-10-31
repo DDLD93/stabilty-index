@@ -132,7 +132,8 @@ export function ReportArticle({ report, preview = false }: { report: Report; pre
           <div className="flex min-w-0 max-w-4xl flex-col gap-14">
             <Section id="pillars" title="The five pillars">
               <p className="mb-4 max-w-2xl text-body text-ink-2">
-                Each pillar is the average of public answers on a scale of 1 to 5.
+                Each pillar is the average of public answers on a scale of 1 to 5; the line under each pillar is the
+                editors’ summary.
                 {prev ? ` The black tick shows ${prev.period}.` : null}{" "}
                 <Link href="/methodology#pillars" className="text-brand underline underline-offset-[0.22em]">
                   What each pillar measures

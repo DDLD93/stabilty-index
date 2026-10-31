@@ -14,7 +14,7 @@ import { PhotoCredit } from "@/components/ui/Figure";
 import { controlClass, Field, FormMessage } from "@/components/ui/Form";
 import { photos, pillarPhotos, type Photo } from "@/lib/photos";
 
-const introPhoto = photos.foodTrader;
+const introPhoto = photos.dyeWorkers;
 
 export type SurveyQuestion = {
   pillarKey: string;
