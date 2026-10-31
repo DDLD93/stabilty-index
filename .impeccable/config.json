@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/assigned.html"
+        ],
+        "createdAt": "2026-10-31T11:26:05.397Z",
+        "reason": "Claude: decision-round sketch for the unchosen 'Signwriter's Board' direction; a fixture under .impeccable/mocks, never shipped"
+      }
+    ]
+  }
+}
