@@ -12,7 +12,8 @@
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
     "db:seed": "npx tsx prisma/seed.ts",
-    "db:seed:honors": "npx tsx prisma/seed.ts --honors-only"
+    "db:seed:honors": "npx tsx prisma/seed.ts --honors-only",
+    "test:honors": "npx tsx scripts/honors-selfcheck.ts"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
