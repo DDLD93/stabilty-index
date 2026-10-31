@@ -12,7 +12,9 @@ import { Check } from "lucide-react";
 import { buttonVariants } from "@/components/ui/Button";
 import { PhotoCredit } from "@/components/ui/Figure";
 import { controlClass, Field, FormMessage } from "@/components/ui/Form";
-import { pillarPhotos, type Photo } from "@/lib/photos";
+import { photos, pillarPhotos, type Photo } from "@/lib/photos";
+
+const introPhoto = photos.canoeLagoon;
 
 export type SurveyQuestion = {
   pillarKey: string;
@@ -258,7 +260,7 @@ export function SurveyWizard() {
   const questions = cycle.surveyQuestions;
   const pillarIndex = step >= 1 && step <= PILLAR_STEPS ? step - 1 : null;
   const currentQuestion = pillarIndex !== null ? questions[pillarIndex] : null;
-  const photo = currentQuestion ? getPillarPhoto(currentQuestion.pillarKey) : null;
+  const photo = currentQuestion ? getPillarPhoto(currentQuestion.pillarKey) : step === 0 ? introPhoto : null;
   const progressLabel =
     step === 0
       ? "Before you start"

@@ -43,7 +43,7 @@ export default async function ReportsPage() {
             The first report will appear here on the 11th after the first monthly survey closes.
           </EmptyState>
         ) : (
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:items-start lg:gap-16">
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:items-start lg:gap-16">
             <div className="lg:sticky lg:top-28">
               <ArchiveTrend
                 points={reports.map((r) => ({ id: r.id, period: r.period, shortLabel: short(r.period), value: r.overallScore }))}

@@ -53,3 +53,7 @@ prisma/migrations
 .taste-skill/inspect/
 .taste-skill/before/
 .taste-skill/after/
+# impeccable working files (local evidence and caches)
+.impeccable/review/
+.impeccable/questions/
+.impeccable/hook.cache.json

@@ -9,7 +9,9 @@ function createClient() {
     throw new Error("DATABASE_URL is required to use Prisma Client.");
   }
 
-  const adapter = new PrismaPg({ connectionString });
+  // DATABASE_POOL_MAX caps pool connections (e.g. 1 for the single-connection local Prisma dev database).
+  const max = Number(process.env.DATABASE_POOL_MAX) || undefined;
+  const adapter = new PrismaPg({ connectionString, ...(max ? { max } : {}) });
   return new PrismaClient({
     adapter,
     log:

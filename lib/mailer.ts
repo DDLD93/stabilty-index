@@ -30,8 +30,13 @@ export function getSmtpConfig(): SmtpConfig | null {
   return { host, port, secure, auth: user && pass ? { user, pass } : undefined, from };
 }
 
+/** Development only: MAIL_TRANSPORT=log prints emails to the server log instead of sending them. */
+function logTransport(): boolean {
+  return process.env.MAIL_TRANSPORT === "log" && process.env.NODE_ENV !== "production";
+}
+
 export function isMailConfigured(): boolean {
-  return getSmtpConfig() !== null;
+  return logTransport() || getSmtpConfig() !== null;
 }
 
 export async function sendMail(message: {
@@ -41,6 +46,10 @@ export async function sendMail(message: {
   html?: string;
   replyTo?: string;
 }): Promise<void> {
+  if (logTransport()) {
+    console.info("[mail:log]", JSON.stringify({ to: message.to, subject: message.subject, text: message.text }));
+    return;
+  }
   const cfg = getSmtpConfig();
   if (!cfg) throw new Error("SMTP is not configured.");
   const transporter = nodemailer.createTransport({

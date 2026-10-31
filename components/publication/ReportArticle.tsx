@@ -61,14 +61,14 @@ export function ReportArticle({ report, preview = false }: { report: Report; pre
               items={[{ href: "/", label: "Home" }, { href: "/reports", label: "Reports" }, { label: report.period }]}
             />
           ) : null}
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-end lg:gap-16">
-            <div>
-              <p className="text-meta text-ink-3">
-                Edition {report.edition} · Published {formatDate(report.publishedAt)}
-              </p>
-              <h1 className="mt-3 text-display">
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-end lg:gap-16">
+            <div className="min-w-0">
+              <h1 className="text-display">
                 {report.period}: the index read {report.overallScore.toFixed(1)} out of 10
               </h1>
+              <p className="mt-3 text-small text-ink-3">
+                Edition {report.edition} · Published {formatDate(report.publishedAt)}
+              </p>
               <p className="mt-5 max-w-2xl text-lead text-ink-2">
                 {narrative && !narrativeIsWord ? (
                   narrative
@@ -118,12 +118,12 @@ export function ReportArticle({ report, preview = false }: { report: Report; pre
       </header>
 
       <Container className="py-10 sm:py-14">
-        <div className="grid gap-10 lg:grid-cols-[12rem_minmax(0,1fr)] lg:gap-16">
-          <aside>
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[12rem_minmax(0,1fr)] lg:gap-16">
+          <aside className="min-w-0">
             <ReportContents items={contents} />
           </aside>
 
-          <div className="flex max-w-4xl flex-col gap-14">
+          <div className="flex min-w-0 max-w-4xl flex-col gap-14">
             <Section id="pillars" title="The five pillars">
               <p className="mb-4 max-w-2xl text-body text-ink-2">
                 Each pillar is the average of public answers on a scale of 1 to 5.
@@ -212,7 +212,7 @@ export function ReportArticle({ report, preview = false }: { report: Report; pre
             ) : null}
 
             <Section id="cite" title="Cite this report">
-              <p className="max-w-[68ch] bg-surface px-5 py-4 text-small text-ink-2">
+              <p className="max-w-[68ch] bg-surface px-5 py-4 text-small break-words text-ink-2 [overflow-wrap:anywhere]">
                 Nigeria Stability Index ({report.publishedAt.getFullYear()}). <em>{report.period}</em>, edition {report.edition}. Published{" "}
                 {formatDate(report.publishedAt)}. nigeriastabilityindex.ng{url}
               </p>

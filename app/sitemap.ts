@@ -2,6 +2,9 @@ import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { siteConfig } from "@/lib/metadata";
 
+// Rebuilt hourly so new reports and Honors pages appear without a redeploy.
+export const revalidate = 3600;
+
 /**
  * Generate dynamic sitemap
  */
@@ -75,7 +78,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }));
 
-    return [...staticPages, ...reportPages];
+    // Separate guard: a missing Honors table (migration not yet applied) must not drop the report URLs.
+    const honorsEdition = await db.honorsEdition
+      .findFirst({
+        where: { status: { not: "DRAFT" } },
+        orderBy: { year: "desc" },
+        select: { updatedAt: true, categories: { where: { isActive: true }, select: { slug: true, updatedAt: true } } },
+      })
+      .catch(() => null);
+    const honorsPages: MetadataRoute.Sitemap = (honorsEdition?.categories ?? []).map((c) => ({
+      url: `${baseUrl}/honors/${c.slug}`,
+      lastModified: c.updatedAt,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    }));
+
+    return [...staticPages, ...reportPages, ...honorsPages];
   } catch (error) {
     // If database is unavailable, return static pages only
     console.error("Error generating sitemap:", error);

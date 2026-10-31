@@ -14,6 +14,7 @@ import {
   LogOutIcon,
   MenuIcon,
   XIcon,
+  TrophyIcon,
 } from "./AdminIcons";
 
 const navItems = [
@@ -23,6 +24,7 @@ const navItems = [
   { href: "/admin/submissions", label: "Submissions", icon: InboxIcon },
   { href: "/admin/snapshot", label: "Build snapshot", icon: CameraIcon },
   { href: "/admin/spotlight", label: "Spotlight", icon: SparklesIcon },
+  { href: "/admin/honors", label: "Honors", icon: TrophyIcon },
 ] as const;
 
 export function AdminSidenav() {

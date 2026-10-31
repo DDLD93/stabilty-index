@@ -78,10 +78,12 @@ export function getTimeline(e: EditionDates): TimelineStep[] {
     if (currentIndex >= first) return "current";
     return "upcoming";
   };
-  return [
+  const steps: TimelineStep[] = [
     { key: "nominate", label: "Public nominations", when: range(e.nominationsOpenAt, e.nominationsCloseAt), state: stateFor(["NOMINATIONS_OPEN"]) },
     { key: "shortlist", label: "Finalists announced", when: formatLagos(e.votingOpenAt) ? `By ${formatLagos(e.votingOpenAt)}` : tba, state: stateFor(["SHORTLISTING"]) },
     { key: "vote", label: "Public vote", when: range(e.votingOpenAt, e.votingCloseAt), state: stateFor(["VOTING_OPEN", "VOTING_CLOSED"]) },
     { key: "announce", label: "Winners announced", when: formatLagos(e.ceremonyAt) ?? tba, state: stateFor(["ANNOUNCED"]) },
   ];
+  // A finished stage with no date set reads "Completed", not "To be announced".
+  return steps.map((s) => (s.when === tba && (s.state === "done" || (s.key === "announce" && s.state === "current")) ? { ...s, when: "Completed" } : s));
 }
