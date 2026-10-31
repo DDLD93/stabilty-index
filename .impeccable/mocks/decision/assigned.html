@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Signwriter's Board — first viewport sketch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Alfa+Slab+One&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --green:#0F4A32; --green-2:#0B3926; --gold:#E3A72F; --primer:#F0F1EC; --black:#151714; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { width:1440px; height:900px; overflow:hidden; background:var(--primer); color:var(--black); font-family:"Source Sans 3", sans-serif; }
+  header { height:84px; display:flex; align-items:center; justify-content:space-between; padding:0 48px; }
+  .mark { display:flex; align-items:center; gap:14px; font-family:"Big Shoulders Display"; font-weight:900; font-size:26px; letter-spacing:.02em; text-transform:uppercase; color:var(--green); }
+  .mark i { width:44px; height:44px; background:var(--gold); display:block; clip-path:polygon(10% 20%,40% 0,70% 10%,100% 30%,90% 70%,60% 100%,25% 90%,0 60%); }
+  nav { display:flex; gap:34px; font-weight:600; font-size:17px; }
+  nav a.cta { background:var(--green); color:var(--primer); padding:12px 20px; font-family:"Big Shoulders Display"; font-weight:900; font-size:20px; text-transform:uppercase; letter-spacing:.04em; }
+  .board { margin:0 48px; height:780px; background:var(--green); position:relative; padding:28px; }
+  .frame { position:absolute; inset:18px; border:4px solid var(--gold); }
+  .frame::after { content:""; position:absolute; inset:8px; border:1.5px solid var(--gold); opacity:.7; }
+  .head { position:relative; z-index:1; margin:14px 14px 0; background:var(--gold); color:var(--green-2); height:66px; display:flex; align-items:center; justify-content:space-between; padding:0 28px; font-family:"Big Shoulders Display"; font-weight:900; text-transform:uppercase; font-size:34px; letter-spacing:.03em; }
+  .body { position:relative; z-index:1; display:grid; grid-template-columns:1.05fr 1fr; gap:48px; padding:34px 46px 0; }
+  .score { color:var(--gold); }
+  .score .label { font-family:"Big Shoulders Display"; font-weight:900; font-size:40px; text-transform:uppercase; color:var(--primer); letter-spacing:.02em; line-height:1; }
+  .score .num { font-family:"Alfa Slab One"; font-size:300px; line-height:.9; letter-spacing:-.02em; margin-top:8px; }
+  .score .num small { font-size:90px; color:var(--primer); opacity:.85; }
+  .score .delta { font-size:24px; color:var(--primer); margin-top:6px; }
+  .list { color:var(--primer); padding-top:6px; }
+  .list h3 { font-family:"Big Shoulders Display"; font-weight:900; font-size:36px; text-transform:uppercase; color:var(--gold); letter-spacing:.03em; margin-bottom:10px; }
+  .row { display:flex; align-items:baseline; gap:12px; padding:14px 0; border-bottom:2px solid rgba(227,167,47,.45); font-family:"Big Shoulders Display"; font-weight:700; font-size:38px; text-transform:uppercase; }
+  .row .dots { flex:1; border-bottom:3px dotted rgba(240,241,236,.5); transform:translateY(-8px); }
+  .row b { font-family:"Alfa Slab One"; font-weight:400; color:var(--gold); font-size:40px; }
+  .checkin { position:absolute; z-index:1; left:46px; right:46px; bottom:46px; background:var(--primer); color:var(--green-2); display:flex; align-items:center; gap:28px; padding:22px 28px; }
+  .checkin p { font-family:"Big Shoulders Display"; font-weight:900; font-size:34px; text-transform:uppercase; line-height:1.05; flex:1; }
+  .scale { display:flex; gap:10px; }
+  .scale span { width:74px; height:74px; display:grid; place-items:center; background:var(--green); color:var(--gold); font-family:"Alfa Slab One"; font-size:40px; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="mark"><i></i>Nigeria Stability Index</div>
+    <nav><a>Reports</a><a>Spotlights</a><a>Honors 2026</a><a>Method</a><a>About</a><a class="cta">Take the October check-in</a></nav>
+  </header>
+  <section class="board">
+    <div class="frame"></div>
+    <div class="head"><span>September 2026 reading</span><span>Edition 9 · Published 11 October</span></div>
+    <div class="body">
+      <div class="score">
+        <div class="label">Nigeria's stability, out of ten</div>
+        <div class="num">4.1<small>/10</small></div>
+        <div class="delta">Down 0.2 from August. Most common word from the public: tired.</div>
+      </div>
+      <div class="list">
+        <h3>The five pillars</h3>
+        <div class="row">Security<span class="dots"></span><b>1.6</b></div>
+        <div class="row">FX &amp; Economy<span class="dots"></span><b>2.3</b></div>
+        <div class="row">Investor confidence<span class="dots"></span><b>2.3</b></div>
+        <div class="row">Governance<span class="dots"></span><b>1.7</b></div>
+        <div class="row">Social stability<span class="dots"></span><b>2.3</b></div>
+      </div>
+    </div>
+    <div class="checkin">
+      <p>October check-in: how safe did you feel this month?</p>
+      <div class="scale"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+    </div>
+  </section>
+</body>
+</html>

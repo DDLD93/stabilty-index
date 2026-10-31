@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Naira Note — first viewport sketch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root { --green:#1D5B3A; --ink:#0B2E22; --gold:#C9A044; --paper:#EEF0E6; --red:#B0322A; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { width:1440px; height:900px; overflow:hidden; background:var(--paper); color:var(--ink); font-family:"Source Sans 3", sans-serif; }
+  header { height:84px; display:flex; align-items:center; justify-content:space-between; padding:0 56px; border-bottom:1px solid rgba(11,46,34,.25); }
+  .mark { font-family:Cinzel; font-weight:800; font-size:24px; letter-spacing:.08em; }
+  nav { display:flex; gap:32px; font-size:17px; font-weight:600; }
+  .note { margin:40px 56px; height:736px; display:grid; grid-template-columns:1fr 330px; border:1px solid var(--green); }
+  .face { position:relative; padding:44px 52px; overflow:hidden; background:
+      repeating-radial-gradient(circle at 30% 55%, rgba(29,91,58,.10) 0 1px, transparent 1px 7px),
+      repeating-linear-gradient(115deg, rgba(201,160,68,.10) 0 1px, transparent 1px 9px); }
+  .serial { position:absolute; top:36px; right:48px; font-family:Cinzel; font-weight:800; color:var(--red); font-size:30px; letter-spacing:.14em; }
+  .title { font-family:Cinzel; font-weight:800; font-size:46px; letter-spacing:.06em; color:var(--green); }
+  .rosette { position:absolute; left:120px; top:170px; width:420px; height:420px; border-radius:50%; background:
+      repeating-conic-gradient(from 0deg, rgba(29,91,58,.35) 0 1deg, transparent 1deg 6deg),
+      radial-gradient(circle, var(--paper) 0 52%, transparent 53%);
+      display:grid; place-items:center; }
+  .rosette span { font-family:Cinzel; font-weight:800; font-size:170px; color:var(--ink); background:var(--paper); border-radius:50%; width:260px; height:260px; display:grid; place-items:center; }
+  .table { position:absolute; right:52px; top:200px; width:420px; }
+  .table div { display:flex; justify-content:space-between; padding:16px 0; border-bottom:1px solid rgba(11,46,34,.4); font-family:Cinzel; font-weight:600; font-size:26px; }
+  .stub { border-left:2px dashed var(--green); padding:44px 32px; display:flex; flex-direction:column; gap:22px; background:rgba(201,160,68,.12); }
+  .stub h3 { font-family:Cinzel; font-weight:800; font-size:30px; color:var(--green); line-height:1.15; }
+  .stub .scale { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+  .stub .scale span { height:56px; border:1px solid var(--green); display:grid; place-items:center; font-family:Cinzel; font-weight:800; font-size:28px; }
+</style>
+</head>
+<body>
+  <header><div class="mark">NIGERIA STABILITY INDEX</div><nav><a>Reports</a><a>Spotlights</a><a>Honors 2026</a><a>Method</a><a>About</a></nav></header>
+  <section class="note">
+    <div class="face">
+      <div class="title">September 2026</div>
+      <div class="serial">NSI 009</div>
+      <div class="rosette"><span>4.1</span></div>
+      <div class="table">
+        <div><span>Security</span><span>1.6</span></div>
+        <div><span>FX &amp; Economy</span><span>2.3</span></div>
+        <div><span>Investor confidence</span><span>2.3</span></div>
+        <div><span>Governance</span><span>1.7</span></div>
+        <div><span>Social stability</span><span>2.3</span></div>
+      </div>
+    </div>
+    <aside class="stub">
+      <h3>October check-in is open</h3>
+      <p>How safe did you feel this month?</p>
+      <div class="scale"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+    </aside>
+  </section>
+</body>
+</html>

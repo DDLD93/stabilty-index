@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Category standard — first viewport sketch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#14211B; --green:#1D6B45; --gold:#D9A42B; --line:#DDE3DF; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { width:1440px; height:900px; overflow:hidden; background:#fff; color:var(--ink); font-family:"Source Sans 3", sans-serif; }
+  header { height:80px; display:flex; align-items:center; justify-content:space-between; padding:0 80px; border-bottom:1px solid var(--line); }
+  .mark { font-weight:700; font-size:22px; }
+  nav { display:flex; gap:32px; font-size:17px; } nav a.cta { background:var(--green); color:#fff; padding:12px 18px; border-radius:6px; font-weight:600; }
+  .hero { display:grid; grid-template-columns:1fr 1fr; gap:64px; padding:72px 80px 40px; }
+  h1 { font-family:"Source Serif 4"; font-size:64px; line-height:1.05; letter-spacing:-.01em; }
+  .lede { font-size:22px; line-height:1.5; margin-top:24px; color:#3B4A43; }
+  .score { margin-top:36px; font-size:96px; font-weight:700; color:var(--green); } .score small { font-size:36px; color:#6B7A73; }
+  .chart { border:1px solid var(--line); border-radius:8px; padding:28px; height:420px; position:relative; }
+  .chart svg { width:100%; height:100%; }
+  .pillars { display:grid; grid-template-columns:repeat(5,1fr); gap:20px; padding:0 80px; }
+  .pillars div { border:1px solid var(--line); border-radius:8px; padding:22px; height:150px; }
+  .pillars b { display:block; font-size:44px; color:var(--green); margin-top:12px; }
+</style>
+</head>
+<body>
+  <header><div class="mark">Nigeria Stability Index</div><nav><a>Reports</a><a>Spotlights</a><a>Honors 2026</a><a>Method</a><a class="cta">Take the survey</a></nav></header>
+  <section class="hero">
+    <div>
+      <h1>How Nigeria is holding together, month by month</h1>
+      <p class="lede">Public check-ins and verified sources, reviewed by editors and published on the 11th of every month.</p>
+      <div class="score">4.1<small> / 10 in September 2026</small></div>
+    </div>
+    <div class="chart"><svg viewBox="0 0 600 360"><polyline fill="none" stroke="#1D6B45" stroke-width="4" points="20,180 90,276 160,240 230,330 300,290 370,200 440,150 510,140 580,160"/><line x1="20" y1="340" x2="580" y2="340" stroke="#DDE3DF" stroke-width="2"/></svg></div>
+  </section>
+  <section class="pillars">
+    <div>Security<b>1.6</b></div><div>FX &amp; Economy<b>2.3</b></div><div>Investor confidence<b>2.3</b></div><div>Governance<b>1.7</b></div><div>Social stability<b>2.3</b></div>
+  </section>
+</body>
+</html>
