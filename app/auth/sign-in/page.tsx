@@ -3,6 +3,8 @@
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { controlClass, Field, FormMessage } from "@/components/ui/Form";
 
 export default function SignInPage() {
   return (
@@ -43,61 +45,47 @@ function SignInInner() {
   }
 
   return (
-    <div className="min-h-screen bg-[color:var(--nsi-paper)] px-6 py-20">
-      <div className="mx-auto w-full max-w-md">
-        <div className="nsi-section-card px-8 py-10">
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/60 px-4 py-1.5 text-xs font-medium text-[color:var(--nsi-ink)] backdrop-blur-md">
-              Admin access
-            </div>
-            <h1 className="mt-5 font-serif text-2xl font-semibold tracking-tight text-[color:var(--nsi-ink)]">
-              Admin sign-in
-            </h1>
-            <p className="mt-2 text-sm text-[color:var(--nsi-ink-soft)]">
-              Use your admin credentials to access NSI tools.
-            </p>
+    <div className="w-full max-w-md border border-line bg-ground px-6 py-8 sm:px-8 sm:py-10">
+      <h1 className="text-h2">Admin sign-in</h1>
+      <p className="mt-2 text-body text-ink-2">For the NSI editorial team.</p>
 
-            <form className="mt-6 space-y-4" onSubmit={onSubmit}>
-              <label className="block">
-                <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Email</span>
-                <input
-                  className="mt-1 w-full rounded-xl border border-black/10 bg-white/70 px-4 py-3 text-[color:var(--nsi-ink)] outline-none ring-0 transition-all focus:border-[color:var(--nsi-green)] focus:bg-white"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </label>
+      <form className="mt-8 flex flex-col gap-6" onSubmit={onSubmit}>
+        <Field label="Email address">
+          {({ id, describedBy }) => (
+            <input
+              id={id}
+              aria-describedby={describedBy}
+              className={controlClass}
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          )}
+        </Field>
+        <Field label="Password">
+          {({ id, describedBy }) => (
+            <input
+              id={id}
+              aria-describedby={describedBy}
+              className={controlClass}
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          )}
+        </Field>
 
-              <label className="block">
-                <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Password</span>
-                <input
-                  className="mt-1 w-full rounded-xl border border-black/10 bg-white/70 px-4 py-3 text-[color:var(--nsi-ink)] outline-none ring-0 transition-all focus:border-[color:var(--nsi-green)] focus:bg-white"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </label>
+        {error ? <FormMessage tone="error">{error}</FormMessage> : null}
 
-              {error ? (
-                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                  {error}
-                </div>
-              ) : null}
-
-              <button
-                className="w-full rounded-xl bg-[color:var(--nsi-green)] px-4 py-3 font-medium text-white shadow-lg transition-all hover:brightness-110 disabled:opacity-60"
-                type="submit"
-                disabled={loading}
-              >
-                {loading ? "Signing in…" : "Sign in"}
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+        <Button type="submit" disabled={loading} aria-busy={loading} block>
+          {loading ? "Signing in…" : "Sign in"}
+        </Button>
+      </form>
     </div>
   );
 }
-

@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { controlClass, Field, FormMessage } from "@/components/ui/Form";
 import {
   CONTACT_SUBJECT_KEYS,
   CONTACT_SUBJECT_LABELS,
   type ContactSubjectKey,
 } from "@/lib/contactSubjects";
-
-const inputClass =
-  "mt-1 w-full rounded-xl border border-black/10 bg-white/70 px-4 py-3 text-[color:var(--nsi-ink)] outline-none ring-0 transition-all focus:border-[color:var(--nsi-green)] focus:bg-white";
 
 export function ContactForm() {
   const [name, setName] = useState("");
@@ -58,99 +57,114 @@ export function ContactForm() {
 
   if (done) {
     return (
-      <div className="rounded-xl border border-black/10 bg-white/70 px-6 py-5 text-sm text-[color:var(--nsi-ink)] shadow-sm">
-        Thank you — your message has been sent. We aim to reply within a few business days.
-      </div>
+      <FormMessage tone="success">
+        <p className="font-semibold">Thank you. Your message has been sent.</p>
+        <p className="mt-1 text-ink-2">We aim to reply within a few working days.</p>
+        <Button variant="quiet" className="mt-3" onClick={() => setDone(false)}>
+          Send another message
+        </Button>
+      </FormMessage>
     );
   }
 
   return (
-    <form className="mt-6 space-y-5" onSubmit={onSubmit}>
-      <label className="block">
-        <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Name</span>
-        <input
-          className={inputClass}
-          type="text"
-          name="name"
-          autoComplete="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={120}
-          required
-        />
-      </label>
+    <form className="flex flex-col gap-6" onSubmit={onSubmit} noValidate={false}>
+      <div className="grid gap-6 sm:grid-cols-2">
+        <Field label="Your name">
+          {({ id, describedBy }) => (
+            <input
+              id={id}
+              aria-describedby={describedBy}
+              className={controlClass}
+              type="text"
+              name="name"
+              autoComplete="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={120}
+              required
+            />
+          )}
+        </Field>
 
-      <label className="block">
-        <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Email</span>
-        <input
-          className={inputClass}
-          type="email"
-          name="email"
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </label>
+        <Field label="Email address" hint="So we can reply.">
+          {({ id, describedBy }) => (
+            <input
+              id={id}
+              aria-describedby={describedBy}
+              className={controlClass}
+              type="email"
+              name="email"
+              autoComplete="email"
+              inputMode="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          )}
+        </Field>
+      </div>
 
-      <label className="block">
-        <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Subject</span>
-        <select
-          className={inputClass}
-          name="subject"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value as ContactSubjectKey)}
-          required
-        >
-          {CONTACT_SUBJECT_KEYS.map((key) => (
-            <option key={key} value={key}>
-              {CONTACT_SUBJECT_LABELS[key]}
-            </option>
-          ))}
-        </select>
-      </label>
+      <Field label="What is it about?">
+        {({ id, describedBy }) => (
+          <select
+            id={id}
+            aria-describedby={describedBy}
+            className={controlClass}
+            name="subject"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value as ContactSubjectKey)}
+            required
+          >
+            {CONTACT_SUBJECT_KEYS.map((key) => (
+              <option key={key} value={key}>
+                {CONTACT_SUBJECT_LABELS[key]}
+              </option>
+            ))}
+          </select>
+        )}
+      </Field>
 
       {subject === "other" ? (
-        <label className="block">
-          <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Please specify</span>
-          <input
-            className={inputClass}
-            type="text"
-            name="subjectOther"
-            value={subjectOther}
-            onChange={(e) => setSubjectOther(e.target.value)}
-            maxLength={200}
-            placeholder="Brief topic for your message"
+        <Field label="Topic" hint="A few words about your message.">
+          {({ id, describedBy }) => (
+            <input
+              id={id}
+              aria-describedby={describedBy}
+              className={controlClass}
+              type="text"
+              name="subjectOther"
+              value={subjectOther}
+              onChange={(e) => setSubjectOther(e.target.value)}
+              maxLength={200}
+              required
+            />
+          )}
+        </Field>
+      ) : null}
+
+      <Field label="Message" counter={{ value: message.length, max: 4000 }}>
+        {({ id, describedBy }) => (
+          <textarea
+            id={id}
+            aria-describedby={describedBy}
+            className={`${controlClass} min-h-40 resize-y`}
+            name="message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            maxLength={4000}
             required
           />
-        </label>
-      ) : null}
+        )}
+      </Field>
 
-      <label className="block">
-        <span className="text-sm font-medium text-[color:var(--nsi-ink)]">Message</span>
-        <textarea
-          className={`${inputClass} min-h-[140px] resize-y`}
-          name="message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          maxLength={4000}
-          required
-        />
-      </label>
+      {error ? <FormMessage tone="error">{error}</FormMessage> : null}
 
-      {error ? (
-        <p className="text-sm text-red-700" role="alert">
-          {error}
-        </p>
-      ) : null}
-
-      <button
-        type="submit"
-        disabled={loading}
-        className="rounded-xl bg-[color:var(--nsi-gold)] px-6 py-3 text-sm font-semibold text-[color:var(--nsi-ink)] transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {loading ? "Sending…" : "Send message"}
-      </button>
+      <div>
+        <Button type="submit" disabled={loading} aria-busy={loading}>
+          {loading ? "Sending…" : "Send message"}
+        </Button>
+      </div>
     </form>
   );
 }

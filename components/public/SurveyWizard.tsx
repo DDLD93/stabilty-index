@@ -7,7 +7,12 @@ import { useSearchParams } from "next/navigation";
 import { MOODS, PILLAR_KEYS, NIGERIAN_STATES, SPOTLIGHT_TAGS } from "@/lib/constants";
 import { getClientDeviceInfo } from "@/lib/clientDeviceInfo";
 import { getDeviceHash } from "@/lib/deviceHash";
-import { normalizeRefQueryParam } from "@/lib/agentReferrerCode";
+import { normalizeRefQueryParam } from "@/lib/referrerCode";
+import { Check } from "lucide-react";
+import { buttonVariants } from "@/components/ui/Button";
+import { PhotoCredit } from "@/components/ui/Figure";
+import { controlClass, Field, FormMessage } from "@/components/ui/Form";
+import { pillarPhotos, type Photo } from "@/lib/photos";
 
 export type SurveyQuestion = {
   pillarKey: string;
@@ -25,13 +30,8 @@ const SCALE = [1, 2, 3, 4, 5] as const;
 const PILLAR_STEPS = 5;
 const TOTAL_STEPS = 6; // intro + 5 pillars + optional spotlight
 
-function getPillarImage(pillarKey: string): string {
-  const t = pillarKey.toLowerCase();
-  if (t.includes("security")) return "/pillars/security.png";
-  if (t.includes("econom")) return "/pillars/economy.png";
-  if (t.includes("invest")) return "/pillars/investor.png";
-  if (t.includes("govern")) return "/pillars/governance.png";
-  return "/pillars/social.png";
+function getPillarPhoto(pillarKey: string): Photo | null {
+  return pillarPhotos[pillarKey] ?? null;
 }
 
 export function SurveyWizard() {
@@ -181,31 +181,34 @@ export function SurveyWizard() {
     }
   };
 
+
+  const shell = (children: React.ReactNode) => (
+    <div className="mx-auto w-full max-w-[40rem]" aria-live="polite">
+      {children}
+    </div>
+  );
+
   if (loading) {
-    return (
-      <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
-        <p className="text-[color:var(--nsi-ink-soft)]">Loading survey…</p>
+    return shell(
+      <div className="border border-line bg-surface px-6 py-10">
+        <p className="text-body text-ink-2">Loading the survey…</p>
       </div>
     );
   }
 
   if (alreadySubmitted) {
-    return (
-      <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
-        <h2 className="font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">Already submitted</h2>
-        <p className="mt-4 text-[color:var(--nsi-ink-soft)]">You&apos;ve already submitted for this cycle.</p>
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <Link
-            href="/"
-            className="inline-flex rounded-xl bg-[color:var(--nsi-green)] px-6 py-3 text-sm font-semibold text-white transition-all hover:brightness-110"
-          >
-            Back to home
+    return shell(
+      <div className="border-t-4 border-brand bg-surface px-6 py-8 sm:px-8">
+        <h2 className="text-h3">You’ve already taken this month’s survey</h2>
+        <p className="mt-3 text-body text-ink-2">
+          Each device can answer once a month. Thank you for taking part; the results will be in the next report.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link href="/reports" className={buttonVariants()}>
+            Read the latest report
           </Link>
-          <Link
-            href="/reports"
-            className="inline-flex rounded-xl border border-black/15 bg-white px-6 py-3 text-sm font-semibold text-[color:var(--nsi-ink)] transition-all hover:bg-black/5"
-          >
-            View reports
+          <Link href="/subscribe" className={buttonVariants({ variant: "secondary" })}>
+            Get an email when it’s out
           </Link>
         </div>
       </div>
@@ -213,39 +216,39 @@ export function SurveyWizard() {
   }
 
   if (error || !cycle) {
-    return (
-      <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
-        <h2 className="font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">Survey is not available right now</h2>
-        <p className="mt-4 text-[color:var(--nsi-ink-soft)]">
-          {error ?? "Collection may be closed or the survey is still being set up. Check back later."}
+    return shell(
+      <div className="border border-line bg-surface px-6 py-8 sm:px-8">
+        <h2 className="text-h3">The survey isn’t open right now</h2>
+        <p className="mt-3 text-body text-ink-2">
+          {error
+            ? "We couldn’t load the survey. Please check your connection and try again."
+            : "This month’s survey has closed or is still being set up. A new survey opens each month."}
         </p>
-        <Link
-          href="/"
-          className="mt-8 inline-flex rounded-xl bg-[color:var(--nsi-green)] px-6 py-3 text-sm font-semibold text-white transition-all hover:brightness-110"
-        >
-          Back to home
-        </Link>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link href="/subscribe" className={buttonVariants()}>
+            Get an email when it opens
+          </Link>
+          <Link href="/reports" className={buttonVariants({ variant: "secondary" })}>
+            Read the reports
+          </Link>
+        </div>
       </div>
     );
   }
 
   if (submitted) {
-    return (
-      <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white p-12 text-center shadow-lg">
-        <h2 className="font-serif text-2xl font-semibold text-[color:var(--nsi-ink)]">Thank you</h2>
-        <p className="mt-4 text-[color:var(--nsi-ink-soft)]">Your responses have been recorded and help shape the Nigeria Stability Index.</p>
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <Link
-            href="/"
-            className="inline-flex rounded-xl bg-[color:var(--nsi-green)] px-6 py-3 text-sm font-semibold text-white transition-all hover:brightness-110"
-          >
-            Back to home
+    return shell(
+      <div className="border-t-4 border-brand bg-surface px-6 py-8 sm:px-8">
+        <h2 className="text-h3">Thank you. Your answers are in.</h2>
+        <p className="mt-3 text-body text-ink-2">
+          They will count towards the {cycle.monthYear} reading, published on the 11th of next month.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link href="/subscribe" className={buttonVariants()}>
+            Get the report by email
           </Link>
-          <Link
-            href="/reports"
-            className="inline-flex rounded-xl border border-black/15 bg-white px-6 py-3 text-sm font-semibold text-[color:var(--nsi-ink)] transition-all hover:bg-black/5"
-          >
-            View reports
+          <Link href="/reports" className={buttonVariants({ variant: "secondary" })}>
+            Read the latest report
           </Link>
         </div>
       </div>
@@ -253,136 +256,149 @@ export function SurveyWizard() {
   }
 
   const questions = cycle.surveyQuestions;
+  const pillarIndex = step >= 1 && step <= PILLAR_STEPS ? step - 1 : null;
+  const currentQuestion = pillarIndex !== null ? questions[pillarIndex] : null;
+  const photo = currentQuestion ? getPillarPhoto(currentQuestion.pillarKey) : null;
+  const progressLabel =
+    step === 0
+      ? "Before you start"
+      : currentQuestion
+        ? `${currentQuestion.pillarLabel}, ${step} of ${PILLAR_STEPS}`
+        : "Optional: anything else?";
+  const progress = Math.min(step, TOTAL_STEPS) / TOTAL_STEPS;
 
   return (
-    <div className="mx-auto w-full max-w-xl rounded-2xl border border-black/10 bg-white shadow-lg">
-      <div className="border-b border-black/5 bg-black/5 px-4 py-3 sm:px-6 sm:py-4">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
-            {step === 0 ? "Intro" : step <= PILLAR_STEPS ? `Step ${step} of ${TOTAL_STEPS}` : "Optional"}
-          </span>
-          <span className="text-xs text-[color:var(--nsi-ink-soft)]">{cycle.monthYear}</span>
-        </div>
-        {refFromUrl && refCheckDone && refLabel && (
-          <p className="mt-2 text-xs text-[color:var(--nsi-ink-soft)]">
-            Referral link recognized — thank you for participating via <span className="font-medium text-[color:var(--nsi-ink)]">{refLabel}</span>.
-          </p>
-        )}
-        {refFromUrl && refCheckDone && !refLabel && (
-          <p className="mt-2 text-xs text-amber-800/90">
-            This referral link is not valid or is no longer active. You can still complete the survey; it will not be attributed to a referrer.
-          </p>
-        )}
-      </div>
-
-      <div className="p-6 sm:p-8">
-        {step === 0 && (
-          <>
-            <h2 className="font-serif text-2xl font-semibold text-[color:var(--nsi-ink)]">
-              Share how Nigeria feels to you
-            </h2>
-            <p className="mt-4 text-[color:var(--nsi-ink-soft)]">
-              One question per pillar — your voice shapes the index. You&apos;ll answer five short questions (scale 1–5), then optionally add a state or comment.
+    <div className="grid gap-10 lg:grid-cols-[minmax(0,40rem)_minmax(0,1fr)] lg:gap-14">
+      <div>
+        <div className="border-b border-line pb-4">
+          <div className="flex items-baseline justify-between gap-4">
+            <p className="font-semibold text-ink">{progressLabel}</p>
+            <p className="text-small text-ink-3">{cycle.monthYear} survey</p>
+          </div>
+          <div
+            className="mt-3 h-1.5 w-full bg-data-track"
+            role="progressbar"
+            aria-label="Survey progress"
+            aria-valuemin={0}
+            aria-valuemax={TOTAL_STEPS}
+            aria-valuenow={Math.min(step, TOTAL_STEPS)}
+          >
+            <div
+              className="h-full bg-brand transition-[width] duration-300 ease-[var(--ease-out-strong)]"
+              style={{ width: `${progress * 100}%` }}
+            />
+          </div>
+          {refFromUrl && refCheckDone && refLabel && (
+            <p className="mt-3 text-small text-ink-2">
+              You’re taking part through <span className="font-semibold text-ink">{refLabel}</span>’s link. Thank you.
             </p>
-            <div className="mt-10 flex justify-end">
+          )}
+          {refFromUrl && refCheckDone && !refLabel && (
+            <p className="mt-3 text-small text-gold-ink">
+              This referral link isn’t active any more. You can still take the survey; it just won’t be credited to a
+              field agent.
+            </p>
+          )}
+        </div>
+
+        {step === 0 && (
+          <div className="pt-8">
+            <h2 className="text-h2">Tell us how Nigeria feels to you this month</h2>
+            <ul className="mt-6 flex flex-col gap-3 text-body text-ink-2">
+              <li className="flex gap-3">
+                <Check aria-hidden className="mt-1 size-5 shrink-0 text-brand" />
+                Five questions, one for each pillar, answered from 1 (least stable) to 5 (most stable).
+              </li>
+              <li className="flex gap-3">
+                <Check aria-hidden className="mt-1 size-5 shrink-0 text-brand" />
+                About two minutes. An optional last step lets you add more.
+              </li>
+              <li className="flex gap-3">
+                <Check aria-hidden className="mt-1 size-5 shrink-0 text-brand" />
+                No names, phone numbers or addresses. One answer per device each month.
+              </li>
+            </ul>
+            <div className="mt-10">
+              <button type="button" onClick={goNext} className={buttonVariants({ size: "lg" })}>
+                Start the survey
+              </button>
+            </div>
+          </div>
+        )}
+
+        {currentQuestion && pillarIndex !== null && (
+          <fieldset className="pt-8">
+            <legend className="font-serif text-[clamp(1.375rem,1.2rem+0.8vw,1.75rem)] leading-snug font-semibold text-ink">
+              {currentQuestion.questionText}
+            </legend>
+            <p className="mt-3 text-body text-ink-2">Choose a number from 1 to 5.</p>
+
+            <div className="mt-6 grid grid-cols-5 gap-2 sm:gap-3">
+              {SCALE.map((n) => {
+                const checked = pillarResponses[currentQuestion.pillarKey] === n;
+                return (
+                  <label
+                    key={n}
+                    className={`relative flex min-h-16 cursor-pointer items-center justify-center rounded-control border text-h3 font-semibold tabular-nums transition-[background-color,border-color,color] duration-150 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand ${
+                      checked ? "border-brand bg-brand text-white" : "border-line-strong bg-ground text-ink hover:border-ink"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name={`pillar-${currentQuestion.pillarKey}`}
+                      value={n}
+                      checked={checked}
+                      onChange={() => setPillar(currentQuestion.pillarKey, n)}
+                      className="sr-only"
+                    />
+                    {n}
+                    <span className="sr-only">{n === 1 ? " (least stable)" : n === 5 ? " (most stable)" : ""}</span>
+                  </label>
+                );
+              })}
+            </div>
+            <div aria-hidden className="mt-2 flex justify-between text-small text-ink-3">
+              <span>Least stable</span>
+              <span>Most stable</span>
+            </div>
+
+            <div className="mt-10 flex items-center justify-between gap-3">
+              <button type="button" onClick={goBack} className={buttonVariants({ variant: "secondary" })}>
+                Back
+              </button>
               <button
                 type="button"
                 onClick={goNext}
-                className="rounded-xl bg-[color:var(--nsi-green)] px-8 py-3 text-sm font-semibold text-white transition-all hover:brightness-110"
+                disabled={pillarResponses[currentQuestion.pillarKey] == null}
+                className={buttonVariants()}
               >
-                Start
+                {step === PILLAR_STEPS ? "Continue to the last step" : "Next question"}
               </button>
             </div>
-          </>
+          </fieldset>
         )}
 
-        {step >= 1 && step <= PILLAR_STEPS && questions[step - 1] && (() => {
-          const q = questions[step - 1];
-          const pillarImage = getPillarImage(q.pillarKey);
-          return (
-          <>
-            <div className="overflow-hidden rounded-2xl border border-black/10 bg-[color:var(--nsi-paper-2)] shadow-inner">
-              <div className="relative flex h-40 w-full items-center justify-center px-6 py-8">
-                <Image
-                  src={pillarImage}
-                  alt={q.pillarLabel}
-                  fill
-                  className="object-contain p-6"
-                  sizes="(max-width: 448px) 100vw, 448px"
-                  priority
-                />
-              </div>
-              <div className="border-t border-black/5 px-6 py-4">
-                <span className="text-sm font-bold uppercase tracking-widest text-[color:var(--nsi-ink)]">
-                  {q.pillarLabel}
-                </span>
-              </div>
-            </div>
-            <h2 className="mt-8 font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">
-              {q.questionText}
-            </h2>
-            <p className="mt-1 text-sm text-[color:var(--nsi-ink-soft)]">
-              Choose 1 (least stable) to 5 (most stable).
-            </p>
-            <div className="mt-8 flex flex-nowrap gap-1 sm:gap-2 md:gap-3">
-              {SCALE.map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => setPillar(questions[step - 1].pillarKey, n)}
-                  className={`flex-1 min-w-0 rounded-xl border-2 px-2 py-3 text-lg font-bold transition-all sm:px-4 sm:py-4 md:px-6 ${
-                    pillarResponses[questions[step - 1].pillarKey] === n
-                      ? "border-[color:var(--nsi-green)] bg-[color:var(--nsi-green)]/10 text-[color:var(--nsi-green)]"
-                      : "border-black/15 bg-white text-[color:var(--nsi-ink-soft)] hover:border-black/25 hover:bg-black/5"
-                  }`}
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
-            <div className="mt-10 flex justify-between">
-              <button
-                type="button"
-                onClick={goBack}
-                className="rounded-xl border border-black/15 px-6 py-2.5 text-sm font-medium text-[color:var(--nsi-ink)] transition-all hover:bg-black/5"
-              >
-                Back
-              </button>
-              {pillarResponses[questions[step - 1].pillarKey] != null && (
-                <button
-                  type="button"
-                  onClick={goNext}
-                  className="rounded-xl bg-[color:var(--nsi-green)] px-6 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
-                >
-                  Next
-                </button>
-              )}
-            </div>
-          </>
-          );
-        })()}
-
         {step === TOTAL_STEPS && (
-          <>
-            <h2 className="font-serif text-xl font-semibold text-[color:var(--nsi-ink)]">Anything else?</h2>
-            <p className="mt-2 text-sm text-[color:var(--nsi-ink-soft)]">
-              Optional: how you feel, one word, a state, tags, or a short comment.
-            </p>
-            <div className="mt-6 space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-[color:var(--nsi-ink)]">How are you feeling about Nigeria? (optional)</label>
-                <div className="mt-2 flex flex-wrap gap-2">
+          <div className="pt-8">
+            <h2 className="text-h2">Anything else?</h2>
+            <p className="mt-3 text-body text-ink-2">Everything on this page is optional. You can submit now if you prefer.</p>
+
+            <div className="mt-8 flex flex-col gap-8">
+              <fieldset>
+                <legend className="text-body font-semibold text-ink">
+                  How are you feeling about Nigeria? <span className="font-normal text-ink-3">(optional)</span>
+                </legend>
+                <div className="mt-3 flex flex-wrap gap-2">
                   {MOODS.map((m) => {
                     const active = m === mood;
                     return (
                       <button
                         key={m}
                         type="button"
+                        aria-pressed={active}
                         onClick={() => setMood(active ? null : m)}
-                        className={`rounded-xl px-4 py-2 text-sm font-medium transition-all ${
-                          active
-                            ? "bg-[color:var(--nsi-green)] text-white"
-                            : "border border-black/15 bg-white text-[color:var(--nsi-ink-soft)] hover:border-black/25 hover:bg-black/5"
+                        className={`min-h-11 rounded-control border px-4 text-body transition-[background-color,border-color,color] duration-150 ${
+                          active ? "border-brand bg-brand text-white" : "border-line-strong bg-ground text-ink hover:border-ink"
                         }`}
                       >
                         {m}
@@ -390,85 +406,126 @@ export function SurveyWizard() {
                     );
                   })}
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[color:var(--nsi-ink)]">One word to describe Nigeria today (optional)</label>
-                <input
-                  type="text"
-                  value={oneWord}
-                  onChange={(e) => setOneWord(e.target.value.slice(0, 40))}
-                  maxLength={40}
-                  placeholder="e.g. steady, tense, hopeful…"
-                  className="mt-1.5 w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-[color:var(--nsi-ink)] placeholder:text-black/40 focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-1 focus:ring-[color:var(--nsi-green)]"
-                />
-                <p className="mt-1 text-xs text-[color:var(--nsi-ink-soft)]">{oneWord.length}/40</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[color:var(--nsi-ink)]">State</label>
-                <select
-                  value={spotlightState ?? ""}
-                  onChange={(e) => setSpotlightState(e.target.value || null)}
-                  className="mt-1.5 w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-[color:var(--nsi-ink)] focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-1 focus:ring-[color:var(--nsi-green)]"
-                >
-                  <option value="">— None —</option>
-                  {NIGERIAN_STATES.map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[color:var(--nsi-ink)]">Tags (optional, max 8)</label>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {SPOTLIGHT_TAGS.map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => toggleTag(tag)}
-                      className={`rounded-lg border px-3 py-1.5 text-sm transition-all ${
-                        spotlightTags.includes(tag)
-                          ? "border-[color:var(--nsi-green)] bg-[color:var(--nsi-green)]/10 text-[color:var(--nsi-green)]"
-                          : "border-black/15 text-[color:var(--nsi-ink-soft)] hover:bg-black/5"
-                      }`}
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[color:var(--nsi-ink)]">Comment (optional, max 600 chars)</label>
-                <textarea
-                  value={spotlightComment}
-                  onChange={(e) => setSpotlightComment(e.target.value.slice(0, 600))}
-                  rows={3}
-                  className="mt-1.5 w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-[color:var(--nsi-ink)] placeholder:text-black/40 focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-1 focus:ring-[color:var(--nsi-green)]"
-                  placeholder="Any additional context…"
-                />
-                <p className="mt-1 text-xs text-[color:var(--nsi-ink-soft)]">{spotlightComment.length}/600</p>
-              </div>
-            </div>
-            {submitError && (
-              <p className="mt-4 text-sm text-red-600">{submitError}</p>
-            )}
-            <div className="mt-10 flex justify-between">
-              <button
-                type="button"
-                onClick={goBack}
-                className="rounded-xl border border-black/15 px-6 py-2.5 text-sm font-medium text-[color:var(--nsi-ink)] transition-all hover:bg-black/5"
+              </fieldset>
+
+              <Field
+                label="One word for Nigeria today"
+                optional
+                hint="For example: steady, tense, hopeful."
+                counter={{ value: oneWord.length, max: 40 }}
               >
+                {({ id, describedBy }) => (
+                  <input
+                    id={id}
+                    aria-describedby={describedBy}
+                    type="text"
+                    value={oneWord}
+                    onChange={(e) => setOneWord(e.target.value.slice(0, 40))}
+                    maxLength={40}
+                    className={controlClass}
+                  />
+                )}
+              </Field>
+
+              <Field label="Your state" optional>
+                {({ id, describedBy }) => (
+                  <select
+                    id={id}
+                    aria-describedby={describedBy}
+                    value={spotlightState ?? ""}
+                    onChange={(e) => setSpotlightState(e.target.value || null)}
+                    className={controlClass}
+                  >
+                    <option value="">Prefer not to say</option>
+                    {NIGERIAN_STATES.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </Field>
+
+              <fieldset>
+                <legend className="text-body font-semibold text-ink">
+                  Topics on your mind <span className="font-normal text-ink-3">(optional, up to 8)</span>
+                </legend>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {SPOTLIGHT_TAGS.map((tag) => {
+                    const checked = spotlightTags.includes(tag);
+                    return (
+                      <label
+                        key={tag}
+                        className={`flex min-h-11 cursor-pointer items-center gap-2 rounded-control border px-3.5 text-body transition-[background-color,border-color] duration-150 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand ${
+                          checked ? "border-brand bg-brand-tint text-ink" : "border-line-strong bg-ground text-ink hover:border-ink"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => toggleTag(tag)}
+                          disabled={!checked && spotlightTags.length >= 8}
+                          className="size-4 accent-[var(--color-brand)]"
+                        />
+                        {tag}
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
+
+              <Field
+                label="Comment"
+                optional
+                hint="Please don’t include names, phone numbers or addresses."
+                counter={{ value: spotlightComment.length, max: 600 }}
+              >
+                {({ id, describedBy }) => (
+                  <textarea
+                    id={id}
+                    aria-describedby={describedBy}
+                    value={spotlightComment}
+                    onChange={(e) => setSpotlightComment(e.target.value.slice(0, 600))}
+                    rows={4}
+                    className={`${controlClass} resize-y`}
+                  />
+                )}
+              </Field>
+            </div>
+
+            {submitError && (
+              <FormMessage tone="error" className="mt-6">
+                {submitError}
+              </FormMessage>
+            )}
+
+            <div className="mt-10 flex items-center justify-between gap-3">
+              <button type="button" onClick={goBack} className={buttonVariants({ variant: "secondary" })}>
                 Back
               </button>
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={submitting || !hasAllPillarAnswers}
-                className="rounded-xl bg-[color:var(--nsi-green)] px-8 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110 disabled:opacity-60"
+                aria-busy={submitting}
+                className={buttonVariants()}
               >
-                {submitting ? "Submitting…" : "Submit"}
+                {submitting ? "Sending…" : "Submit my answers"}
               </button>
             </div>
-          </>
+          </div>
         )}
+      </div>
+
+      <div className="hidden lg:block">
+        {photo ? (
+          <div className="sticky top-28">
+            <div className="relative aspect-[4/5] w-full overflow-hidden bg-surface">
+              <Image src={photo.src} alt="" fill sizes="(min-width: 1024px) 35vw, 0px" className="object-cover" />
+            </div>
+            <PhotoCredit photo={photo} className="mt-2" />
+          </div>
+        ) : null}
       </div>
     </div>
   );

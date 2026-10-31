@@ -1,4 +1,10 @@
+import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import { AdminSidenav } from "@/components/admin/AdminSidenav";
+
+// The admin area keeps its existing faces; these rebind the shared font roles inside the admin wrapper.
+const adminSans = Geist({ variable: "--font-body", subsets: ["latin"], display: "swap" });
+const adminMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" });
+const adminSerif = Playfair_Display({ variable: "--font-display", subsets: ["latin"], display: "swap" });
 
 export default function AdminLayout({
   children,
@@ -6,7 +12,9 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen flex-col overflow-hidden md:flex-row">
+    <div
+      className={`${adminSans.variable} ${adminMono.variable} ${adminSerif.variable} admin-scope flex h-dvh flex-col overflow-hidden font-sans text-[color:var(--nsi-ink)] md:flex-row`}
+    >
       {/* Skip link for keyboard users */}
       <a
         href="#admin-main"
@@ -24,7 +32,7 @@ export default function AdminLayout({
         tabIndex={-1}
         className="flex-1 overflow-auto bg-[color:var(--nsi-paper)] focus:outline-none"
       >
-        <div className="mx-auto w-full max-w-7xl px-6 py-8 md:py-10">
+        <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 md:py-10">
           {children}
         </div>
       </main>

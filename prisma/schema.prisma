@@ -36,6 +36,7 @@ model Agent {
   referrerCode  String        @unique
   isActive      Boolean       @default(true)
   submissions   Submission[]
+  honorsNominations HonorsNomination[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -126,3 +127,237 @@ model AuditLog {
   @@index([action, createdAt])
 }
 
+
+// ---------------------------------------------------------------------------
+// Email updates (double opt-in)
+// ---------------------------------------------------------------------------
+
+enum SubscriberStatus {
+  PENDING
+  CONFIRMED
+  UNSUBSCRIBED
+}
+
+model Subscriber {
+  id                    String           @id @default(cuid())
+  /** Normalised (trimmed, lower-case) address. */
+  email                 String           @unique
+  status                SubscriberStatus @default(PENDING)
+  confirmTokenHash      String?          @unique
+  confirmTokenExpiresAt DateTime?
+  /** Random token carried in every email's unsubscribe link. */
+  unsubscribeToken      String           @unique
+  confirmedAt           DateTime?
+  unsubscribedAt        DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// NSI Honors: public nominations, admin shortlist, verified public vote
+// ---------------------------------------------------------------------------
+
+enum HonorsEditionStatus {
+  DRAFT
+  NOMINATIONS_OPEN
+  SHORTLISTING
+  VOTING_OPEN
+  VOTING_CLOSED
+  ANNOUNCED
+  ARCHIVED
+}
+
+enum HonorsNomineeType {
+  PUBLIC_INSTITUTION
+  STATE_OR_LGA
+  ORGANISATION
+  INDIVIDUAL
+}
+
+enum HonorsNominationStatus {
+  PENDING
+  SHORTLISTED
+  REJECTED
+  DUPLICATE
+}
+
+enum HonorsNominatorRelation {
+  INDEPENDENT
+  AFFILIATED
+  SELF
+}
+
+model HonorsEdition {
+  id                 String              @id @default(cuid())
+  year               Int                 @unique
+  title              String
+  status             HonorsEditionStatus @default(DRAFT)
+  nominationsOpenAt  DateTime?
+  nominationsCloseAt DateTime?
+  votingOpenAt       DateTime?
+  votingCloseAt      DateTime?
+  ceremonyAt         DateTime?
+  ceremonyVenue      String?
+  ceremonyDetails    String?
+  /** Show vote shares next to published winners. */
+  showVoteResults    Boolean             @default(false)
+  contactsPurgedAt   DateTime?
+
+  categories   HonorsCategory[]
+  nominations  HonorsNomination[]
+  finalists    HonorsFinalist[]
+  voteRequests HonorsVoteRequest[]
+  votes        HonorsVote[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}
+
+model HonorsCategory {
+  id                  String              @id @default(cuid())
+  editionId           String
+  edition             HonorsEdition       @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  slug                String
+  name                String
+  shortDescription    String
+  criteria            String?
+  allowedNomineeTypes HonorsNomineeType[]
+  sortOrder           Int                 @default(0)
+  isActive            Boolean             @default(true)
+
+  winnerFinalistId  String?         @unique
+  winnerFinalist    HonorsFinalist? @relation("CategoryWinner", fields: [winnerFinalistId], references: [id], onDelete: SetNull)
+  winnerCitation    String?
+  /** Required when the chosen winner is not the vote leader (disqualification or tie). */
+  winnerNote        String?
+  winnerPublishedAt DateTime?
+
+  nominations HonorsNomination[]
+  finalists   HonorsFinalist[]   @relation("CategoryFinalists")
+  votes       HonorsVote[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([editionId, slug])
+  @@index([editionId, sortOrder])
+}
+
+model HonorsNomination {
+  id                 String                  @id @default(cuid())
+  /** Short public reference shown to the nominator, e.g. H26-7F3K2Q. */
+  reference          String                  @unique
+  editionId          String
+  edition            HonorsEdition           @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  categoryId         String
+  category           HonorsCategory          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  nomineeType        HonorsNomineeType
+  nomineeName        String
+  nomineeState       String?
+  nomineeLga         String?
+  nomineeAffiliation String?
+  reason             String
+  evidenceUrls       String[]
+
+  nominatorName      String?
+  nominatorEmail     String?
+  nominatorEmailHash String
+  nominatorRelation  HonorsNominatorRelation
+
+  agentId    String?
+  agent      Agent?  @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  deviceHash String?
+  ipHash     String?
+
+  status        HonorsNominationStatus @default(PENDING)
+  duplicateOfId String?
+  adminNote     String?
+  reviewedAt    DateTime?
+
+  finalist HonorsFinalist?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([editionId, categoryId, status])
+  @@index([nominatorEmailHash])
+  @@index([ipHash, createdAt])
+}
+
+model HonorsFinalist {
+  id           String            @id @default(cuid())
+  editionId    String
+  edition      HonorsEdition     @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  categoryId   String
+  category     HonorsCategory    @relation("CategoryFinalists", fields: [categoryId], references: [id], onDelete: Cascade)
+  nominationId String?           @unique
+  nomination   HonorsNomination? @relation(fields: [nominationId], references: [id], onDelete: SetNull)
+
+  displayName String
+  nomineeType HonorsNomineeType
+  state       String?
+  summary     String
+  /** Local path under /public/honors only; finalists are never shown with found photos. */
+  imageUrl    String?
+  imageAlt    String?
+  sortOrder   Int               @default(0)
+  isActive    Boolean           @default(true)
+
+  wonCategory HonorsCategory? @relation("CategoryWinner")
+  votes       HonorsVote[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId, isActive, sortOrder])
+}
+
+model HonorsVoteRequest {
+  id         String        @id @default(cuid())
+  editionId  String
+  edition    HonorsEdition @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  tokenHash  String        @unique
+  emailHash  String
+  /** [{ categoryId, finalistId }] */
+  selections Json
+  deviceHash String?
+  ipHash     String?
+  expiresAt  DateTime
+  consumedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([emailHash, createdAt])
+  @@index([ipHash, createdAt])
+  @@index([deviceHash, createdAt])
+}
+
+model HonorsVote {
+  id         String         @id @default(cuid())
+  editionId  String
+  edition    HonorsEdition  @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   HonorsCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  finalistId String
+  finalist   HonorsFinalist @relation(fields: [finalistId], references: [id], onDelete: Restrict)
+  /** HMAC of the normalised, verified email address; the address itself is never stored. */
+  emailHash  String
+  deviceHash String?
+  ipHash     String?
+  requestId  String?
+  isVoid     Boolean        @default(false)
+  voidReason String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([categoryId, emailHash])
+  @@index([finalistId, isVoid])
+  @@index([editionId, ipHash])
+  @@index([editionId, deviceHash])
+}

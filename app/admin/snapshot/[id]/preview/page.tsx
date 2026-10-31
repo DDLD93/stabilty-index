@@ -40,7 +40,7 @@ export default async function AdminSnapshotPreviewPage({ params }: Props) {
           ← Back to Snapshot builder
         </Link>
       </div>
-      <PublicationDashboard snapshotId={id} />
+      <PublicationDashboard snapshotId={id} allowDraft />
     </div>
   );
 }

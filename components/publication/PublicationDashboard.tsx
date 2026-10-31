@@ -1,117 +1,18 @@
-import { db } from "@/lib/db";
-import { PublicationPoster } from "@/components/publication/PublicationPoster";
+import { ReportArticle } from "@/components/publication/ReportArticle";
+import { getReport } from "@/lib/snapshots";
 
-type Pillar = { title: string; score: number; summary?: string };
-type StateSpotlight = { state?: string; score?: number; bullets?: string[]; keyPointsHtml?: string };
-type InstitutionSpotlight = { institution?: string; summary?: string; bullets?: string[]; keyPointsHtml?: string };
-type StreetPulseSpotlight = { title?: string; summary?: string; keyPointsHtml?: string };
-type SourceRef = { label?: string; url?: string };
-type Sentiment = { topWords?: string[]; averagePublicScore?: number; topMood?: string };
-
-function safeArray<T>(v: unknown): T[] {
-  return Array.isArray(v) ? (v as T[]) : [];
-}
-
-function safeNumber(v: unknown): number | null {
-  const n = typeof v === "number" ? v : Number(v);
-  return Number.isFinite(n) ? n : null;
-}
-
-export async function PublicationDashboard({ snapshotId }: { snapshotId: string | null }) {
-  if (!snapshotId) {
+/**
+ * Renders one edition. Drafts render only when `allowDraft` is set, which only
+ * the admin preview does; the public route 404s on anything unpublished.
+ */
+export async function PublicationDashboard({ snapshotId, allowDraft = false }: { snapshotId: string | null; allowDraft?: boolean }) {
+  const report = snapshotId ? await getReport(snapshotId, allowDraft) : null;
+  if (!report) {
     return (
-      <div className="rounded-3xl border border-black/10 bg-white p-8">
-        <h2 className="font-serif text-2xl font-semibold tracking-tight text-[color:var(--nsi-green)]">
-          Latest report
-        </h2>
-        <p className="mt-2 text-black/70">No published snapshot is available yet.</p>
+      <div className="border border-line bg-surface p-8">
+        <p className="font-semibold">This report could not be found.</p>
       </div>
     );
   }
-
-  const snapshot = await db.snapshot.findUnique({
-    where: { id: snapshotId },
-    select: {
-      period: true,
-      overallScore: true,
-      overallNarrative: true,
-      pillarScores: true,
-      stateSpotlightContent: true,
-      institutionSpotlightContent: true,
-      streetPulseSpotlightContent: true,
-      sourcesReferences: true,
-      publicSentimentSummary: true,
-    },
-  });
-
-  if (!snapshot) {
-    return (
-      <div className="rounded-3xl border border-black/10 bg-white p-8">
-        <p className="text-black/70">Snapshot not found.</p>
-      </div>
-    );
-  }
-
-  const pillars = safeArray<Pillar>((snapshot.pillarScores as { pillars?: unknown })?.pillars ?? snapshot.pillarScores);
-  const stateSpot = (snapshot.stateSpotlightContent ?? {}) as StateSpotlight;
-  const instSpot = (snapshot.institutionSpotlightContent ?? {}) as InstitutionSpotlight;
-  const streetPulseSpot = (snapshot.streetPulseSpotlightContent ?? null) as StreetPulseSpotlight | null;
-  const sourcesRaw = snapshot.sourcesReferences as unknown;
-  const sources = Array.isArray(sourcesRaw)
-    ? (sourcesRaw as { label?: string; url?: string }[])
-        .filter((x) => x && typeof x === "object" && x.label && x.url)
-        .map((x) => ({ label: String(x.label), url: String(x.url) }))
-    : [];
-  const sentiment = (snapshot.publicSentimentSummary ?? {}) as Sentiment;
-  const avgPublic = safeNumber(sentiment.averagePublicScore) ?? undefined;
-  const topWords = safeArray<string>(sentiment.topWords);
-
-  return (
-    <PublicationPoster
-      snapshotId={snapshotId}
-      period={snapshot.period}
-      overallScore={snapshot.overallScore}
-      overallNarrative={snapshot.overallNarrative}
-      pillars={
-        pillars.length
-          ? pillars
-          : [
-              { title: "Security", score: 0, summary: "—" },
-              { title: "FX & Economy", score: 0, summary: "—" },
-              { title: "Investor Confidence", score: 0, summary: "—" },
-              { title: "Governance", score: 0, summary: "—" },
-              { title: "Social Stability", score: 0, summary: "—" },
-            ]
-      }
-      spotlight={{
-        state: stateSpot.state,
-        score: safeNumber(stateSpot.score) ?? undefined,
-        bullets: safeArray<string>(stateSpot.bullets),
-        keyPointsHtml: typeof stateSpot.keyPointsHtml === "string" ? stateSpot.keyPointsHtml : undefined,
-      }}
-      institutionSpotlight={{
-        institution: instSpot.institution,
-        summary: instSpot.summary,
-        bullets: safeArray<string>(instSpot.bullets),
-        keyPointsHtml: typeof instSpot.keyPointsHtml === "string" ? instSpot.keyPointsHtml : undefined,
-      }}
-      streetPulseSpotlight={
-        streetPulseSpot &&
-        (streetPulseSpot.title || streetPulseSpot.summary || streetPulseSpot.keyPointsHtml)
-          ? {
-              title: streetPulseSpot.title,
-              summary: streetPulseSpot.summary,
-              keyPointsHtml: streetPulseSpot.keyPointsHtml,
-            }
-          : undefined
-      }
-      sourcesReferences={sources}
-      sentiment={{
-        topWords,
-        averagePublicScore: avgPublic,
-        topMood: sentiment.topMood,
-      }}
-    />
-  );
+  return <ReportArticle report={report} preview={allowDraft} />;
 }
-

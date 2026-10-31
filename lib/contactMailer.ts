@@ -1,6 +1,6 @@
-import nodemailer from "nodemailer";
 import type { ContactSubjectKey } from "@/lib/contactSubjects";
 import { CONTACT_SUBJECT_LABELS } from "@/lib/contactSubjects";
+import { escapeHtml, isMailConfigured, sendMail } from "@/lib/mailer";
 
 export type ContactEmailPayload = {
   name: string;
@@ -10,44 +10,8 @@ export type ContactEmailPayload = {
   message: string;
 };
 
-function escapeHtml(text: string) {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-function getSmtpConfig():
-  | {
-      host: string;
-      port: number;
-      secure: boolean;
-      auth: { user: string; pass: string };
-      from: string;
-      to: string;
-    }
-  | { error: "missing_env" } {
-  const host = process.env.SMTP_HOST?.trim();
-  const user = process.env.SMTP_USER?.trim();
-  const pass = process.env.SMTP_PASSWORD?.trim();
-  const from = process.env.CONTACT_MAIL_FROM?.trim();
-  const to = process.env.CONTACT_MAIL_TO?.trim();
-
-  if (!host || !user || !pass || !from || !to) {
-    return { error: "missing_env" };
-  }
-
-  const portRaw = process.env.SMTP_PORT?.trim();
-  const port = portRaw ? Number.parseInt(portRaw, 10) : 587;
-  if (!Number.isFinite(port) || port < 1 || port > 65535) {
-    return { error: "missing_env" };
-  }
-
-  const secureEnv = process.env.SMTP_SECURE?.trim().toLowerCase();
-  const secure = secureEnv === "true" || secureEnv === "1" || port === 465;
-
-  return { host, port, secure, auth: { user, pass }, from, to };
+function contactInbox(): string | null {
+  return process.env.CONTACT_MAIL_TO?.trim() || null;
 }
 
 function resolvedSubjectLine(payload: ContactEmailPayload): string {
@@ -59,12 +23,12 @@ function resolvedSubjectLine(payload: ContactEmailPayload): string {
 }
 
 export function isContactMailConfigured(): boolean {
-  return !("error" in getSmtpConfig());
+  return isMailConfigured() && contactInbox() !== null;
 }
 
 export async function sendContactEmail(payload: ContactEmailPayload): Promise<void> {
-  const cfg = getSmtpConfig();
-  if ("error" in cfg) {
+  const to = contactInbox();
+  if (!to || !isMailConfigured()) {
     throw new Error("SMTP is not configured.");
   }
 
@@ -86,16 +50,8 @@ export async function sendContactEmail(payload: ContactEmailPayload): Promise<vo
     `<pre style="white-space:pre-wrap;font-family:inherit">${escapeHtml(payload.message)}</pre>`,
   ].join("");
 
-  const transporter = nodemailer.createTransport({
-    host: cfg.host,
-    port: cfg.port,
-    secure: cfg.secure,
-    auth: cfg.auth,
-  });
-
-  await transporter.sendMail({
-    from: cfg.from,
-    to: cfg.to,
+  await sendMail({
+    to,
     replyTo: payload.email,
     subject: `[NSI Contact] ${subjectLine}`,
     text,

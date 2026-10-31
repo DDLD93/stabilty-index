@@ -1,19 +1,10 @@
 import { randomInt } from "node:crypto";
 import type { PrismaClient } from "@prisma/client";
 
-const CODE_LEN = 6;
+import { REFERRER_CODE_LENGTH as CODE_LEN } from "@/lib/referrerCode";
 
-export function normalizeRefQueryParam(ref: string | null | undefined): string | null {
-  if (ref == null || typeof ref !== "string") return null;
-  const trimmed = ref.trim();
-  if (!trimmed) return null;
-  if (!/^\d{1,6}$/.test(trimmed)) return null;
-  return trimmed.padStart(CODE_LEN, "0");
-}
-
-export function isValidReferrerCodeFormat(code: string): boolean {
-  return /^\d{6}$/.test(code);
-}
+// Re-exported so existing server imports keep working; client code imports lib/referrerCode directly.
+export { normalizeRefQueryParam, isValidReferrerCodeFormat } from "@/lib/referrerCode";
 
 /** Cryptographic 6-digit string (leading zeros). Caller must ensure uniqueness in DB. */
 export function randomSixDigitCode(): string {
