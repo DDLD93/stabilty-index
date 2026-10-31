@@ -80,7 +80,7 @@ There are eight 2026 categories:
   - the method facts above;
   - the logo files.
 - **Not confirmed, so never invent or show them:**
-  - social media accounts (the URLs in `lib/metadata.ts` are placeholders);
+  - social media accounts beyond those already in the live footer (X @Nigeria_NSI, Instagram nigeriastabilityindex, TikTok @nigeria_nsi, kept as they were); the URLs in `lib/metadata.ts` are placeholders;
   - named team or editorial board;
   - partners and sponsors;
   - press coverage;

@@ -1,0 +1,510 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-31T11:41:37.055Z",
+  "title": "Design System: Nigeria Stability Index",
+  "extensions": {
+    "colorMeta": {
+      "ground": {
+        "role": "neutral",
+        "displayName": "Ground White",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(60% 0.000 89.9)",
+          "oklch(72% 0.000 89.9)",
+          "oklch(84% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Survey Paper",
+        "canonical": "#f4f6f4",
+        "oklch": "oklch(97.1% 0.003 145.5)",
+        "tonalRamp": [
+          "oklch(15% 0.003 145.5)",
+          "oklch(26% 0.003 145.5)",
+          "oklch(37% 0.003 145.5)",
+          "oklch(48% 0.003 145.5)",
+          "oklch(60% 0.003 145.5)",
+          "oklch(72% 0.003 145.5)",
+          "oklch(84% 0.003 145.5)",
+          "oklch(95% 0.003 145.5)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Bureau Ink",
+        "canonical": "#14211b",
+        "oklch": "oklch(23.3% 0.022 164.3)",
+        "tonalRamp": [
+          "oklch(15% 0.008 164.3)",
+          "oklch(26% 0.015 164.3)",
+          "oklch(37% 0.021 164.3)",
+          "oklch(48% 0.022 164.3)",
+          "oklch(60% 0.022 164.3)",
+          "oklch(72% 0.016 164.3)",
+          "oklch(84% 0.009 164.3)",
+          "oklch(95% 0.005 164.3)"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Second Ink",
+        "canonical": "#45534c",
+        "oklch": "oklch(42.8% 0.021 163.8)",
+        "tonalRamp": [
+          "oklch(15% 0.008 163.8)",
+          "oklch(26% 0.014 163.8)",
+          "oklch(37% 0.020 163.8)",
+          "oklch(48% 0.021 163.8)",
+          "oklch(60% 0.021 163.8)",
+          "oklch(72% 0.015 163.8)",
+          "oklch(84% 0.009 163.8)",
+          "oklch(95% 0.005 163.8)"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Third Ink",
+        "canonical": "#5c6a63",
+        "oklch": "oklch(51.0% 0.020 164.1)",
+        "tonalRamp": [
+          "oklch(15% 0.008 164.1)",
+          "oklch(26% 0.014 164.1)",
+          "oklch(37% 0.019 164.1)",
+          "oklch(48% 0.020 164.1)",
+          "oklch(60% 0.020 164.1)",
+          "oklch(72% 0.015 164.1)",
+          "oklch(84% 0.008 164.1)",
+          "oklch(95% 0.005 164.1)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#dde3df",
+        "oklch": "oklch(91.0% 0.008 157.1)",
+        "tonalRamp": [
+          "oklch(15% 0.008 157.1)",
+          "oklch(26% 0.008 157.1)",
+          "oklch(37% 0.008 157.1)",
+          "oklch(48% 0.008 157.1)",
+          "oklch(60% 0.008 157.1)",
+          "oklch(72% 0.008 157.1)",
+          "oklch(84% 0.008 157.1)",
+          "oklch(95% 0.008 157.1)"
+        ]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Firm Line",
+        "canonical": "#b9c4be",
+        "oklch": "oklch(81.0% 0.015 162.4)",
+        "tonalRamp": [
+          "oklch(15% 0.006 162.4)",
+          "oklch(26% 0.010 162.4)",
+          "oklch(37% 0.014 162.4)",
+          "oklch(48% 0.015 162.4)",
+          "oklch(60% 0.015 162.4)",
+          "oklch(72% 0.011 162.4)",
+          "oklch(84% 0.006 162.4)",
+          "oklch(95% 0.004 162.4)"
+        ]
+      },
+      "brand": {
+        "role": "primary",
+        "displayName": "NSI Civic Green",
+        "canonical": "#1d6b45",
+        "oklch": "oklch(47.1% 0.097 157.6)",
+        "tonalRamp": [
+          "oklch(15% 0.038 157.6)",
+          "oklch(26% 0.066 157.6)",
+          "oklch(37% 0.093 157.6)",
+          "oklch(48% 0.097 157.6)",
+          "oklch(60% 0.097 157.6)",
+          "oklch(72% 0.071 157.6)",
+          "oklch(84% 0.040 157.6)",
+          "oklch(95% 0.024 157.6)"
+        ]
+      },
+      "brand-strong": {
+        "role": "primary",
+        "displayName": "Deep Civic Green",
+        "canonical": "#154f33",
+        "oklch": "oklch(38.2% 0.077 158.2)",
+        "tonalRamp": [
+          "oklch(15% 0.030 158.2)",
+          "oklch(26% 0.052 158.2)",
+          "oklch(37% 0.074 158.2)",
+          "oklch(48% 0.077 158.2)",
+          "oklch(60% 0.077 158.2)",
+          "oklch(72% 0.056 158.2)",
+          "oklch(84% 0.032 158.2)",
+          "oklch(95% 0.019 158.2)"
+        ]
+      },
+      "brand-tint": {
+        "role": "primary",
+        "displayName": "Pale Ledger Green",
+        "canonical": "#e8f2ec",
+        "oklch": "oklch(95.2% 0.013 159.9)",
+        "tonalRamp": [
+          "oklch(15% 0.005 159.9)",
+          "oklch(26% 0.009 159.9)",
+          "oklch(37% 0.013 159.9)",
+          "oklch(48% 0.013 159.9)",
+          "oklch(60% 0.013 159.9)",
+          "oklch(72% 0.010 159.9)",
+          "oklch(84% 0.006 159.9)",
+          "oklch(95% 0.003 159.9)"
+        ]
+      },
+      "data": {
+        "role": "secondary",
+        "displayName": "Chart Green",
+        "canonical": "#157a4c",
+        "oklch": "oklch(51.3% 0.114 157.3)",
+        "tonalRamp": [
+          "oklch(15% 0.045 157.3)",
+          "oklch(26% 0.077 157.3)",
+          "oklch(37% 0.110 157.3)",
+          "oklch(48% 0.114 157.3)",
+          "oklch(60% 0.114 157.3)",
+          "oklch(72% 0.083 157.3)",
+          "oklch(84% 0.048 157.3)",
+          "oklch(95% 0.029 157.3)"
+        ]
+      },
+      "data-track": {
+        "role": "secondary",
+        "displayName": "Bar Track",
+        "canonical": "#e3efe8",
+        "oklch": "oklch(94.1% 0.016 160.6)",
+        "tonalRamp": [
+          "oklch(15% 0.006 160.6)",
+          "oklch(26% 0.011 160.6)",
+          "oklch(37% 0.015 160.6)",
+          "oklch(48% 0.016 160.6)",
+          "oklch(60% 0.016 160.6)",
+          "oklch(72% 0.011 160.6)",
+          "oklch(84% 0.007 160.6)",
+          "oklch(95% 0.004 160.6)"
+        ]
+      },
+      "gold": {
+        "role": "tertiary",
+        "displayName": "Honors Gold",
+        "canonical": "#d9a42b",
+        "oklch": "oklch(74.9% 0.142 82.9)",
+        "tonalRamp": [
+          "oklch(15% 0.055 82.9)",
+          "oklch(26% 0.096 82.9)",
+          "oklch(37% 0.136 82.9)",
+          "oklch(48% 0.142 82.9)",
+          "oklch(60% 0.142 82.9)",
+          "oklch(72% 0.103 82.9)",
+          "oklch(84% 0.059 82.9)",
+          "oklch(95% 0.035 82.9)"
+        ]
+      },
+      "gold-ink": {
+        "role": "tertiary",
+        "displayName": "Honors Gold Ink",
+        "canonical": "#835e0e",
+        "oklch": "oklch(50.8% 0.100 80.2)",
+        "tonalRamp": [
+          "oklch(15% 0.039 80.2)",
+          "oklch(26% 0.068 80.2)",
+          "oklch(37% 0.096 80.2)",
+          "oklch(48% 0.100 80.2)",
+          "oklch(60% 0.100 80.2)",
+          "oklch(72% 0.073 80.2)",
+          "oklch(84% 0.042 80.2)",
+          "oklch(95% 0.025 80.2)"
+        ]
+      },
+      "gold-tint": {
+        "role": "tertiary",
+        "displayName": "Honors Gold Wash",
+        "canonical": "#fbf3df",
+        "oklch": "oklch(96.5% 0.028 88.7)",
+        "tonalRamp": [
+          "oklch(15% 0.011 88.7)",
+          "oklch(26% 0.019 88.7)",
+          "oklch(37% 0.027 88.7)",
+          "oklch(48% 0.028 88.7)",
+          "oklch(60% 0.028 88.7)",
+          "oklch(72% 0.020 88.7)",
+          "oklch(84% 0.012 88.7)",
+          "oklch(95% 0.007 88.7)"
+        ]
+      },
+      "negative": {
+        "role": "error",
+        "displayName": "Alert Red",
+        "canonical": "#a33a1f",
+        "oklch": "oklch(49.4% 0.145 35.3)",
+        "tonalRamp": [
+          "oklch(15% 0.056 35.3)",
+          "oklch(26% 0.098 35.3)",
+          "oklch(37% 0.139 35.3)",
+          "oklch(48% 0.145 35.3)",
+          "oklch(60% 0.145 35.3)",
+          "oklch(72% 0.105 35.3)",
+          "oklch(84% 0.060 35.3)",
+          "oklch(95% 0.036 35.3)"
+        ]
+      },
+      "negative-tint": {
+        "role": "error",
+        "displayName": "Alert Wash",
+        "canonical": "#fbebe6",
+        "oklch": "oklch(95.1% 0.019 38.2)",
+        "tonalRamp": [
+          "oklch(15% 0.007 38.2)",
+          "oklch(26% 0.013 38.2)",
+          "oklch(37% 0.018 38.2)",
+          "oklch(48% 0.019 38.2)",
+          "oklch(60% 0.019 38.2)",
+          "oklch(72% 0.014 38.2)",
+          "oklch(84% 0.008 38.2)",
+          "oklch(95% 0.005 38.2)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The one h1 per page: PageHeader, home and Honors heroes."
+      },
+      "h2": {
+        "displayName": "Section Heading",
+        "purpose": "Section headings."
+      },
+      "h3": {
+        "displayName": "Sub-heading",
+        "purpose": "Sub-sections, timeline steps, empty-state titles."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "One-paragraph ledes; \"out of 10\"; pillar scores in tables."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text and form labels; 42rem reading measure."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Hints, notes, footer and nav links."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Edition lines, axis labels, captions and photo credits; tabular."
+      },
+      "score-figure": {
+        "displayName": "Score Figure",
+        "purpose": "The headline score in the edition explorer (68px mobile, 84px from sm; 56px on report pages)."
+      }
+    },
+    "shadows": [
+      {
+        "name": "overlay",
+        "value": "0 18px 40px -16px rgb(20 33 27 / 0.32), 0 2px 6px rgb(20 33 27 / 0.08)",
+        "purpose": "The <dialog> mobile menu only, over a 40% ink backdrop. Nothing else on the public site casts a shadow."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-strong",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Default easing for every state transition."
+      },
+      {
+        "name": "feedback",
+        "value": "150ms",
+        "purpose": "Button colour and press (scale 0.98), fields, nav colour, chart crosshair and points."
+      },
+      {
+        "name": "panel",
+        "value": "200ms",
+        "purpose": "Nav underline scale-in and the mobile menu slide (24px from the right)."
+      },
+      {
+        "name": "section-reveal",
+        "value": "view-timeline; translateY(14px) to none, opacity 0 to 1, entry 0%–55%, children staggered 6%",
+        "purpose": "The one scroll moment (.reveal / .reveal-stagger). It runs only where animation-timeline: view() is supported and only under prefers-reduced-motion: no-preference. Content is visible by default."
+      },
+      {
+        "name": "chart-reveal",
+        "value": "clip-path inset(0 100% 0 0) to inset(0), 0.9s ease-out-strong, 0.1s delay",
+        "purpose": "The trend line draws once. Disabled under reduced motion and in print."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ],
+    "scope": {
+      "governs": [
+        "app/(site)/**",
+        "app/auth/**",
+        "components/site",
+        "components/ui",
+        "components/data",
+        "components/publication",
+        "components/honors",
+        "components/public"
+      ],
+      "excluded": "app/admin/** keeps its previous look via the admin-scope wrapper (Geist/Playfair, --nsi-* variables, admin-* utilities). Not part of this system."
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main action on a page or form: take the survey, submit, continue.",
+      "html": "<button class=\"ds-btn-primary\">Take the September survey</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border-radius:var(--radius-control,6px);font-family: var(--font-body, 'Source Sans 3 Variable'), ui-sans-serif, system-ui, sans-serif;font-size:1.0625rem;font-weight:600;border:0;cursor:pointer;transition:background-color 150ms var(--ease-out-strong),border-color 150ms var(--ease-out-strong),color 150ms var(--ease-out-strong),transform 150ms var(--ease-out-strong);background:var(--color-brand,#1d6b45);color:#fff;} .ds-btn-primary:hover{background:var(--color-brand-strong,#154f33);} .ds-btn-primary:focus-visible{outline:3px solid var(--color-brand,#1d6b45);outline-offset:2px;} .ds-btn-primary:active{transform:scale(0.98);}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "The second action beside a primary one, such as method links.",
+      "html": "<button class=\"ds-btn-secondary\">How the index is made</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border-radius:var(--radius-control,6px);font-family: var(--font-body, 'Source Sans 3 Variable'), ui-sans-serif, system-ui, sans-serif;font-size:1.0625rem;font-weight:600;border:0;cursor:pointer;transition:background-color 150ms var(--ease-out-strong),border-color 150ms var(--ease-out-strong),color 150ms var(--ease-out-strong),transform 150ms var(--ease-out-strong);background:var(--color-ground,#fff);color:var(--color-ink,#14211b);border:1px solid var(--color-line-strong,#b9c4be);} .ds-btn-secondary:hover{border-color:var(--color-ink,#14211b);background:var(--color-surface,#f4f6f4);} .ds-btn-secondary:focus-visible{outline:3px solid var(--color-brand,#1d6b45);outline-offset:2px;} .ds-btn-secondary:active{transform:scale(0.98);}"
+    },
+    {
+      "name": "Quiet Button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "A text action with an underline, such as \"Read the September report\".",
+      "html": "<a href=\"#\" class=\"ds-btn-quiet\">Read the September 2026 report</a>",
+      "css": ".ds-btn-quiet{display:inline-flex;align-items:center;min-height:44px;font-family: var(--font-body, 'Source Sans 3 Variable'), ui-sans-serif, system-ui, sans-serif;font-weight:600;color:var(--color-brand,#1d6b45);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:0.22em;} .ds-btn-quiet:hover{text-decoration-thickness:2px;} .ds-btn-quiet:focus-visible{outline:3px solid var(--color-brand,#1d6b45);outline-offset:2px;}"
+    },
+    {
+      "name": "Gold Button",
+      "kind": "button",
+      "refersTo": "button-gold",
+      "description": "Honors actions only: nominate, vote, see the categories.",
+      "html": "<button class=\"ds-btn-gold\">See the eight categories</button>",
+      "css": ".ds-btn-gold{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border-radius:var(--radius-control,6px);font-family: var(--font-body, 'Source Sans 3 Variable'), ui-sans-serif, system-ui, sans-serif;font-size:1.0625rem;font-weight:600;border:0;cursor:pointer;transition:background-color 150ms var(--ease-out-strong),border-color 150ms var(--ease-out-strong),color 150ms var(--ease-out-strong),transform 150ms var(--ease-out-strong);background:var(--color-gold,#d9a42b);color:var(--color-ink,#14211b);} .ds-btn-gold:hover{background:var(--color-gold-strong,#c8931f);} .ds-btn-gold:focus-visible{outline:3px solid var(--color-brand,#1d6b45);outline-offset:2px;} .ds-btn-gold:active{transform:scale(0.98);}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "The Field pattern: label, hint, then the control. Errors come before the control.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-f1\">Your state <span class=\"ds-field-opt\">(optional)</span></label><p class=\"ds-field-hint\">We use this only to group answers by state.</p><input id=\"ds-f1\" class=\"ds-input\" placeholder=\"For example, Kano\"></div>",
+      "css": ".ds-field{display:flex;flex-direction:column;font-family: var(--font-body, 'Source Sans 3 Variable'), ui-sans-serif, system-ui, sans-serif;max-width:28rem;} .ds-field-label{font-size:1.0625rem;font-weight:600;color:var(--color-ink,#14211b);} .ds-field-opt{font-weight:400;color:var(--color-ink-3,#5c6a63);} .ds-field-hint{margin:4px 0 0;font-size:0.9375rem;line-height:1.55;color:var(--color-ink-2,#45534c);} .ds-input{margin-top:8px;display:block;width:100%;box-sizing:border-box;min-height:48px;padding:10px 14px;border:1px solid var(--color-line-strong,#b9c4be);border-radius:var(--radius-control,6px);background:var(--color-ground,#fff);color:var(--color-ink,#14211b);font:inherit;font-size:1.0625rem;transition:border-color 150ms,box-shadow 150ms;} .ds-input::placeholder{color:var(--color-ink-3,#5c6a63);} .ds-input:focus{outline:none;border-color:var(--color-brand,#1d6b45);box-shadow:0 0 0 3px rgb(29 107 69 / 0.2);}"
+    },
+    {
+      "name": "Header Navigation",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Sticky header links with a brand underline that scales in on hover and on the current page.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\" class=\"ds-nav-link\" aria-current=\"page\">Reports</a><a href=\"#\" class=\"ds-nav-link\">Spotlights</a><a href=\"#\" class=\"ds-nav-link\">Honors 2026</a><a href=\"#\" class=\"ds-nav-link\">Methodology</a><a href=\"#\" class=\"ds-nav-link\">About</a></nav>",
+      "css": ".ds-nav{display:flex;gap:4px;padding:0 8px;border-bottom:1px solid var(--color-line,#dde3df);background:var(--color-ground,#fff);} .ds-nav-link{position:relative;display:flex;align-items:center;min-height:44px;padding:0 12px;font-family: var(--font-body, 'Source Sans 3 Variable'), ui-sans-serif, system-ui, sans-serif;font-size:0.9375rem;font-weight:600;color:var(--color-ink-2,#45534c);text-decoration:none;transition:color 150ms;} .ds-nav-link::after{content:\"\";position:absolute;left:12px;right:12px;bottom:6px;height:2px;background:var(--color-brand,#1d6b45);transform:scaleX(0);transform-origin:left;transition:transform 200ms var(--ease-out-strong);} .ds-nav-link:hover,.ds-nav-link[aria-current=page]{color:var(--color-ink,#14211b);} .ds-nav-link:hover::after,.ds-nav-link[aria-current=page]::after{transform:scaleX(1);} .ds-nav-link:focus-visible{outline:3px solid var(--color-brand,#1d6b45);outline-offset:2px;}"
+    },
+    {
+      "name": "Pillar Row with Score Bar",
+      "kind": "custom",
+      "refersTo": "score-bar",
+      "description": "One PillarTable row: pillar, a bar on the 1–5 scale with the previous-edition tick, the score of 5 and the change in arrow plus words.",
+      "html": "<div class=\"ds-pillar\"><div class=\"ds-pillar-name\">Security<span class=\"ds-pillar-note\"><span class=\"ds-muted\">Editors’ note: </span>Incidents fell in the north-west</span></div><div class=\"ds-bar\" aria-hidden=\"true\"><div class=\"ds-bar-fill\" style=\"width:57%\"></div><div class=\"ds-bar-tick\" style=\"left:45%\"></div></div><div class=\"ds-pillar-score\">3.3</div><div class=\"ds-change\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 7h10v10\"/><path d=\"M7 17 17 7\"/></svg>up 0.5</div></div>",
+      "css": ".ds-pillar{display:grid;grid-template-columns:minmax(0,1fr) 38% auto auto;gap:16px 24px;align-items:center;padding:16px 0;border-bottom:1px solid var(--color-line,#dde3df);font-family: var(--font-body, 'Source Sans 3 Variable'), ui-sans-serif, system-ui, sans-serif;color:var(--color-ink,#14211b);} .ds-pillar-name{font-weight:600;} .ds-pillar-note{display:block;margin-top:4px;font-size:0.9375rem;font-weight:400;color:var(--color-ink-2,#45534c);} .ds-muted{color:var(--color-ink-3,#5c6a63);} .ds-bar{position:relative;height:10px;background:var(--color-data-track,#e3efe8);border-radius:0 4px 4px 0;} .ds-bar-fill{position:absolute;top:0;bottom:0;left:0;background:var(--color-data,#157a4c);border-radius:0 4px 4px 0;} .ds-bar-tick{position:absolute;top:-4px;bottom:-4px;width:2px;transform:translateX(-50%);background:var(--color-ink,#14211b);} .ds-pillar-score{font-size:1.375rem;font-weight:600;font-variant-numeric:tabular-nums;text-align:right;} .ds-change{display:inline-flex;align-items:center;gap:4px;font-size:0.9375rem;color:var(--color-brand,#1d6b45);font-variant-numeric:tabular-nums;}"
+    },
+    {
+      "name": "Score Lockup",
+      "kind": "custom",
+      "refersTo": "score-figure",
+      "description": "The edition explorer headline: a meta line, the sans score figure out of 10, then the change.",
+      "html": "<div class=\"ds-lockup\"><p class=\"ds-lockup-meta\">September 2026 · Edition 9 · Published 11 October 2026 · Latest</p><p class=\"ds-lockup-score\"><span class=\"ds-lockup-fig\">4.1</span><span class=\"ds-lockup-of\">out of 10</span></p><p class=\"ds-lockup-change\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 7h10v10\"/><path d=\"M7 17 17 7\"/></svg>up 0.3 from August</p></div>",
+      "css": ".ds-lockup{border-top:1px solid var(--color-line,#dde3df);padding-top:24px;font-family: var(--font-body, 'Source Sans 3 Variable'), ui-sans-serif, system-ui, sans-serif;color:var(--color-ink,#14211b);} .ds-lockup-meta{margin:0;font-size:0.875rem;color:var(--color-ink-3,#5c6a63);font-variant-numeric:tabular-nums;} .ds-lockup-score{margin:8px 0 0;display:flex;align-items:baseline;gap:12px;} .ds-lockup-fig{font-size:5.25rem;line-height:1;font-weight:600;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;} .ds-lockup-of{font-size:1.25rem;color:var(--color-ink-2,#45534c);} .ds-lockup-change{margin:12px 0 0;display:inline-flex;align-items:center;gap:4px;color:var(--color-brand,#1d6b45);font-variant-numeric:tabular-nums;}"
+    },
+    {
+      "name": "Honors Outcome Panel",
+      "kind": "card",
+      "refersTo": "honors-outcome-panel",
+      "description": "The confirmation after a nomination or vote, and the winner block: a 4px gold top edge on a gold wash, square-cornered.",
+      "html": "<div class=\"ds-honors-panel\"><h3 class=\"ds-honors-title\">Your vote is counted</h3><p class=\"ds-honors-text\">Winners are published when voting closes. Ceremony date: To be announced.</p></div>",
+      "css": ".ds-honors-panel{max-width:40rem;border-top:4px solid var(--color-gold,#d9a42b);background:var(--color-gold-tint,#fbf3df);padding:32px;font-family: var(--font-body, 'Source Sans 3 Variable'), ui-sans-serif, system-ui, sans-serif;color:var(--color-ink,#14211b);} .ds-honors-title{margin:0;font-family: var(--font-display, 'Source Serif 4 Variable'), ui-serif, Georgia, serif;font-weight:600;font-size:1.5rem;line-height:1.25;} .ds-honors-text{margin:12px 0 0;color:var(--color-ink-2,#45534c);line-height:1.65;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Statistics Bureau's Front Page",
+    "overview": "The site reads like a respected public-interest data publication, in the register of Stears, Our World in Data and the Mo Ibrahim Index (IIAG). The user chose that standard deliberately. The number is the hero. Each edition's score sits in a large sans figure with its scale (\"out of 10\"), its edition and its publish date right beside it. Every chart sits on a fixed, labelled axis. Pages are white with pale green-grey bands. Ink is a deep green-black, and NSI green is the colour of action, links and the single data series. Gold belongs to Honors. Pages use conventional, credible patterns (breadcrumbs, real tables, framed charts, plain forms) because that is what makes the figure citable.\n\nDensity follows the reader. Persuade pages (home, about, Honors landing) use generous section rhythm and credited documentary photographs. Read pages (reports, archive, spotlights) narrow to a reading column with a contents rail. Operate pages (survey, nomination, vote) ask one question at a time with large, honest targets. Depth comes from tone and 1px rules, not from shadows.",
+    "keyCharacteristics": [
+      "White ground with #f4f6f4 alternate bands; a full-bleed ink band only behind a photograph.",
+      "Source Serif 4 for headings, Source Sans 3 for everything else, including the score figures.",
+      "One green data series on a fixed scale: 0–10 overall, 1–5 for pillars.",
+      "1px rules for tables, fields, chart frames and section edges.",
+      "A 6px radius on controls only; photographs and panels stay square.",
+      "Every photograph carries a visible credit line.",
+      "Motion is restrained: 150–200ms feedback, one scroll reveal, one chart draw, and none of it under reduced motion."
+    ],
+    "rules": [
+      {
+        "name": "The Gold Is Earned Rule",
+        "body": "Gold appears only on Honors surfaces and on the home page's Honors band. It never appears as an action colour elsewhere, and never as #d9a42b text on white.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Series Rule",
+        "body": "A chart carries one data colour (data) on a fixed axis. Change is shown with an arrow and words. Colour is never the only signal.",
+        "section": "colors"
+      },
+      {
+        "name": "The Figures Are Sans Rule",
+        "body": "Scores, changes, axis ticks and table numbers are set in Source Sans 3 with tabular numerals, and always carry their scale (/10 overall, /5 pillars).",
+        "section": "typography"
+      },
+      {
+        "name": "The No Eyebrow Rule",
+        "body": "A heading is not preceded by a small uppercase kicker. The breadcrumb, the meta line or the Honors gold rule does that job. The public site sets no uppercase tracked labels.",
+        "section": "typography"
+      },
+      {
+        "name": "The Ruled, Not Lifted Rule",
+        "body": "Cards, panels, tables and charts are separated with 1px hairlines or a surface band. They never get a shadow. A 1px rule is this world's own device; the house-style ban on borders does not apply here.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do label every score with its scale: \"4.1 out of 10\" overall, \"of 5\" for pillars. Keep axes fixed at 0–10 and 1–5.",
+      "Do put the edition, period and publish date in a meta line next to any figure, with the method one link away.",
+      "Do credit every photograph with creator and licence through Figure or PhotoCredit.",
+      "Do keep touch targets at 44px or more, fields at 48px or more and survey scale options at 56px or more.",
+      "Do show change with an arrow and words together.",
+      "Do use 1px hairlines for tables, fields, chart frames and section edges. They are this world's native rule.",
+      "Do keep feedback motion at 150–200ms on ease-out-strong (cubic-bezier(0.23, 1, 0.32, 1)), and gate hover styles to fine pointers.",
+      "Do write in plain, serious Nigerian English, and show \"To be announced\" for any Honors date not yet set."
+    ],
+    "donts": [
+      "Don't use gold outside Honors, or set #d9a42b as text on white.",
+      "Don't add shadows to cards, panels or charts. The overlay shadow is only for the dialog.",
+      "Don't put an uppercase kicker or eyebrow above a heading.",
+      "Don't present a found photograph as a respondent, nominee or honoree, or invent quotes, partners, statistics or \"live\" signals.",
+      "Don't use video, glass or blur panels, gradient-and-glow heroes, or gauges that decorate rather than measure.",
+      "Don't add motion beyond the one view-timeline section reveal and the one chart clip reveal on Read and Operate pages. Never animate content into visibility: it must be visible by default, and all motion stops under `prefers-reduced-motion`.",
+      "Don't round photographs or panels. The 6px radius is for controls.",
+      "Don't use the admin `--nsi-*` variables or `admin-*` classes on public pages."
+    ]
+  }
+}

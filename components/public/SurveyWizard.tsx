@@ -286,7 +286,7 @@ export function SurveyWizard() {
             aria-valuenow={Math.min(step, TOTAL_STEPS)}
           >
             <div
-              className="h-full bg-brand transition-[width] duration-300 ease-[var(--ease-out-strong)]"
+              className="h-full bg-brand transition-[width] duration-200 ease-[var(--ease-out-strong)]"
               style={{ width: `${progress * 100}%` }}
             />
           </div>
@@ -296,7 +296,7 @@ export function SurveyWizard() {
             </p>
           )}
           {refFromUrl && refCheckDone && !refLabel && (
-            <p className="mt-3 text-small text-gold-ink">
+            <p className="mt-3 text-small font-semibold text-ink-2">
               This referral link isn’t active any more. You can still take the survey; it just won’t be credited to a
               field agent.
             </p>

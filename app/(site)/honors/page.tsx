@@ -166,7 +166,7 @@ export default async function HonorsPage() {
                         alt=""
                         fill
                         sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 88px"
-                        className="object-cover transition-transform duration-500 ease-[var(--ease-out-strong)] [@media(hover:hover)]:group-hover:scale-[1.03]"
+                        className="object-cover transition-transform duration-200 ease-[var(--ease-out-strong)] [@media(hover:hover)]:group-hover:scale-[1.03]"
                       />
                     </span>
                     <span className="font-serif text-h3 font-semibold group-hover:underline group-hover:underline-offset-[0.18em] sm:mt-4">

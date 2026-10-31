@@ -17,7 +17,7 @@ export const buttonVariants = cva(
           "border border-line-strong bg-ground text-ink [@media(hover:hover)_and_(pointer:fine)]:hover:border-ink [@media(hover:hover)_and_(pointer:fine)]:hover:bg-surface",
         quiet:
           "text-brand underline decoration-1 underline-offset-[0.22em] [@media(hover:hover)_and_(pointer:fine)]:hover:decoration-2 px-0!",
-        gold: "bg-gold text-ink [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[#c8931f]",
+        gold: "bg-gold text-ink [@media(hover:hover)_and_(pointer:fine)]:hover:bg-gold-strong",
         inverse:
           "bg-ground text-ink [@media(hover:hover)_and_(pointer:fine)]:hover:bg-brand-tint",
       },
