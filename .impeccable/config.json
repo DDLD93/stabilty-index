@@ -11,6 +11,33 @@
         ],
         "createdAt": "2026-10-31T11:26:05.397Z",
         "reason": "Claude: decision-round sketch for the unchosen 'Signwriter's Board' direction; a fixture under .impeccable/mocks, never shipped"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/assigned.html"
+        ],
+        "createdAt": "2026-10-31T11:43:39.529Z",
+        "reason": "Claude: decision-round sketch from before DESIGN.md existed (fonts were part of each candidate direction); fixture under .impeccable/mocks, never shipped"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/model-pick.html"
+        ],
+        "createdAt": "2026-10-31T11:43:39.787Z",
+        "reason": "Claude: decision-round sketch from before DESIGN.md existed (fonts were part of each candidate direction); fixture under .impeccable/mocks, never shipped"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/canon.html"
+        ],
+        "createdAt": "2026-10-31T11:43:40.031Z",
+        "reason": "Claude: decision-round sketch from before DESIGN.md existed (fonts were part of each candidate direction); fixture under .impeccable/mocks, never shipped"
       }
     ]
   }
