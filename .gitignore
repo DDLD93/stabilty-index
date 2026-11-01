@@ -42,8 +42,6 @@ yarn-error.log*
 next-env.d.ts
 
 
-# prisma
-prisma/migrations
 # agent skills: restore with `npx skills experimental_install` (skills-lock.json) and `npx impeccable install`
 .agents/
 .claude/skills/*
