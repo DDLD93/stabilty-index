@@ -403,7 +403,7 @@
       "kind": "button",
       "refersTo": "button-gold",
       "description": "Honors actions only: nominate, vote, see the categories.",
-      "html": "<button class=\"ds-btn-gold\">See the eight categories</button>",
+      "html": "<button class=\"ds-btn-gold\">See the ten categories</button>",
       "css": ".ds-btn-gold{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border-radius:var(--radius-control,6px);font-family: var(--font-body, 'Source Sans 3 Variable'), ui-sans-serif, system-ui, sans-serif;font-size:1.0625rem;font-weight:600;border:0;cursor:pointer;transition:background-color 150ms var(--ease-out-strong),border-color 150ms var(--ease-out-strong),color 150ms var(--ease-out-strong),transform 150ms var(--ease-out-strong);background:var(--color-gold,#d9a42b);color:var(--color-ink,#14211b);} .ds-btn-gold:hover{background:var(--color-gold-strong,#c8931f);} .ds-btn-gold:focus-visible{outline:3px solid var(--color-brand,#1d6b45);outline-offset:2px;} .ds-btn-gold:active{transform:scale(0.98);}"
     },
     {

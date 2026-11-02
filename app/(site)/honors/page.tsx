@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   ...defaultMetadata,
   title: "NSI Honors 2026",
   description:
-    "Eight awards for the institutions, communities and people who made a real difference to Nigerians in 2026. Nominated by the public, decided by a verified public vote.",
+    "Ten awards for the institutions, communities and people who made a real difference to Nigerians in 2026. Nominated by the public, decided by a verified public vote.",
   alternates: { canonical: "/honors" },
 };
 
@@ -31,6 +31,13 @@ const STAGE_TEXT: Record<string, string> = {
   vote: "Anyone can vote for one finalist per category. Votes count once they are confirmed by email, one per email address per category.",
   announce: "The finalist with the most verified votes in each category wins. Results are published here with a short citation for each winner.",
 };
+
+const COUNT_WORDS = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+
+/** "ten" for 10, so the heading follows whichever categories are live; numerals past twelve. */
+function countWord(n: number): string {
+  return COUNT_WORDS[n] ?? String(n);
+}
 
 const FAQ = [
   {
@@ -63,6 +70,7 @@ export default async function HonorsPage() {
   const votingOpen = edition ? isVotingOpen(edition) : false;
   const winners = edition && !isDraft ? await getPublishedWinners(edition.id) : [];
   const title = edition?.title ?? "NSI Honors 2026";
+  const categories = edition?.categories ?? [];
 
   const phaseLine = isDraft
     ? "Nominations open soon. Dates will be announced here."
@@ -110,7 +118,7 @@ export default async function HonorsPage() {
             <GoldRule />
             <h1 className="mt-6 text-display text-white">{title}</h1>
             <p className="mt-5 max-w-2xl text-lead text-white/85">
-              Eight awards for the institutions, communities and people who made a real difference to Nigerians in
+              Ten awards for the institutions, communities and people who made a real difference to Nigerians in
               2026. You nominate; a verified public vote decides.
             </p>
             <p className="mt-6 font-semibold text-gold">{phaseLine}</p>
@@ -148,14 +156,16 @@ export default async function HonorsPage() {
       <Section id="categories" className="scroll-mt-20">
         <Container>
           <div className="max-w-2xl">
-            <h2 className="text-h2">The eight categories</h2>
+            <h2 className="text-h2">
+              {categories.length === 1 ? "The category" : `The ${countWord(categories.length)} categories`}
+            </h2>
             <p className="mt-4 text-lead text-ink-2">
               Each award recognises work done in 2026, backed by evidence. Choose a category to read what it looks for
               and who can be nominated.
             </p>
           </div>
-          <ul className="reveal-stagger mt-10 grid gap-x-8 gap-y-6 sm:mt-12 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-4">
-            {(edition?.categories ?? []).map((c) => {
+          <ul className="reveal-stagger mt-10 grid gap-x-8 gap-y-6 sm:mt-12 sm:grid-cols-2 sm:gap-y-12 xl:grid-cols-5">
+            {categories.map((c) => {
               const photo = categoryPhoto(c.slug);
               return (
                 <li key={c.id}>
@@ -165,7 +175,7 @@ export default async function HonorsPage() {
                         src={photo.src}
                         alt=""
                         fill
-                        sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 88px"
+                        sizes="(min-width: 1280px) 18vw, (min-width: 640px) 45vw, 88px"
                         className="object-cover transition-transform duration-200 ease-[var(--ease-out-strong)] [@media(hover:hover)]:group-hover:scale-[1.03]"
                       />
                     </span>

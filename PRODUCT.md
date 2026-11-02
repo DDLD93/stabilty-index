@@ -28,15 +28,17 @@ Each snapshot combines anonymous public check-ins with editorial review of verif
 3. Verified members of the public vote, and the vote decides the winner. Admins only void fraudulent votes or settle ties, and record the reason.
 4. Winners are published.
 
-There are eight 2026 categories:
-- Public Institution of 2026
-- Education Impact of 2026
-- Healthcare Impact of 2026
-- Infrastructure Impact of 2026
-- Community Development of 2026
-- Digital Innovation of 2026
-- Agricultural Impact of 2026
-- Security Impact of 2026
+There are ten official 2026 categories, in this order:
+1. Public Service Leadership 2026
+2. Education Impact 2026
+3. Healthcare Impact 2026
+4. Community Development 2026
+5. Agricultural Impact 2026
+6. Public Institution Excellence 2026
+7. Infrastructure Impact 2026
+8. Digital Innovation 2026
+9. Security Impact 2026
+10. Youth Development Impact 2026
 
 ## Positioning
 - **Independent and non-political:** no campaigning, no advocacy.

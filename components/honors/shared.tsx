@@ -5,14 +5,16 @@ import { cn } from "@/lib/utils";
 
 /** Illustrative photo per category. These show the field, never a nominee or winner. */
 const CATEGORY_PHOTOS: Record<string, Photo> = {
-  "public-institution": photos.abujaCbd,
+  "public-service-leadership": photos.nationalAssemblyMace,
   "education-impact": photos.classroom,
   "healthcare-impact": photos.nurse,
-  "infrastructure-impact": photos.roadWorks,
   "community-development": photos.foodTrader,
-  "digital-innovation": photos.digitalClassroom,
   "agricultural-impact": photos.farmer,
+  "public-institution-excellence": photos.abujaCbd,
+  "infrastructure-impact": photos.roadWorks,
+  "digital-innovation": photos.miniGrid,
   "security-impact": photos.policeTraffic,
+  "youth-development-impact": photos.digitalClassroom,
 };
 
 export function categoryPhoto(slug: string): Photo {

@@ -62,7 +62,7 @@ export function HonorsAdmin() {
   if (!data.edition) {
     return (
       <div className="admin-card">
-        <p className="text-sm">No Honors edition exists yet. Run <code>npm run db:seed:honors</code> to create NSI Honors 2026 with its eight categories, or create one here.</p>
+        <p className="text-sm">No Honors edition exists yet. Run <code>npm run db:seed:honors</code> to create NSI Honors 2026 with its ten categories, or create one here.</p>
         <button type="button" className="admin-btn-primary mt-3" onClick={createEdition}>Create an edition</button>
       </div>
     );

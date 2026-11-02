@@ -242,12 +242,12 @@ export default async function Home() {
             <div aria-hidden className="h-1 w-16 bg-gold" />
             <h2 className="mt-6 text-h2 text-white">NSI Honors 2026</h2>
             <p className="mt-4 text-lead text-white/85">
-              Eight awards for the institutions, communities and people who made a real difference to Nigerians in
+              Ten awards for the institutions, communities and people who made a real difference to Nigerians in
               2026. Nominated by the public, decided by a verified public vote.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <LinkButton href="/honors" variant="gold">
-                See the eight categories
+                See the ten categories
               </LinkButton>
             </div>
           </div>
