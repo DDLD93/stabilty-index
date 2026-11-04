@@ -12,7 +12,7 @@ import { writeFileSync } from "node:fs";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PILLAR_KEYS } from "../lib/constants";
-import { cleanPeriod } from "../lib/reportFormat";
+import { change, cleanPeriod } from "../lib/reportFormat";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) throw new Error("DATABASE_URL is required");
@@ -79,7 +79,7 @@ async function main() {
 
   log(`## Cycles (survey months)`);
   log();
-  log(`| Month | Status | Created | Submissions from → to | Total | Flagged | Counted | Pillar-based | Legacy | Avg stabilityScore | Avg of pillar means ×2 | ${PILLAR_KEYS.join(" | ")} |`);
+  log(`| Month | Status | Created | Submissions from → to | Total | Flagged | Counted | Pillar-based | Legacy | Avg stabilityScore | Avg of personal means | ${PILLAR_KEYS.join(" | ")} |`);
   log(`|---|---|---|---|---|---|---|---|---|---|---|${PILLAR_KEYS.map(() => "---").join("|")}|`);
 
   for (const c of cycles) {
@@ -102,24 +102,24 @@ async function main() {
       for (const k of PILLAR_KEYS) {
         const v = pr[k];
         if (typeof v !== "number") { missingKeys++; continue; }
-        if (!Number.isInteger(v) || v < 1 || v > 5) outOfRange++;
+        if (!Number.isInteger(v) || v < 1 || v > 10) outOfRange++;
         vals.push(v);
         if (!s.isFlagged) perPillar[k].push(v);
       }
       for (const k of Object.keys(pr)) if (!(PILLAR_KEYS as readonly string[]).includes(k)) unknownKeys++;
       if (vals.length === PILLAR_KEYS.length) {
         const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
-        const expected = Math.min(10, Math.max(1, Math.round(avg * 2)));
+        const expected = Math.min(10, Math.max(1, Math.round(avg)));
         if (s.stabilityScore !== expected) scoreMismatch++;
-        if (!s.isFlagged) personalMeans.push(avg * 2);
+        if (!s.isFlagged) personalMeans.push(avg);
       }
     }
 
     const label = cleanPeriod(c.monthYear);
-    if (outOfRange) issue(`${label}: ${outOfRange} answer(s) outside the 1–5 range.`);
+    if (outOfRange) issue(`${label}: ${outOfRange} answer(s) outside the 1–10 range.`);
     if (missingKeys) issue(`${label}: ${missingKeys} missing pillar answer(s) in pillar-based submissions.`);
     if (unknownKeys) issue(`${label}: ${unknownKeys} answer(s) under pillar keys that are not in PILLARS.`);
-    if (scoreMismatch) issue(`${label}: ${scoreMismatch} submission(s) whose stabilityScore ≠ round(avg×2).`);
+    if (scoreMismatch) issue(`${label}: ${scoreMismatch} submission(s) whose stabilityScore ≠ round(avg).`);
     if (legacy && pillarBased) issue(`${label}: mixes ${legacy} legacy (direct 1–10 score) and ${pillarBased} pillar-based submissions in one average.`);
 
     const pillars = Object.fromEntries(PILLAR_KEYS.map((k) => [k, mean(perPillar[k])]));
@@ -132,7 +132,7 @@ async function main() {
     log(`| ${label} | ${c.status} | ${day(+c.createdAt)} | ${day(times[0])} → ${day(times.at(-1))} | ${all.length} | ${all.length - counted.length} | ${counted.length} | ${pillarBased} | ${legacy} | ${r2(overall)} | ${r2(overallFromPillars)} | ${PILLAR_KEYS.map((k) => r2(pillars[k])).join(" | ")} |`);
   }
   log();
-  log(`"Avg stabilityScore" is what admin analytics shows (mean of rounded integers). "Avg of pillar means ×2" is the unrounded equivalent.`);
+  log(`"Avg stabilityScore" is what admin analytics shows (mean of rounded integers). "Avg of personal means" is the unrounded overall the editions publish. All values are on the 1–10 scale.`);
   log();
 
   /** Unflagged pillar stats over a set of cycles, optionally only rows created before `before`. */
@@ -144,7 +144,7 @@ async function main() {
       const pr = (x.pillarResponses ?? {}) as Record<string, unknown>;
       const vals = PILLAR_KEYS.map((k) => pr[k]).filter((v): v is number => typeof v === "number");
       for (const k of PILLAR_KEYS) if (typeof pr[k] === "number") per[k].push(pr[k] as number);
-      if (vals.length === PILLAR_KEYS.length) personal.push((vals.reduce((a, b) => a + b, 0) / vals.length) * 2);
+      if (vals.length === PILLAR_KEYS.length) personal.push(vals.reduce((a, b) => a + b, 0) / vals.length);
     }
     return {
       n: rows.length,
@@ -162,7 +162,7 @@ async function main() {
   for (const s of published) periodCount.set(cleanPeriod(s.period), (periodCount.get(cleanPeriod(s.period)) ?? 0) + 1);
   for (const [p, n] of periodCount) if (n > 1) issue(`Published period "${p}" appears ${n} times.`);
 
-  log(`## Published editions (in the order the site shows them: by publishedAt)`);
+  log(`## Published editions (by publication date)`);
   log();
   const classifications: { id: string; period: string; scale: string }[] = [];
 
@@ -196,11 +196,7 @@ async function main() {
     if (period !== s.period.trim()) log(`- Stored period text: "${s.period}"`);
 
     log(`- Overall published: **${r2(s.overallScore)}** · survey (avg stabilityScore): ${r2(st?.overall)} · survey (unrounded): ${r2(st?.overallFromPillars)} · counted submissions: ${st?.n ?? "—"}${atPublish && st && atPublish.n !== st.n ? ` (at publish time: ${atPublish.n}, overall ${r2(atPublish.overallFromPillars)})` : ""}`);
-    const pillarMeanPublished = mean(pillars.map((p) => p.score).filter((n): n is number => n != null));
-    if (pillarMeanPublished != null && pillarMeanPublished <= 5 && Math.abs(s.overallScore - pillarMeanPublished) <= 0.1) {
-      issue(`${period}: overall ${r2(s.overallScore)} equals the mean of its 1–5 pillar scores, so it was published on a /5 basis while the site shows it "out of 10" (should be ≈ ${r2(pillarMeanPublished * 2)}).`);
-    }
-    if (st?.overallFromPillars != null && Math.abs(s.overallScore - st.overallFromPillars) > 0.25) {
+    if (st?.overallFromPillars != null && Math.abs(s.overallScore - st.overallFromPillars) > 0.05) {
       issue(`${period}: overall published ${r2(s.overallScore)} vs survey ${r2(st.overallFromPillars)} (diff ${r2(s.overallScore - st.overallFromPillars)}).`);
     }
 
@@ -211,8 +207,7 @@ async function main() {
 
     // Pillars
     const scores = pillars.map((p) => p.score).filter((n): n is number => n != null);
-    const any5plus = scores.some((n) => n > 5);
-    let match1to5 = 0, match0to10 = 0, compared = 0;
+    let pillarMatches = 0, compared = 0;
     log(`- Pillars:`);
     for (const p of pillars) {
       const key = PILLAR_KEYS.find((k) => k.toLowerCase() === p.title.toLowerCase());
@@ -220,24 +215,20 @@ async function main() {
       const survey = key && st ? st.pillars[key] : null;
       if (p.score != null && survey != null) {
         compared++;
-        if (Math.abs(p.score - survey) <= 0.25) match1to5++;
-        if (Math.abs(p.score - survey * 2) <= 0.5) match0to10++;
+        if (Math.abs(p.score - survey) <= 0.05) pillarMatches++;
       }
       const surveyAtPub = key && atPublish ? atPublish.pillars[key] : null;
-      log(`  - ${p.title || "(untitled)"}: published ${r2(p.score)} · survey mean (1–5) ${r2(survey)}${surveyAtPub != null && atPublish!.n !== st!.n ? ` (at publish: ${r2(surveyAtPub)})` : ""}`);
+      log(`  - ${p.title || "(untitled)"}: published ${r2(p.score)} · survey mean ${r2(survey)}${surveyAtPub != null && atPublish!.n !== st!.n ? ` (at publish: ${r2(surveyAtPub)})` : ""}`);
     }
     if (pillars.length !== PILLAR_KEYS.length) issue(`${period}: has ${pillars.length} pillar rows (expected ${PILLAR_KEYS.length}).`);
     if (scores.some((n) => n < 0 || n > 10)) issue(`${period}: a pillar score is outside 0–10.`);
 
     let scale: string;
-    if (any5plus) scale = "looks 0–10";
-    else if (compared && match0to10 > match1to5) scale = "looks 0–10";
-    else if (compared && match1to5 === compared) scale = "1–5 scale (matches survey)";
-    else if (compared) scale = "1–5 scale (does NOT match survey)";
-    else scale = scores.length ? "1–5 scale (unverified: no survey data)" : "no pillar scores";
-    if (any5plus) issue(`${period}: pillar score(s) above 5 — entered on the admin's 0–10 scale but shown on the public site as "out of 5".`);
+    if (compared && pillarMatches === compared) scale = "matches survey";
+    else if (compared) scale = "does NOT match survey";
+    else scale = scores.length ? "unverified: no survey data" : "no pillar scores";
     if (scale.includes("does NOT match")) issue(`${period}: published pillar scores don't match the recomputed survey means.`);
-    log(`- Pillar scale classification: **${scale}**`);
+    log(`- Pillar check: **${scale}**`);
     classifications.push({ id: s.id, period, scale });
     log();
   });
@@ -254,10 +245,12 @@ async function main() {
   }
   for (let i = 1; i < published.length; i++) {
     const cur = published[i], prev = published[i - 1];
-    const raw = Math.round((cur.overallScore - prev.overallScore) * 10) / 10;
-    const shown = Number(cur.overallScore.toFixed(1)) - Number(prev.overallScore.toFixed(1));
-    if (Math.abs(Math.abs(raw) - Math.abs(Math.round(shown * 10) / 10)) > 1e-9) {
-      issue(`${cleanPeriod(cur.period)}: delta label (${raw.toFixed(1)}) doesn't equal the difference of the displayed scores (${shown.toFixed(1)}).`);
+    // The site's change label (lib/reportFormat change()) must equal the difference of the two displayed scores.
+    const c = change(cur.overallScore, prev.overallScore)!;
+    const label = c.direction === "down" ? -c.value : c.value;
+    const shown = (Math.round(cur.overallScore * 10) - Math.round(prev.overallScore * 10)) / 10;
+    if (Math.abs(label - shown) > 1e-9) {
+      issue(`${cleanPeriod(cur.period)}: change label (${label.toFixed(1)}) doesn't equal the difference of the displayed scores (${shown.toFixed(1)}).`);
     }
   }
 
@@ -269,7 +262,7 @@ async function main() {
     log();
   }
 
-  log(`## Pillar scale classification (input to the 1–10 migration)`);
+  log(`## Pillar check per edition`);
   for (const c of classifications) log(`- \`${c.id}\` ${c.period}: ${c.scale}`);
   log();
 

@@ -24,7 +24,7 @@ export async function GET() {
       r.edition,
       r.period,
       r.surveyWindow ?? "",
-      r.publishedAt.toISOString().slice(0, 10),
+      new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Lagos" }).format(r.publishedAt),
       r.overallScore.toFixed(2),
       ...PILLARS.map((p) => {
         const v = byTitle.get(p.label.toLowerCase());
