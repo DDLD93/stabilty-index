@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   ...defaultMetadata,
   title: "Methodology",
   description:
-    "How the Nigeria Stability Index is made: the monthly survey, the five pillars, the 1–5 scale, editorial review and publication on the 11th.",
+    "How the Nigeria Stability Index is made: the monthly survey, the five pillars, the 1 to 10 scale, editorial review and publication on the 11th of the following month.",
   alternates: { canonical: "/methodology" },
 };
 
@@ -26,11 +26,11 @@ const PILLAR_NOTES: Record<string, string> = {
 const STEPS = [
   {
     title: "The survey opens",
-    text: "At the start of each month a new survey opens with five questions, one per pillar. Anyone can answer, once per device. Field agents also share the survey through referral links.",
+    text: "In the first days of each month a new survey opens with five questions, one per pillar, about the month that has just ended. Anyone can answer, once per device. Field agents also share the survey through referral links.",
   },
   {
-    title: "People answer on a 1 to 5 scale",
-    text: "Each answer runs from 1 (least stable) to 5 (most stable). An optional last step lets people describe their mood, give one word for Nigeria today, name a state, pick topics and leave a short comment. We don’t ask for names, phone numbers or addresses.",
+    title: "People answer on a 1 to 10 scale",
+    text: "Each answer runs from 1 (least stable) to 10 (most stable). An optional last step lets people describe their mood, give one word for Nigeria today, name a state, pick topics and leave a short comment. We don’t ask for names, phone numbers or addresses.",
   },
   {
     title: "Editors review",
@@ -38,7 +38,7 @@ const STEPS = [
   },
   {
     title: "The report is published on the 11th",
-    text: "The report gives the overall reading out of 10, the five pillar scores out of 5, a state and an institution spotlight, and what people said. It is then locked and does not change.",
+    text: "The report is named after the month it covers, so the reading published on 11 November is the October edition. It gives the overall reading and the five pillar scores, all out of 10, a state and an institution spotlight, and what people said. It is then locked and does not change.",
   },
 ];
 
@@ -58,6 +58,10 @@ export default function MethodologyPage() {
               <h2 className="text-h2">Every month, in four steps</h2>
               <p className="mt-4 text-body text-ink-2">
                 The same cycle runs each month, so one month can be compared with the next.
+              </p>
+              <p className="mt-4 text-body text-ink-2">
+                <strong className="text-ink">Every edition reports the previous month.</strong> The survey is taken in
+                the first days of a month and asks about the month just ended; the results are published on the 11th.
               </p>
             </div>
             <ol className="reveal-stagger flex flex-col">
@@ -83,7 +87,7 @@ export default function MethodologyPage() {
             <h2 className="text-h2">The five pillars</h2>
             <p className="mt-4 text-lead text-ink-2">
               Each pillar has one survey question. A pillar’s score is the average of everyone’s answers that month, on
-              the same 1 to 5 scale.
+              the same 1 to 10 scale.
             </p>
           </div>
           <ul className="mt-12 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
@@ -105,14 +109,14 @@ export default function MethodologyPage() {
               <h2 className="text-h2">How the scores are calculated</h2>
               <div className="mt-5 flex flex-col gap-4 text-body text-ink-2">
                 <p>
-                  <strong className="text-ink">Pillar scores (out of 5).</strong> The average of all valid answers to
+                  <strong className="text-ink">Pillar scores (out of 10).</strong> The average of all valid answers to
                   that pillar’s question in the month.
                 </p>
                 <p>
                   <strong className="text-ink">Overall reading (out of 10).</strong> Each person’s five answers are
-                  averaged and doubled, giving a personal score from 2 to 10. The editors then set the published
-                  overall reading after reviewing these scores alongside verified sources, and explain the reading in
-                  the report.
+                  averaged, giving a personal score from 1 to 10, and the overall reading is the average of those
+                  personal scores. The editors review it alongside verified sources and explain the reading in the
+                  report.
                 </p>
                 <p>
                   <strong className="text-ink">Spotlights.</strong> One state and one institution each month, chosen by
@@ -143,8 +147,8 @@ export default function MethodologyPage() {
             <div>
               <h2 className="text-h2">Using NSI figures</h2>
               <p className="mt-4 text-body text-ink-2">
-                You are welcome to quote the index. Please name the month and edition, link to the report, and say that
-                pillar scores are out of 5 and the overall reading is out of 10. Each report has a ready-made citation
+                You are welcome to quote the index. Please name the month the edition covers, link to the report, and say
+                that scores are out of 10. Each report has a ready-made citation
                 at the end.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">

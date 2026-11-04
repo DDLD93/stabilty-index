@@ -11,10 +11,13 @@ export async function GET() {
 
   const cycles = await db.cycle.findMany({
     orderBy: { createdAt: "desc" },
-    select: { id: true, monthYear: true, status: true },
+    select: { id: true, monthYear: true, status: true, createdAt: true, _count: { select: { submissions: true } } },
   });
 
   const currentCycleId = cycles[0]?.id ?? null;
 
-  return NextResponse.json({ cycles, currentCycleId });
+  return NextResponse.json({
+    cycles: cycles.map(({ _count, ...c }) => ({ ...c, submissionCount: _count.submissions })),
+    currentCycleId,
+  });
 }

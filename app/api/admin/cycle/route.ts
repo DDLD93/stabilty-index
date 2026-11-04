@@ -4,12 +4,18 @@ import { requireAdminSession, getAuditAdminUserId } from "@/lib/adminSession";
 import { PILLAR_KEYS, PILLARS } from "@/lib/constants";
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
+import { cleanPeriod, previousMonthLabel } from "@/lib/reportFormat";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function formatMonthYear(d: Date) {
-  return new Intl.DateTimeFormat("en-NG", { month: "long", year: "numeric" }).format(d);
+/**
+ * A cycle is named after the month its survey asks about. Collection opens in the first days
+ * of the following month, so the default name is the previous month in Lagos time
+ * (a cycle opened on 1 November 2026 is "October 2026").
+ */
+function defaultCycleName(input?: string) {
+  return input?.trim() ? cleanPeriod(input) : previousMonthLabel();
 }
 
 const surveyQuestionSchema = z.object({
@@ -82,7 +88,7 @@ export async function PATCH(req: Request) {
   if ("surveyQuestions" in parsed.data) {
     const { surveyQuestions, action, monthYear: bodyMonthYear } = parsed.data;
     const surveyJson = surveyQuestions as unknown as Prisma.InputJsonValue;
-    const monthYear = bodyMonthYear?.trim() ? bodyMonthYear.trim() : formatMonthYear(new Date());
+    const monthYear = defaultCycleName(bodyMonthYear);
     if (!currentCycle) {
       // Only one open cycle: close any other OPEN before creating
       await db.cycle.updateMany({ where: { status: "OPEN" }, data: { status: "CLOSED" } });
@@ -115,6 +121,7 @@ export async function PATCH(req: Request) {
       where: { id: currentCycle.id },
       data: {
         surveyQuestions: surveyJson,
+        ...(bodyMonthYear?.trim() ? { monthYear } : {}),
         ...(action === "OPEN" ? { status: "OPEN" as const } : {}),
       },
     });
@@ -127,7 +134,7 @@ export async function PATCH(req: Request) {
   }
 
   const { action, monthYear: bodyMonthYear } = parsed.data;
-  const defaultMonthYear = bodyMonthYear?.trim() ? bodyMonthYear.trim() : formatMonthYear(new Date());
+  const defaultMonthYear = defaultCycleName(bodyMonthYear);
 
   const defaultQuestions = PILLARS.map((p) => ({
     pillarKey: p.key,

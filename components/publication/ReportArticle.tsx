@@ -10,12 +10,14 @@ import { Breadcrumb } from "@/components/ui/PageHeader";
 import { RichText } from "@/components/ui/RichText";
 import {
   change,
+  editionDateline,
   formatDate,
   formatInstitutionName,
   formatScore,
   formatStateName,
   monthOf,
   OVERALL_MAX,
+  yearOf,
   type Report,
 } from "@/lib/snapshots";
 
@@ -67,7 +69,7 @@ export function ReportArticle({ report, preview = false }: { report: Report; pre
                 {report.period}: the index read {report.overallScore.toFixed(1)} out of 10
               </h1>
               <p className="mt-3 text-small text-ink-3">
-                Edition {report.edition} · Published {formatDate(report.publishedAt)}
+                Edition {report.edition} · {editionDateline(report)}
               </p>
               <p className="mt-5 max-w-2xl text-lead text-ink-2">
                 {narrative && !narrativeIsWord ? (
@@ -132,7 +134,7 @@ export function ReportArticle({ report, preview = false }: { report: Report; pre
           <div className="flex min-w-0 max-w-4xl flex-col gap-14">
             <Section id="pillars" title="The five pillars">
               <p className="mb-4 max-w-2xl text-body text-ink-2">
-                Each pillar is the average of public answers on a scale of 1 to 5; the line under each pillar is the
+                Each pillar is the average of public answers on a scale of 1 to 10; the line under each pillar is the
                 editors’ summary.
                 {prev ? ` The black tick shows ${prev.period}.` : null}{" "}
                 <Link href="/methodology#pillars" className="text-brand underline underline-offset-[0.22em]">
@@ -144,7 +146,7 @@ export function ReportArticle({ report, preview = false }: { report: Report; pre
                   pillars={report.pillars}
                   previous={prev?.pillars}
                   previousLabel={prev ? monthOf(prev.period) : undefined}
-                  caption={`Pillar scores for ${report.period}, out of 5`}
+                  caption={`Pillar scores for ${report.period}, out of 10`}
                 />
               ) : (
                 <p className="text-body text-ink-2">Pillar scores were not published for this edition.</p>
@@ -225,7 +227,7 @@ export function ReportArticle({ report, preview = false }: { report: Report; pre
 
             <Section id="cite" title="Cite this report">
               <p className="max-w-[68ch] bg-surface px-5 py-4 text-small break-words text-ink-2 [overflow-wrap:anywhere]">
-                Nigeria Stability Index ({report.publishedAt.getFullYear()}). <em>{report.period}</em>, edition {report.edition}. Published{" "}
+                Nigeria Stability Index ({yearOf(report.period) ?? report.publishedAt.getFullYear()}). <em>{report.period}</em>, edition {report.edition}. Published{" "}
                 {formatDate(report.publishedAt)}. nigeriastabilityindex.ng{url}
               </p>
             </Section>

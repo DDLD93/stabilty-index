@@ -161,7 +161,7 @@ Density follows the reader. Persuade pages (home, about, Honors landing) use gen
 **Key Characteristics:**
 - White ground with #f4f6f4 alternate bands; a full-bleed ink band only behind a photograph.
 - Source Serif 4 for headings, Source Sans 3 for everything else, including the score figures.
-- One green data series on a fixed scale: 0–10 overall, 1–5 for pillars.
+- One green data series on a fixed scale: 0–10 for the overall reading and for pillars.
 - 1px rules for tables, fields, chart frames and section edges.
 - A 6px radius on controls only; photographs and panels stay square.
 - Every photograph carries a visible credit line.
@@ -222,7 +222,7 @@ Both faces are self-hosted through `@fontsource-variable`, with no font CDN at r
 All h1–h3 elements are serif 600 with `text-wrap: balance`. Paragraphs, list items and captions use `pretty`. Survey step questions use the serif at about 22–28px.
 
 ### Named Rules
-**The Figures Are Sans Rule.** Scores, changes, axis ticks and table numbers are set in Source Sans 3 with tabular numerals, and always carry their scale (/10 overall, /5 pillars).
+**The Figures Are Sans Rule.** Scores, changes, axis ticks and table numbers are set in Source Sans 3 with tabular numerals, and always carry their scale (/10 for the overall and for pillars).
 
 **The No Eyebrow Rule.** A heading is not preceded by a small uppercase kicker. The breadcrumb, the meta line or the Honors gold rule does that job. The public site sets no uppercase tracked labels.
 
@@ -263,7 +263,7 @@ Plain, sure and large enough to hit.
 - **Focus:** the border turns brand, with a 3px brand ring at 20%.
 - **Error / Disabled:** `aria-invalid` turns the border negative with a matching ring. Disabled fields use a surface fill and ink-3 text.
 - **Field pattern:** a semibold label ("(optional)" in ink-3), then the hint in small ink-2, then the error in small semibold negative, then the control, then an optional tabular character counter. Hint, error and counter ids are wired into `aria-describedby`. FormMessage gives outcome lines: error on negative-tint (`role=alert`), success on brand-tint and info on surface (`role=status`).
-- **Choices:** real radio and checkbox inputs inside bordered tiles (line-strong border, ink on hover). A selected tile gets a brand border on brand-tint, or a gold border on gold-tint in Honors. The 1–5 survey scale uses targets at least 56px tall.
+- **Choices:** real radio and checkbox inputs inside bordered tiles (line-strong border, ink on hover). A selected tile gets a brand border on brand-tint, or a gold border on gold-tint in Honors. The 1–10 survey scale (5 per row on mobile, 10 in a row from sm) uses targets at least 56px tall.
 
 ### Navigation
 - **Header:** sticky, ground fill, 1px bottom rule. Links are small semibold ink-2 at least 44px tall. Hover and the current page get ink text and a 2px brand underline that scales in from the left over 200ms.
@@ -277,7 +277,7 @@ Documentary photographs only. Every one carries a caption and a "Photo: creator,
 
 ### Data: ScoreBar, PillarTable, TrendChart, EditionExplorer, ChangeText
 - **ScoreBar:** a 10px data-track bar filled with data on a fixed scale. A 2px ink tick, taller than the bar, marks the previous edition.
-- **PillarTable:** a real `<table>` with 1px row rules. Columns are the pillar (with an "Editors' note" in small ink-2), a 1–5 axis header over the bar, the score "of 5" in lead semibold tabular, and the change. Rows stack into a grid on mobile.
+- **PillarTable:** a real `<table>` with 1px row rules. Columns are the pillar (with an "Editors' note" in small ink-2), a 0–10 axis header over the bar, the score "of 10" in lead semibold tabular, and the change. Rows stack into a grid on mobile.
 - **TrendChart:** an SVG line on a fixed 0–10 axis with ticks every 2, line gridlines and a line-strong baseline. A 2px data line sits over a 10% area. Points have a 2px white ring and the focused point grows. An ink crosshair and an ink value tag mark the focused month. Each month is a full-height radio button in a `radiogroup`, controlled with the arrow keys and Home/End.
 - **EditionExplorer:** the score lockup (meta line, then the score figure with "out of 10", the change, and a method line linking to Methodology) beside a framed chart (1px line border, 16–24px padding). Choosing a month updates the lockup and the pillars, and announces the change politely.
 - **ChangeText:** an arrow icon plus words ("up 0.4 from August", "no change"), tabular. Brand for up, negative for down, ink-2 for no change. An em dash when there is no comparison.
@@ -290,7 +290,7 @@ Documentary photographs only. Every one carries a caption and a "Photo: creator,
 ## Do's and Don'ts
 
 ### Do:
-- **Do** label every score with its scale: "4.1 out of 10" overall, "of 5" for pillars. Keep axes fixed at 0–10 and 1–5.
+- **Do** label every score with its scale: "4.1 out of 10" overall, "of 10" for pillars. Keep axes fixed at 0–10.
 - **Do** put the edition, period and publish date in a meta line next to any figure, with the method one link away.
 - **Do** credit every photograph with creator and licence through Figure or PhotoCredit.
 - **Do** keep touch targets at 44px or more, fields at 48px or more and survey scale options at 56px or more.

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireAdminSession, getAuditAdminUserId } from "@/lib/adminSession";
 import { Prisma } from "@prisma/client";
+import { pillarScoresSchema } from "@/lib/snapshotSchema";
 
 const listSchema = z.object({
   take: z.coerce.number().int().min(1).max(50).default(20),
@@ -15,7 +16,7 @@ const upsertSchema = z.object({
   period: z.string().min(3).max(60),
   overallScore: z.number().min(0).max(10),
   overallNarrative: z.string().min(1).max(2000),
-  pillarScores: z.unknown(),
+  pillarScores: pillarScoresSchema,
   stateSpotlightContent: z.unknown(),
   institutionSpotlightContent: z.unknown().optional(),
   streetPulseSpotlightContent: z.unknown().optional(),
@@ -67,7 +68,7 @@ export async function POST(req: Request) {
   const parsed = upsertSchema.safeParse(json);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Invalid snapshot payload.", details: parsed.error.flatten() },
+      { error: parsed.error.issues[0]?.message ?? "Invalid snapshot payload.", details: parsed.error.flatten() },
       { status: 400 }
     );
   }

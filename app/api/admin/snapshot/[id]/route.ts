@@ -3,12 +3,13 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireAdminSession, getAuditAdminUserId } from "@/lib/adminSession";
 import { Prisma } from "@prisma/client";
+import { pillarScoresSchema } from "@/lib/snapshotSchema";
 
 const updateSchema = z.object({
   period: z.string().min(3).max(60).optional(),
   overallScore: z.number().min(0).max(10).optional(),
   overallNarrative: z.string().min(1).max(2000).optional(),
-  pillarScores: z.unknown().optional(),
+  pillarScores: pillarScoresSchema.optional(),
   stateSpotlightContent: z.unknown().optional(),
   institutionSpotlightContent: z.unknown().optional(),
   streetPulseSpotlightContent: z.unknown().optional(),
@@ -46,7 +47,7 @@ export async function PATCH(
   const parsed = updateSchema.safeParse(json);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Invalid payload.", details: parsed.error.flatten() },
+      { error: parsed.error.issues[0]?.message ?? "Invalid payload.", details: parsed.error.flatten() },
       { status: 400 }
     );
   }

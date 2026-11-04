@@ -6,15 +6,24 @@ export const revalidate = 3600;
 
 const cell = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
 
-/** Every published edition as CSV: overall score out of 10, pillar scores out of 5. */
+/** Every published edition as CSV, all scores out of 10. "Period" is the month the edition covers. */
 export async function GET() {
   const reports = await listPublishedReports();
-  const header = ["Edition", "Period", "Published", "Overall (out of 10)", ...PILLARS.map((p) => `${p.label} (out of 5)`), "Report"];
+  const header = [
+    "Edition",
+    "Month covered",
+    "Survey taken",
+    "Published",
+    "Overall (out of 10)",
+    ...PILLARS.map((p) => `${p.label} (out of 10)`),
+    "Report",
+  ];
   const rows = reports.map((r) => {
     const byTitle = new Map(r.pillars.map((p) => [p.title.toLowerCase(), p.score]));
     return [
       r.edition,
       r.period,
+      r.surveyWindow ?? "",
       r.publishedAt.toISOString().slice(0, 10),
       r.overallScore.toFixed(2),
       ...PILLARS.map((p) => {

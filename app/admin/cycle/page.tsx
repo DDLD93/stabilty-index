@@ -8,7 +8,7 @@ export default function AdminCyclePage() {
     <>
       <AdminPageHeader
         title="Cycle survey"
-        description="Define one question per pillar (scale 1–5). Open the cycle so respondents can submit answers."
+        description="Define one question per pillar (answered 1–10). Name the cycle after the month the survey asks about: a cycle opened in early November is “October 2026”, published on 11 November."
         breadcrumb={[
           { label: "Dashboard", href: "/admin" },
           { label: "Cycle survey" },

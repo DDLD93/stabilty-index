@@ -48,7 +48,7 @@ There are ten official 2026 categories, in this order:
 
 ## Operating Context
 - **Monthly cycle:**
-  1. An admin opens a cycle with five pillar questions on a 1–5 scale.
+  1. An admin opens a cycle with five pillar questions on a 1–10 scale. The cycle is named after the month it asks about (opened early November = "October 2026") and published on the 11th.
   2. The public answers once per device. They can optionally add their state, topic tags and a comment.
   3. Field agents share referral links (`?ref=` six-digit codes).
   4. The cycle closes.

@@ -1,3 +1,6 @@
+import { PILLARS } from "@/lib/constants";
+import { previousMonthLabel } from "@/lib/reportFormat";
+
 export type SnapshotListItem = {
   id: string;
   period: string;
@@ -64,19 +67,17 @@ export type SnapshotApiResponse =
   | { error: string }
   | { snapshot: SnapshotModel & { id: string; isLocked: boolean; publishedAt: string | null } };
 
+/**
+ * A blank edition. Scores start at 0 (not example numbers) so nothing invented can be published;
+ * pick the survey cycle and use "Use survey averages" to fill them from the answers.
+ */
 export const defaultSnapshot: SnapshotModel = {
   cycleId: null,
-  period: "January 2026",
-  overallScore: 6.6,
-  overallNarrative: "Cautiously stable",
+  period: previousMonthLabel(),
+  overallScore: 0,
+  overallNarrative: "",
   pillarScores: {
-    pillars: [
-      { title: "Security", score: 6.5, summary: "Order holds despite threats." },
-      { title: "FX & Economy", score: 6.0, summary: "Fragile, but stabilizing." },
-      { title: "Investor Confidence", score: 6.5, summary: "Capital is cautious." },
-      { title: "Governance", score: 7.0, summary: "Direction remains consistent." },
-      { title: "Social Stability", score: 7.0, summary: "Tensions ease; mood is calm." },
-    ],
+    pillars: PILLARS.map((p) => ({ title: p.label, score: 0, summary: "" })),
   },
   stateSpotlightContent: {
     state: "No StateSpotlight this round",
@@ -95,9 +96,9 @@ export const defaultSnapshot: SnapshotModel = {
   },
   sourcesReferences: [],
   publicSentimentSummary: {
-    topWords: ["Hopeful", "Steady", "Progressing", "Demanding"],
-    averagePublicScore: 6.5,
-    topMood: "Cautiously hopeful",
+    topWords: [],
+    averagePublicScore: 0,
+    topMood: "",
   },
 };
 

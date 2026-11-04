@@ -49,7 +49,12 @@ export default async function Home() {
       <p className="mt-5 max-w-xl text-lead text-ink-2">
         A monthly reading built from what Nigerians tell us. People answer five questions about security, the
         economy, investment, governance and social life; editors check the answers against verified sources and
-        publish the result on the 11th.
+        publish the result on the 11th of the following month.
+      </p>
+      <p className="mt-3 max-w-xl text-body text-ink-2">
+        <strong className="font-semibold text-ink">Each edition reports the previous month.</strong> The survey runs
+        in the first days of a month and asks about the month just ended, so the reading published on 11 November
+        covers October.
       </p>
     </>
   );
@@ -198,8 +203,10 @@ export default async function Home() {
                 <>
                   <h2 className="text-h2">The {cycleMonth} survey is open</h2>
                   <p className="mt-4 text-lead text-ink-2">
-                    Five questions, one for each pillar, answered on a scale of 1 to 5. It takes about two minutes. We
-                    don’t ask for your name, phone number or address.
+                    Five questions about {cycleMonth}, one for each pillar, answered on a scale of 1 to 10. It takes
+                    about two minutes. Your answers go into the {state.currentCycle?.monthYear} edition
+                    {nextPublication ? <>, published on {nextPublication}</> : null}. We don’t ask for your name, phone
+                    number or address.
                   </p>
                   <div className="mt-8 flex flex-wrap gap-3">
                     <LinkButton href="/survey">Take the {cycleMonth} survey</LinkButton>
@@ -273,7 +280,7 @@ export default async function Home() {
             <dl className="reveal-stagger grid gap-px border-y border-line bg-line sm:grid-cols-3">
               <div className="bg-ground py-6 sm:px-6 sm:first:pl-0">
                 <dt className="font-serif text-h3 font-semibold">On the 11th</dt>
-                <dd className="mt-2 text-small text-ink-2">A new reading is published every month and then locked, so it can be cited.</dd>
+                <dd className="mt-2 text-small text-ink-2">Each month’s reading is published on the 11th of the next month and then locked, so it can be cited.</dd>
               </div>
               <div className="bg-ground py-6 sm:px-6">
                 <dt className="font-serif text-h3 font-semibold">Five pillars</dt>

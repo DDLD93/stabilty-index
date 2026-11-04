@@ -6,11 +6,12 @@ import { ArrowRight } from "lucide-react";
 import { ChangeText } from "@/components/data/ChangeText";
 import { PillarTable } from "@/components/data/PillarTable";
 import { TrendChart } from "@/components/data/TrendChart";
-import { change, formatDate, monthOf, type PillarScore } from "@/lib/reportFormat";
+import { change, editionDateline, monthOf, type PillarScore } from "@/lib/reportFormat";
 
 export type ExplorerEdition = {
   id: string;
   period: string;
+  surveyWindow: string | null;
   overallScore: number;
   publishedAt: string;
   edition: number;
@@ -56,8 +57,8 @@ export function EditionExplorer({
 
           <div className="mt-8 border-t border-line pt-6 lg:mt-6 lg:pt-5" aria-live="polite">
             <p className="text-meta text-ink-3">
-              {current.period} · Edition {current.edition} · Published {formatDate(new Date(current.publishedAt))}
-              {isLatest ? " · Latest" : null}
+              {isLatest ? "Latest edition" : `Edition ${current.edition}`} ·{" "}
+              {editionDateline({ ...current, publishedAt: new Date(current.publishedAt) })}
             </p>
             <p className="mt-2 flex items-baseline gap-3">
               <span className="text-[4.25rem] leading-none font-semibold tracking-[-0.03em] sm:text-[5.25rem]">
@@ -128,13 +129,13 @@ export function EditionExplorer({
         <div className="mt-10 lg:mt-9">
           <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-ink pb-3">
             <h2 className="text-h3">The five pillars, {current.period}</h2>
-            <p className="text-meta text-ink-3">Average of public answers on a 1–5 scale; the line under each pillar is the editors’ summary. The black tick marks {previous ? monthOf(previous.period) : "the previous month"}.</p>
+            <p className="text-meta text-ink-3">Average of public answers on a 1 to 10 scale; the line under each pillar is the editors’ summary. The black tick marks {previous ? monthOf(previous.period) : "the previous month"}.</p>
           </div>
           <PillarTable
             pillars={current.pillars}
             previous={previous?.pillars}
             previousLabel={previous ? monthOf(previous.period) : undefined}
-            caption={`Pillar scores for ${current.period}, out of 5`}
+            caption={`Pillar scores for ${current.period}, out of 10`}
           />
         </div>
       ) : null}

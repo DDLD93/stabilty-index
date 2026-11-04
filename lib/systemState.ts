@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { cleanPeriod } from "@/lib/reportFormat";
 
 export type PublicPhase =
   | "COLLECTION_OPEN"
@@ -90,8 +91,16 @@ export async function getPublicSystemState(): Promise<PublicSystemState> {
   }
 
   try {
+    // An edition counts as this cycle's when it is linked to it, or (for editions saved before the
+    // link existed) when it covers the same month.
     const hasPublishedForCurrent = await db.snapshot.findFirst({
-      where: { cycleId: currentCycle.id, publishedAt: { not: null } },
+      where: {
+        publishedAt: { not: null },
+        OR: [
+          { cycleId: currentCycle.id },
+          { period: { startsWith: cleanPeriod(currentCycle.monthYear), mode: "insensitive" } },
+        ],
+      },
       select: { id: true },
     });
 

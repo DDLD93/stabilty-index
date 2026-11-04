@@ -55,3 +55,6 @@ next-env.d.ts
 .impeccable/review/
 .impeccable/questions/
 .impeccable/hook.cache.json
+
+# data-migration backups (scripts/migrate-scale-to-10.ts)
+/backups/

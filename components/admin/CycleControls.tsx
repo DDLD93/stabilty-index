@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { previousMonthLabel } from "@/lib/reportFormat";
 
 type Action = "OPEN" | "CLOSE" | "NEXT";
 
@@ -19,8 +20,8 @@ async function send(action: Action, monthYear?: string) {
   }
 }
 
-const defaultMonthYear = () =>
-  new Intl.DateTimeFormat("en-NG", { month: "long", year: "numeric" }).format(new Date());
+/** Cycles are named after the month the survey asks about: the month before it opens. */
+const defaultMonthYear = () => previousMonthLabel();
 
 type CycleStatus = "OPEN" | "CLOSED" | "ARCHIVED";
 
@@ -100,7 +101,8 @@ export function CycleControls({ cycleStatus = null }: CycleControlsProps) {
               New cycle name
             </h2>
             <p className="mt-1 text-sm text-[color:var(--nsi-ink-soft)]">
-              Optionally edit the name for the new cycle (e.g. month and year).
+              Name it after the month the survey asks about, usually last month. A cycle opened in early November
+              is &ldquo;October 2026&rdquo; and is published on 11 November.
             </p>
             <input
               type="text"

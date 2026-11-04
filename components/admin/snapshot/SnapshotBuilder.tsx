@@ -50,6 +50,7 @@ export function SnapshotBuilder() {
   const hasKeyPoints = (html: string) => (html || "").replace(/<[^>]+>/g, "").trim().length >= 1;
   const completionStatus = useMemo(() => {
     const checks = [
+      !!model.cycleId || published,
       model.period.trim().length > 2,
       model.overallNarrative.trim().length > 0,
       model.pillarScores.pillars.every((p) => p.title && p.summary),
@@ -64,12 +65,14 @@ export function SnapshotBuilder() {
 
   const canSave = useMemo(() => {
     return (
+      // New editions must be linked to the survey cycle they report.
+      (!!model.cycleId || published) &&
       model.period.trim().length > 2 &&
       model.overallNarrative.trim().length > 0 &&
       model.pillarScores.pillars.length === 5 &&
       hasKeyPoints(model.stateSpotlightContent.keyPointsHtml)
     );
-  }, [model]);
+  }, [model, published]);
 
   // API functions
   const loadList = useCallback(async () => {

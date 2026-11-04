@@ -129,16 +129,16 @@ export function ReportPdfDocument({
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Overall score</Text>
+          <Text style={styles.sectionTitle}>Overall score (out of 10)</Text>
           <Text style={styles.scoreBig}>
             {data.overallAvgScore != null
-              ? data.overallAvgScore.toFixed(2)
+              ? `${data.overallAvgScore.toFixed(2)} / 10`
               : "—"}
           </Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Pillar averages</Text>
+          <Text style={styles.sectionTitle}>Pillar averages (out of 10)</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
             {PILLARS.map((p) => (
               <View key={p.key} style={styles.pill}>

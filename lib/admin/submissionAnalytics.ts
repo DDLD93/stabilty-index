@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { PILLAR_KEYS } from "@/lib/constants";
+import { overallFromPillars } from "@/lib/reportFormat";
 
 export type SubmissionAnalyticsResult = {
   overallAvgScore: number | null;
@@ -37,9 +38,11 @@ export async function getSubmissionAnalytics(
 
   const submissionCount = submissions.length;
 
-  const scores = submissions
-    .map((s) => s.stabilityScore)
-    .filter((n): n is number => n != null);
+  // Each person's reading out of 10: the unrounded mean of their five 1–10 answers.
+  // Legacy check-ins (no pillar answers) fall back to their stored 1–10 score.
+  const personal = (s: (typeof submissions)[number]): number | null =>
+    overallFromPillars((s.pillarResponses ?? {}) as Record<string, unknown>, PILLAR_KEYS) ?? s.stabilityScore ?? null;
+  const scores = submissions.map(personal).filter((n): n is number => n != null);
   const overallAvgScore =
     scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : null;
 
@@ -106,7 +109,7 @@ export async function getSubmissionAnalytics(
   const moodScoreCount: Record<string, number> = {};
   for (const s of submissions) {
     const m = s.mood?.trim();
-    const score = s.stabilityScore;
+    const score = personal(s);
     if (m && typeof score === "number") {
       moodScoreSum[m] = (moodScoreSum[m] ?? 0) + score;
       moodScoreCount[m] = (moodScoreCount[m] ?? 0) + 1;
@@ -122,7 +125,7 @@ export async function getSubmissionAnalytics(
   const stateScoreCount: Record<string, number> = {};
   for (const s of submissions) {
     const state = s.spotlightState?.trim();
-    const score = s.stabilityScore;
+    const score = personal(s);
     if (state && typeof score === "number") {
       stateScoreSum[state] = (stateScoreSum[state] ?? 0) + score;
       stateScoreCount[state] = (stateScoreCount[state] ?? 0) + 1;

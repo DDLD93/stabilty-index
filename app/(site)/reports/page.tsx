@@ -7,7 +7,7 @@ import { LinkButton } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Layout";
 import { EmptyState, PageHeader } from "@/components/ui/PageHeader";
 import { defaultMetadata } from "@/lib/metadata";
-import { change, formatDate, listPublishedReports, monthOf } from "@/lib/snapshots";
+import { change, editionDateline, listPublishedReports, monthOf } from "@/lib/snapshots";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +31,7 @@ export default async function ReportsPage() {
       <PageHeader
         crumbs={[{ href: "/", label: "Home" }, { label: "Reports" }]}
         title="Monthly reports"
-        lede="Every edition of the index since it began. A new report is published on the 11th of each month and locked once it is out, so the numbers you cite will not change."
+        lede="Every edition of the index since it began. Each report covers the previous month: the survey runs in the first days of the month and the report is published on the 11th, then locked so the numbers you cite will not change."
       />
 
       <Container className="py-10 sm:py-14">
@@ -68,8 +68,7 @@ export default async function ReportsPage() {
                             {r.period}
                           </span>
                           <span className="mt-1 block text-small text-ink-3">
-                            Edition {r.edition} · Published {formatDate(r.publishedAt)}
-                            {i === 0 ? " · Latest" : null}
+                            {i === 0 ? "Latest · " : null}Edition {r.edition} · {editionDateline(r)}
                           </span>
                         </span>
                         <span className="row-span-2 flex items-center gap-4 text-right">

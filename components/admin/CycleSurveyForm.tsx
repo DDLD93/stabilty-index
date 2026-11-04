@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PILLARS } from "@/lib/constants";
+import { previousMonthLabel } from "@/lib/reportFormat";
 
 type SurveyQuestion = {
   pillarKey: string;
@@ -167,10 +168,10 @@ export function CycleSurveyForm() {
         }}
       >
         <h2 className="text-sm font-semibold uppercase tracking-wide text-[color:var(--nsi-ink-soft)]">
-          Survey questions (one per pillar, scale 1–5)
+          Survey questions (one per pillar, scale 1–10)
         </h2>
         <p className="mt-2 max-w-xl text-sm text-[color:var(--nsi-ink-soft)]">
-          Define the question text for each stability pillar. Respondents will answer with a radio scale from 1 to 5.
+          Define the question text for each stability pillar. Respondents answer on a scale from 1 (least stable) to 10 (most stable).
         </p>
 
         {(cycle?.status !== "OPEN" || !cycle) && (
@@ -183,12 +184,13 @@ export function CycleSurveyForm() {
               type="text"
               value={cycleName}
               onChange={(e) => setCycleName(e.target.value)}
-              placeholder={cycle?.monthYear ?? new Intl.DateTimeFormat("en-NG", { month: "long", year: "numeric" }).format(new Date())}
+              placeholder={cycle?.monthYear ?? previousMonthLabel()}
               className="mt-1.5 w-full max-w-xs rounded-xl border border-black/15 bg-white px-4 py-2.5 text-[color:var(--nsi-ink)] placeholder:text-black/40 focus:border-[color:var(--nsi-green)] focus:outline-none focus:ring-1 focus:ring-[color:var(--nsi-green)]"
               aria-label="Cycle name"
             />
             <p className="mt-1 text-xs text-[color:var(--nsi-ink-soft)]">
-              Used when creating or opening a cycle (e.g. month and year). Leave blank to use the default.
+              The month the survey asks about, usually last month (e.g. a cycle opened in early November is
+              &ldquo;October 2026&rdquo;). Leave blank to use {previousMonthLabel()}.
             </p>
           </div>
         )}

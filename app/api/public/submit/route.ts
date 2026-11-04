@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { MOODS, NIGERIAN_STATES, PILLAR_KEYS, SPOTLIGHT_TAGS, PILLARS } from "@/lib/constants";
 import { isValidReferrerCodeFormat } from "@/lib/agentReferrerCode";
 import { deviceInfoPayloadSchema } from "@/lib/clientDeviceInfo";
+import { SCALE_MAX, SCALE_MIN, isScaleAnswer, overallFromPillars, previousMonthLabel } from "@/lib/reportFormat";
 
 const referrerCodeField = z
   .string()
@@ -24,14 +25,9 @@ const legacySchema = z.object({
   deviceInfo: deviceInfoPayloadSchema.optional(),
 });
 
-const pillarResponsesSchema = z.record(z.string(), z.number().int().min(1).max(5)).refine(
-  (obj) => {
-    for (const key of PILLAR_KEYS) {
-      if (typeof obj[key] !== "number" || obj[key] < 1 || obj[key] > 5) return false;
-    }
-    return true;
-  },
-  { message: "Must have a value 1–5 for each pillar." }
+const pillarResponsesSchema = z.record(z.string(), z.number().int().min(SCALE_MIN).max(SCALE_MAX)).refine(
+  (obj) => PILLAR_KEYS.every((key) => isScaleAnswer(obj[key])),
+  { message: `Must have a value ${SCALE_MIN}–${SCALE_MAX} for each pillar.` }
 );
 
 const submitSchema = z.union([
@@ -39,6 +35,8 @@ const submitSchema = z.union([
   z.object({
     deviceHash: z.string().min(1).optional(),
     pillarResponses: pillarResponsesSchema,
+    /** The scale the client showed. Pages loaded before the 1–10 switch don't send it. */
+    scaleMax: z.number().int().optional(),
     mood: z.enum(MOODS).nullable().optional(),
     oneWord: z.string().trim().max(40).nullable().optional(),
     spotlightState: z.enum(NIGERIAN_STATES).nullable().optional(),
@@ -54,10 +52,6 @@ function looksLikePII(text: string) {
   const email = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i;
   const phone = /(\+?\d[\d\s().-]{7,}\d)/;
   return email.test(text) || phone.test(text);
-}
-
-function formatMonthYear(d: Date) {
-  return new Intl.DateTimeFormat("en-NG", { month: "long", year: "numeric" }).format(d);
 }
 
 async function resolveAgentIdForSubmit(
@@ -116,7 +110,7 @@ export async function POST(req: Request) {
     cycle = await db.cycle.create({
       data: {
         status: "OPEN",
-        monthYear: formatMonthYear(new Date()),
+        monthYear: previousMonthLabel(),
         surveyQuestions: defaultQuestions as unknown as Prisma.InputJsonValue,
       },
       select: { id: true, status: true, surveyQuestions: true },
@@ -125,6 +119,14 @@ export async function POST(req: Request) {
 
   if (cycle.status !== "OPEN") {
     return NextResponse.json({ error: "Collection is currently closed." }, { status: 409 });
+  }
+
+  if (isPillarPayload && (data as { scaleMax?: number }).scaleMax !== SCALE_MAX) {
+    // A page loaded before the switch to the 1–10 scale would send 1–5 answers that look valid.
+    return NextResponse.json(
+      { error: "The survey has been updated to a 1 to 10 scale. Please reload the page and answer again." },
+      { status: 409 }
+    );
   }
 
   if (isPillarPayload) {
@@ -149,10 +151,10 @@ export async function POST(req: Request) {
       }
     }
     const pillarResponses = data.pillarResponses as Record<string, number>;
-    const values = PILLAR_KEYS.map((k) => pillarResponses[k]).filter((v): v is number => typeof v === "number");
-    const avg = values.length === 5 ? values.reduce((a, b) => a + b, 0) / 5 : 0;
-    const stabilityScore = Math.round(avg * 2);
-    const clampedScore = Math.min(10, Math.max(1, stabilityScore));
+    // Personal reading = plain mean of the five 1–10 answers, stored rounded to a whole number.
+    // (Analytics average the raw answers, so this rounding never reaches a published figure.)
+    const personal = overallFromPillars(pillarResponses, PILLAR_KEYS) ?? SCALE_MIN;
+    const clampedScore = Math.min(SCALE_MAX, Math.max(SCALE_MIN, Math.round(personal)));
 
     const pillarData = data as {
       mood?: string | null;

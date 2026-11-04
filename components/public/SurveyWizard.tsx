@@ -13,6 +13,7 @@ import { buttonVariants } from "@/components/ui/Button";
 import { PhotoCredit } from "@/components/ui/Figure";
 import { controlClass, Field, FormMessage } from "@/components/ui/Form";
 import { photos, pillarPhotos, type Photo } from "@/lib/photos";
+import { SCALE_MAX, SCALE_MIN, SCALE_VALUES, isScaleAnswer, monthOf, publicationDateFor } from "@/lib/reportFormat";
 
 const introPhoto = photos.dyeWorkers;
 
@@ -28,7 +29,6 @@ export type Cycle = {
   surveyQuestions: SurveyQuestion[];
 };
 
-const SCALE = [1, 2, 3, 4, 5] as const;
 const PILLAR_STEPS = 5;
 const TOTAL_STEPS = 6; // intro + 5 pillars + optional spotlight
 
@@ -133,7 +133,7 @@ export function SurveyWizard() {
   };
 
   const hasAllPillarAnswers =
-    PILLAR_KEYS.every((k) => typeof pillarResponses[k] === "number" && pillarResponses[k] >= 1 && pillarResponses[k] <= 5);
+    PILLAR_KEYS.every((k) => isScaleAnswer(pillarResponses[k]));
 
   const goNext = () => {
     if (step < TOTAL_STEPS) setStep((s) => s + 1);
@@ -163,6 +163,7 @@ export function SurveyWizard() {
           ...(referrerCodeToSubmit && { referrerCode: referrerCodeToSubmit }),
           ...(deviceInfo && { deviceInfo }),
           pillarResponses,
+          scaleMax: SCALE_MAX,
           mood: mood || null,
           oneWord: oneWord.trim() || null,
           spotlightState: spotlightState || null,
@@ -243,7 +244,8 @@ export function SurveyWizard() {
       <div className="border-t-4 border-brand bg-surface px-6 py-8 sm:px-8">
         <h2 className="text-h3">Thank you. Your answers are in.</h2>
         <p className="mt-3 text-body text-ink-2">
-          They will count towards the {cycle.monthYear} reading, published on the 11th of next month.
+          They will count towards the {cycle.monthYear} edition, published on{" "}
+          {publicationDateFor(cycle.monthYear) ?? "the 11th of this month"}.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link href="/subscribe" className={buttonVariants()}>
@@ -305,11 +307,16 @@ export function SurveyWizard() {
 
         {step === 0 && (
           <div className="pt-8">
-            <h2 className="text-h2">Tell us how Nigeria feels to you this month</h2>
+            <h2 className="text-h2">Tell us how Nigeria felt to you in {monthOf(cycle.monthYear)}</h2>
+            <p className="mt-3 text-body text-ink-2">
+              This survey is for the {cycle.monthYear} edition of the index, published on{" "}
+              {publicationDateFor(cycle.monthYear) ?? "the 11th of this month"}. Each edition reports the month
+              before it is published.
+            </p>
             <ul className="mt-6 flex flex-col gap-3 text-body text-ink-2">
               <li className="flex gap-3">
                 <Check aria-hidden className="mt-1 size-5 shrink-0 text-brand" />
-                Five questions, one for each pillar, answered from 1 (least stable) to 5 (most stable).
+                Five questions, one for each pillar, answered from {SCALE_MIN} (least stable) to {SCALE_MAX} (most stable).
               </li>
               <li className="flex gap-3">
                 <Check aria-hidden className="mt-1 size-5 shrink-0 text-brand" />
@@ -333,15 +340,17 @@ export function SurveyWizard() {
             <legend className="font-serif text-[clamp(1.375rem,1.2rem+0.8vw,1.75rem)] leading-snug font-semibold text-ink">
               {currentQuestion.questionText}
             </legend>
-            <p className="mt-3 text-body text-ink-2">Choose a number from 1 to 5.</p>
+            <p className="mt-3 text-body text-ink-2">
+              Choose a number from {SCALE_MIN} to {SCALE_MAX}.
+            </p>
 
-            <div className="mt-6 grid grid-cols-5 gap-2 sm:gap-3">
-              {SCALE.map((n) => {
+            <div className="mt-6 grid grid-cols-5 gap-2 sm:grid-cols-10">
+              {SCALE_VALUES.map((n) => {
                 const checked = pillarResponses[currentQuestion.pillarKey] === n;
                 return (
                   <label
                     key={n}
-                    className={`relative flex min-h-16 cursor-pointer items-center justify-center rounded-control border text-h3 font-semibold tabular-nums transition-[background-color,border-color,color] duration-150 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand ${
+                    className={`relative flex min-h-14 cursor-pointer items-center justify-center rounded-control border text-h3 font-semibold tabular-nums transition-[background-color,border-color,color] duration-150 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand ${
                       checked ? "border-brand bg-brand text-white" : "border-line-strong bg-ground text-ink hover:border-ink"
                     }`}
                   >
@@ -354,7 +363,7 @@ export function SurveyWizard() {
                       className="sr-only"
                     />
                     {n}
-                    <span className="sr-only">{n === 1 ? " (least stable)" : n === 5 ? " (most stable)" : ""}</span>
+                    <span className="sr-only">{n === SCALE_MIN ? " (least stable)" : n === SCALE_MAX ? " (most stable)" : ""}</span>
                   </label>
                 );
               })}

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ReportArticle } from "@/components/publication/ReportArticle";
 import { defaultMetadata, siteConfig } from "@/lib/metadata";
 import { getBreadcrumbSchema, getArticleSchema, renderJsonLd } from "@/lib/seo";
-import { getReport } from "@/lib/snapshots";
+import { formatDate, getReport } from "@/lib/snapshots";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { ...defaultMetadata, title: "Report not found", robots: { index: false } };
   }
   const title = `${report.period}: ${report.overallScore.toFixed(1)} out of 10`;
-  const description = `The Nigeria Stability Index for ${report.period} (edition ${report.edition}) read ${report.overallScore.toFixed(1)} out of 10. Pillar scores, state and institution spotlights, and what people said.`;
+  const description = `The Nigeria Stability Index for ${report.period} (edition ${report.edition}, published ${formatDate(report.publishedAt)}) read ${report.overallScore.toFixed(1)} out of 10. Pillar scores, state and institution spotlights, and what people said.`;
   return {
     ...defaultMetadata,
     title,

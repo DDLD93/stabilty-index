@@ -1,9 +1,28 @@
 /** Client-safe formatting helpers and scales for NSI reports. */
 
-/** The overall index is out of 10; each pillar is the average of 1–5 survey answers. */
-export const OVERALL_MAX = 10;
-export const PILLAR_MIN = 1;
-export const PILLAR_MAX = 5;
+/**
+ * Survey answers are whole numbers from 1 (least stable) to 10 (most stable).
+ * Each pillar score is the average of its answers; the overall index is the average
+ * of each person's five answers. Everything is out of 10.
+ * (Editions collected before the switch used 1–5 and were rescaled ×2.)
+ */
+export const SCALE_MIN = 1;
+export const SCALE_MAX = 10;
+export const SCALE_VALUES: readonly number[] = Array.from({ length: SCALE_MAX - SCALE_MIN + 1 }, (_, i) => SCALE_MIN + i);
+export const OVERALL_MAX = SCALE_MAX;
+export const PILLAR_MIN = 0;
+export const PILLAR_MAX = SCALE_MAX;
+
+/** True for a whole-number answer on the survey scale. */
+export function isScaleAnswer(v: unknown): v is number {
+  return typeof v === "number" && Number.isInteger(v) && v >= SCALE_MIN && v <= SCALE_MAX;
+}
+
+/** One person's overall reading: the plain mean of their pillar answers (null unless every key is answered). */
+export function overallFromPillars(responses: Record<string, unknown>, keys: readonly string[]): number | null {
+  const vals = keys.map((k) => responses[k]).filter(isScaleAnswer);
+  return keys.length > 0 && vals.length === keys.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+}
 
 export type PillarScore = { title: string; score: number | null; summary: string };
 
@@ -52,9 +71,10 @@ export function formatInstitutionName(name: string): string {
 
 export type Change = { value: number; direction: "up" | "down" | "same" };
 
+/** Change between two scores as displayed: both are rounded to 1 decimal first, so the label matches the numbers shown. */
 export function change(current: number | null, previous: number | null): Change | null {
   if (current === null || previous === null) return null;
-  const value = Math.round((current - previous) * 10) / 10;
+  const value = (Math.round(current * 10) - Math.round(previous * 10)) / 10;
   return { value: Math.abs(value), direction: value > 0 ? "up" : value < 0 ? "down" : "same" };
 }
 
@@ -71,7 +91,47 @@ export function monthOf(period: string): string {
 
 const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
 
-/** Reports are published on the 11th of the month after the survey month: "October 2026" → "11 November 2026". */
+/**
+ * The standard dateline for an edition, making clear it reports the previous month:
+ * "Covers October 2026 · Survey taken 1–7 November 2026 · Published 11 November 2026".
+ */
+export function editionDateline(e: { period: string; surveyWindow?: string | null; publishedAt: Date }): string {
+  return [
+    `Covers ${e.period}`,
+    e.surveyWindow ? `Survey taken ${e.surveyWindow}` : null,
+    `Published ${formatDate(e.publishedAt)}`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
+/** "October 2026" → sortable month number (year × 12 + month index), or null. */
+export function monthNumber(period: string | null | undefined): number | null {
+  const match = period?.trim().match(/^([A-Za-z]+)\s+(\d{4})/);
+  if (!match) return null;
+  const m = MONTHS.findIndex((name) => name.startsWith(match[1].toLowerCase().slice(0, 3)));
+  return m < 0 ? null : Number(match[2]) * 12 + m;
+}
+
+/** Year of a period string ("December 2026" → "2026"). */
+export function yearOf(period: string): string | null {
+  return period.match(/\b(\d{4})\b/)?.[1] ?? null;
+}
+
+/** The month before `d` in Lagos time, e.g. any day in November 2026 → "October 2026". */
+export function previousMonthLabel(d: Date = new Date()): string {
+  const parts = new Intl.DateTimeFormat("en-GB", { month: "numeric", year: "numeric", timeZone: "Africa/Lagos" }).formatToParts(d);
+  const m = Number(parts.find((p) => p.type === "month")?.value) - 1;
+  const y = Number(parts.find((p) => p.type === "year")?.value);
+  const pm = (m + 11) % 12;
+  return `${MONTHS[pm][0].toUpperCase()}${MONTHS[pm].slice(1)} ${m === 0 ? y - 1 : y}`;
+}
+
+/**
+ * Each edition describes one month (the "period"). Its survey is taken in the first days of the
+ * FOLLOWING month, and the edition is published on the 11th of that following month:
+ * "October 2026" → "11 November 2026".
+ */
 export function publicationDateFor(monthYear: string | null | undefined): string | null {
   const match = monthYear?.trim().match(/^([A-Za-z]+)\s+(\d{4})/);
   if (!match) return null;

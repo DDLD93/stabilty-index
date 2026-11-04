@@ -180,13 +180,18 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
             {data.overallAvgScore != null
               ? data.overallAvgScore.toFixed(2)
               : "—"}
+            <span className="ml-1 text-base font-medium text-black/50">/ 10</span>
+          </p>
+          <p className="mt-1 text-xs text-black/50">
+            Mean of each person&rsquo;s five answers (1&ndash;10), unflagged submissions only. This is the figure the
+            edition&rsquo;s overall score should match.
           </p>
         </section>
 
         {/* Average per pillar */}
         <section>
           <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
-            Average score per pillar
+            Average score per pillar <span className="normal-case">(out of 10)</span>
           </h3>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {PILLARS.map((p) => (

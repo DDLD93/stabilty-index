@@ -1,5 +1,6 @@
 "use client";
 
+import { PILLAR_MAX, PILLAR_MIN } from "@/lib/reportFormat";
 import { SnapshotModel, Pillar } from "./types";
 
 type SnapshotPillarsProps = {
@@ -20,7 +21,8 @@ export function SnapshotPillars({ model, setModel, locked }: SnapshotPillarsProp
   return (
     <div className="space-y-6">
       <p className="text-sm text-[color:var(--nsi-ink-soft)]">
-        Define scores and summaries for each of the five stability pillars.
+        Define scores and summaries for each of the five stability pillars. Scores are out of 10: the average of
+        the survey answers (1&ndash;10) for that pillar.
       </p>
 
       <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
@@ -71,6 +73,7 @@ function PillarCard({ pillar, index, locked, onUpdate }: PillarCardProps) {
           <span className="font-serif text-2xl font-bold tabular-nums text-[color:var(--nsi-green)]">
             {pillar.score.toFixed(1)}
           </span>
+          <span className="text-xs text-[color:var(--nsi-ink-soft)]">/{PILLAR_MAX}</span>
         </div>
       </div>
 
@@ -78,7 +81,7 @@ function PillarCard({ pillar, index, locked, onUpdate }: PillarCardProps) {
       <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-black/5">
         <div
           className="h-full rounded-full bg-[color:var(--nsi-green)] transition-all duration-300"
-          style={{ width: `${(pillar.score / 10) * 100}%` }}
+          style={{ width: `${Math.min(100, Math.max(0, (pillar.score / PILLAR_MAX) * 100))}%` }}
         />
       </div>
 
@@ -96,13 +99,13 @@ function PillarCard({ pillar, index, locked, onUpdate }: PillarCardProps) {
         </label>
 
         <label className="block">
-          <span className="text-xs font-medium text-[color:var(--nsi-ink-soft)]">Score (0-10)</span>
+          <span className="text-xs font-medium text-[color:var(--nsi-ink-soft)]">Score (out of {PILLAR_MAX})</span>
           <input
             className="admin-input mt-1 text-sm"
             type="number"
             step="0.1"
-            min={0}
-            max={10}
+            min={PILLAR_MIN}
+            max={PILLAR_MAX}
             value={pillar.score}
             onChange={(e) => onUpdate({ score: Number(e.target.value) })}
             disabled={locked}

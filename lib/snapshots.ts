@@ -1,17 +1,19 @@
 import { cache } from "react";
 import { db } from "@/lib/db";
 import { getKeyPointsHtml } from "@/lib/spotlight";
-import { cleanPeriod, hasText, type PillarScore } from "@/lib/reportFormat";
+import { cleanPeriod, hasText, monthNumber, type PillarScore } from "@/lib/reportFormat";
 
 export * from "@/lib/reportFormat";
 
 export type ReportSummary = {
   id: string;
-  /** "September 2026" (cleaned of editorial suffixes such as "final"). */
+  /** The month this edition covers: "September 2026" (cleaned of editorial suffixes such as "final"). */
   period: string;
+  /** When the survey behind it was collected, e.g. "1–7 October 2026"; null when the edition isn't linked to a cycle. */
+  surveyWindow: string | null;
   overallScore: number;
   publishedAt: Date;
-  /** 1-based count of published editions, in publication order. */
+  /** 1-based count of published editions, in the order of the months they cover. */
   edition: number;
   pillars: PillarScore[];
 };
@@ -109,21 +111,66 @@ function normalizeSources(raw: unknown): SourceRef[] {
 
 // ---------- queries ----------
 
-/** Every published edition, oldest first, with edition numbers. */
+const dayMonth = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", timeZone: "Africa/Lagos" });
+const dayMonthYear = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Africa/Lagos" });
+
+/** "1 October 2026" + "7 October 2026" → "1–7 October 2026"; spans across months keep both months. */
+function formatWindow(from: Date, to: Date): string {
+  const a = dayMonthYear.formatToParts(from);
+  const b = dayMonthYear.formatToParts(to);
+  const part = (p: Intl.DateTimeFormatPart[], t: string) => p.find((x) => x.type === t)?.value;
+  if (part(a, "month") === part(b, "month") && part(a, "year") === part(b, "year")) {
+    return part(a, "day") === part(b, "day")
+      ? dayMonthYear.format(to)
+      : `${part(a, "day")}–${dayMonthYear.format(to)}`;
+  }
+  return `${part(a, "year") === part(b, "year") ? dayMonth.format(from) : dayMonthYear.format(from)} – ${dayMonthYear.format(to)}`;
+}
+
+/** Collection dates (first and last answer) for each cycle that has answers. */
+const surveyWindows = cache(async (cycleIds: string[]): Promise<Map<string, string>> => {
+  if (cycleIds.length === 0) return new Map();
+  const rows = await db.submission.groupBy({
+    by: ["cycleId"],
+    where: { cycleId: { in: cycleIds } },
+    _min: { createdAt: true },
+    _max: { createdAt: true },
+  });
+  return new Map(
+    rows
+      .filter((r) => r._min.createdAt && r._max.createdAt)
+      .map((r) => [r.cycleId, formatWindow(r._min.createdAt as Date, r._max.createdAt as Date)])
+  );
+});
+
+/** Survey-month order, falling back to publication date when a period can't be read. */
+function byCoveredMonth<T extends { period: string; publishedAt: Date }>(a: T, b: T): number {
+  const ma = monthNumber(a.period);
+  const mb = monthNumber(b.period);
+  if (ma !== null && mb !== null && ma !== mb) return ma - mb;
+  return +a.publishedAt - +b.publishedAt;
+}
+
+/** Every published edition, oldest month first, with edition numbers. */
 export const listPublishedReports = cache(async (): Promise<ReportSummary[]> => {
   const rows = await db.snapshot.findMany({
     where: { publishedAt: { not: null } },
     orderBy: { publishedAt: "asc" },
-    select: { id: true, period: true, overallScore: true, publishedAt: true, pillarScores: true },
+    select: { id: true, cycleId: true, period: true, overallScore: true, publishedAt: true, pillarScores: true },
   });
-  return rows.map((r, i) => ({
-    id: r.id,
-    period: cleanPeriod(r.period),
-    overallScore: r.overallScore,
-    publishedAt: r.publishedAt as Date,
-    edition: i + 1,
-    pillars: normalizePillars(r.pillarScores),
-  }));
+  const windows = await surveyWindows(rows.map((r) => r.cycleId).filter((id): id is string => !!id));
+  return rows
+    .map((r) => ({ ...r, period: cleanPeriod(r.period), publishedAt: r.publishedAt as Date }))
+    .sort(byCoveredMonth)
+    .map((r, i) => ({
+      id: r.id,
+      period: r.period,
+      surveyWindow: r.cycleId ? (windows.get(r.cycleId) ?? null) : null,
+      overallScore: r.overallScore,
+      publishedAt: r.publishedAt,
+      edition: i + 1,
+      pillars: normalizePillars(r.pillarScores),
+    }));
 });
 
 /** A published report with its neighbours. Returns null for drafts unless `allowDraft` (admin preview). */
@@ -134,10 +181,19 @@ export const getReport = cache(async (id: string, allowDraft = false): Promise<R
 
   const all = await listPublishedReports();
   const index = all.findIndex((r) => r.id === id);
+  const period = cleanPeriod(row.period);
+  // A draft preview compares against the latest edition that covers an earlier month.
+  const draftMonth = monthNumber(period);
+  const draftPrevious =
+    index === -1
+      ? ([...all].reverse().find((r) => draftMonth === null || (monthNumber(r.period) ?? -1) < draftMonth) ?? null)
+      : null;
+  const windows = row.cycleId ? await surveyWindows([row.cycleId]) : new Map<string, string>();
 
   return {
     id: row.id,
-    period: cleanPeriod(row.period),
+    period,
+    surveyWindow: row.cycleId ? (windows.get(row.cycleId) ?? null) : null,
     overallScore: row.overallScore,
     publishedAt: row.publishedAt ?? row.updatedAt,
     edition: index >= 0 ? index + 1 : all.length + 1,
@@ -148,7 +204,7 @@ export const getReport = cache(async (id: string, allowDraft = false): Promise<R
     streetPulse: normalizeStreetPulse(row.streetPulseSpotlightContent),
     sentiment: normalizeSentiment(row.publicSentimentSummary),
     sources: normalizeSources(row.sourcesReferences),
-    previous: index > 0 ? all[index - 1] : index === -1 ? (all.at(-1) ?? null) : null,
+    previous: index > 0 ? all[index - 1] : draftPrevious,
     next: index >= 0 && index < all.length - 1 ? all[index + 1] : null,
   };
 });
