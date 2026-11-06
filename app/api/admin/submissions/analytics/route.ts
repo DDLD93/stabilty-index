@@ -4,6 +4,7 @@ import { requireAdminSession } from "@/lib/adminSession";
 import { getSubmissionAnalytics } from "@/lib/admin/submissionAnalytics";
 
 const emptyAnalytics = {
+  pillarMax: 10 as 5 | 10,
   overallAvgScore: null as number | null,
   avgPerPillar: {} as Record<string, number>,
   moodDistribution: {} as Record<string, number>,

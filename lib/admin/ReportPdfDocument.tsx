@@ -138,7 +138,7 @@ export function ReportPdfDocument({
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Pillar averages (out of 10)</Text>
+          <Text style={styles.sectionTitle}>Pillar averages (out of {data.pillarMax ?? 10})</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
             {PILLARS.map((p) => (
               <View key={p.key} style={styles.pill}>

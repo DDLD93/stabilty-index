@@ -10,8 +10,9 @@ function tidyNote(note: string): string {
 }
 
 /**
- * The five pillar scores for one edition as a real table: name, score out of 10,
- * a bar on the 0–10 scale, and the change from the previous edition.
+ * The five pillar scores for one edition as a real table: name, score out of `max`
+ * (5 for editions up to September 2026, 10 from October 2026), a bar on that scale,
+ * and the change from the previous edition. Pass `previous` only when it uses the same scale.
  * Rows stack into blocks on small screens.
  */
 export function PillarTable({
@@ -20,13 +21,17 @@ export function PillarTable({
   previousLabel,
   caption,
   className,
+  max = PILLAR_MAX,
 }: {
+  max?: 5 | 10;
   pillars: PillarScore[];
   previous?: PillarScore[];
   previousLabel?: string;
   caption: string;
   className?: string;
 }) {
+  // Old 1–5 editions keep the 1–5 axis they were published with.
+  const min = max === 5 ? 1 : PILLAR_MIN;
   const prevBy = new Map((previous ?? []).map((p) => [p.title.toLowerCase(), p.score]));
 
   return (
@@ -36,13 +41,13 @@ export function PillarTable({
         <tr className="border-b border-line text-meta text-ink-3">
           <th scope="col" className="py-3 pr-4 font-semibold">Pillar</th>
           <th scope="col" className="w-[38%] py-3 pr-6 font-semibold">
-            <span className="sr-only">Score on a {PILLAR_MIN} to {PILLAR_MAX} scale</span>
+            <span className="sr-only">Score on a {min} to {max} scale</span>
             <span aria-hidden className="flex justify-between tabular-nums">
-              <span>{PILLAR_MIN}</span>
-              <span>{PILLAR_MAX}</span>
+              <span>{min}</span>
+              <span>{max}</span>
             </span>
           </th>
-          <th scope="col" className="py-3 pr-4 text-right font-semibold">Score (of {PILLAR_MAX})</th>
+          <th scope="col" className="py-3 pr-4 text-right font-semibold">Score (of {max})</th>
           {previous ? (
             <th scope="col" className="py-3 text-right font-semibold">
               Change{previousLabel ? <span className="sr-only"> from {previousLabel}</span> : null}
@@ -66,11 +71,11 @@ export function PillarTable({
                 ) : null}
               </th>
               <td className="py-5 pr-6 max-md:col-span-2 max-md:row-start-2 max-md:py-1">
-                <ScoreBar value={p.score} previous={prev} min={PILLAR_MIN} max={PILLAR_MAX} />
+                <ScoreBar value={p.score} previous={prev} min={min} max={max} />
               </td>
               <td className="py-4 pr-4 text-right text-lead font-semibold tabular-nums max-md:col-start-2 max-md:row-start-1 max-md:py-0 max-md:pr-0">
                 {formatScore(p.score)}
-                <span className="sr-only"> out of {PILLAR_MAX}</span>
+                <span className="sr-only"> out of {max}</span>
               </td>
               {previous ? (
                 <td className="py-4 text-right text-small max-md:col-span-2 max-md:row-start-3 max-md:py-0 max-md:text-left">

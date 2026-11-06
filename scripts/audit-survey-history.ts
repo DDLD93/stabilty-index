@@ -12,7 +12,7 @@ import { writeFileSync } from "node:fs";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PILLAR_KEYS } from "../lib/constants";
-import { change, cleanPeriod } from "../lib/reportFormat";
+import { change, cleanPeriod, pillarScaleFor } from "../lib/reportFormat";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) throw new Error("DATABASE_URL is required");
@@ -83,6 +83,8 @@ async function main() {
   log(`|---|---|---|---|---|---|---|---|---|---|---|${PILLAR_KEYS.map(() => "---").join("|")}|`);
 
   for (const c of cycles) {
+    // Answers are 1–5 for cycles up to September 2026 and 1–10 from October 2026.
+    const scale = pillarScaleFor(c.monthYear);
     const all = submissions.filter((s) => s.cycleId === c.id);
     const counted = all.filter((s) => !s.isFlagged);
     let pillarBased = 0, legacy = 0;
@@ -102,24 +104,24 @@ async function main() {
       for (const k of PILLAR_KEYS) {
         const v = pr[k];
         if (typeof v !== "number") { missingKeys++; continue; }
-        if (!Number.isInteger(v) || v < 1 || v > 10) outOfRange++;
+        if (!Number.isInteger(v) || v < 1 || v > scale) outOfRange++;
         vals.push(v);
         if (!s.isFlagged) perPillar[k].push(v);
       }
       for (const k of Object.keys(pr)) if (!(PILLAR_KEYS as readonly string[]).includes(k)) unknownKeys++;
       if (vals.length === PILLAR_KEYS.length) {
         const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
-        const expected = Math.min(10, Math.max(1, Math.round(avg)));
+        const expected = Math.min(10, Math.max(1, Math.round((avg * 10) / scale)));
         if (s.stabilityScore !== expected) scoreMismatch++;
-        if (!s.isFlagged) personalMeans.push(avg);
+        if (!s.isFlagged) personalMeans.push((avg * 10) / scale);
       }
     }
 
     const label = cleanPeriod(c.monthYear);
-    if (outOfRange) issue(`${label}: ${outOfRange} answer(s) outside the 1–10 range.`);
+    if (outOfRange) issue(`${label}: ${outOfRange} answer(s) outside the 1–${scale} range.`);
     if (missingKeys) issue(`${label}: ${missingKeys} missing pillar answer(s) in pillar-based submissions.`);
     if (unknownKeys) issue(`${label}: ${unknownKeys} answer(s) under pillar keys that are not in PILLARS.`);
-    if (scoreMismatch) issue(`${label}: ${scoreMismatch} submission(s) whose stabilityScore ≠ round(avg).`);
+    if (scoreMismatch) issue(`${label}: ${scoreMismatch} submission(s) whose stabilityScore ≠ round(avg × 10/${scale}).`);
     if (legacy && pillarBased) issue(`${label}: mixes ${legacy} legacy (direct 1–10 score) and ${pillarBased} pillar-based submissions in one average.`);
 
     const pillars = Object.fromEntries(PILLAR_KEYS.map((k) => [k, mean(perPillar[k])]));
@@ -132,19 +134,20 @@ async function main() {
     log(`| ${label} | ${c.status} | ${day(+c.createdAt)} | ${day(times[0])} → ${day(times.at(-1))} | ${all.length} | ${all.length - counted.length} | ${counted.length} | ${pillarBased} | ${legacy} | ${r2(overall)} | ${r2(overallFromPillars)} | ${PILLAR_KEYS.map((k) => r2(pillars[k])).join(" | ")} |`);
   }
   log();
-  log(`"Avg stabilityScore" is what admin analytics shows (mean of rounded integers). "Avg of personal means" is the unrounded overall the editions publish. All values are on the 1–10 scale.`);
+  log(`"Avg stabilityScore" is what admin analytics shows (mean of rounded integers). "Avg of personal means" is the unrounded overall the editions publish. Overall figures are out of 10; pillar columns are on each cycle's own scale (1–5 up to September 2026, 1–10 from October 2026).`);
   log();
 
   /** Unflagged pillar stats over a set of cycles, optionally only rows created before `before`. */
   function pooled(cycleIds: string[], before?: Date) {
     const rows = submissions.filter((x) => cycleIds.includes(x.cycleId) && !x.isFlagged && (!before || x.createdAt < before));
+    const scale = pillarScaleFor(cycles.find((c) => c.id === cycleIds[0])?.monthYear);
     const per: Record<string, number[]> = Object.fromEntries(PILLAR_KEYS.map((k) => [k, []]));
     const personal: number[] = [];
     for (const x of rows) {
       const pr = (x.pillarResponses ?? {}) as Record<string, unknown>;
       const vals = PILLAR_KEYS.map((k) => pr[k]).filter((v): v is number => typeof v === "number");
       for (const k of PILLAR_KEYS) if (typeof pr[k] === "number") per[k].push(pr[k] as number);
-      if (vals.length === PILLAR_KEYS.length) personal.push(vals.reduce((a, b) => a + b, 0) / vals.length);
+      if (vals.length === PILLAR_KEYS.length) personal.push(((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / scale);
     }
     return {
       n: rows.length,

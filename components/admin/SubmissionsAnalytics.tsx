@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { PILLARS, MOODS } from "@/lib/constants";
 
 type AnalyticsData = {
+  pillarMax?: 5 | 10;
   overallAvgScore: number | null;
   avgPerPillar: Record<string, number>;
   moodDistribution: Record<string, number>;
@@ -183,15 +184,15 @@ export function SubmissionsAnalytics({ cycleId }: SubmissionsAnalyticsProps) {
             <span className="ml-1 text-base font-medium text-black/50">/ 10</span>
           </p>
           <p className="mt-1 text-xs text-black/50">
-            Mean of each person&rsquo;s five answers (1&ndash;10), unflagged submissions only. This is the figure the
-            edition&rsquo;s overall score should match.
+            Mean of each person&rsquo;s reading out of 10 (their five answers averaged
+            {data.pillarMax === 5 ? ", ×2 on this cycle’s 1–5 scale" : ""}), unflagged submissions only.
           </p>
         </section>
 
         {/* Average per pillar */}
         <section>
           <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">
-            Average score per pillar <span className="normal-case">(out of 10)</span>
+            Average score per pillar <span className="normal-case">(out of {data.pillarMax ?? 10})</span>
           </h3>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {PILLARS.map((p) => (

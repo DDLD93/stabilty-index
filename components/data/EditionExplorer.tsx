@@ -12,6 +12,7 @@ export type ExplorerEdition = {
   id: string;
   period: string;
   surveyWindow: string | null;
+  pillarMax: 5 | 10;
   overallScore: number;
   publishedAt: string;
   edition: number;
@@ -45,6 +46,8 @@ export function EditionExplorer({
   const current = editions[index];
   const previous = index > 0 ? editions[index - 1] : null;
   const isLatest = index === editions.length - 1;
+  // Pillar changes are only shown between editions on the same scale (1–5 until September 2026, then 1–10).
+  const samePillarScale = !!previous && previous.pillarMax === current?.pillarMax;
   const first = editions[0];
 
   if (!current) return null;
@@ -129,13 +132,17 @@ export function EditionExplorer({
         <div className="mt-10 lg:mt-9">
           <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-ink pb-3">
             <h2 className="text-h3">The five pillars, {current.period}</h2>
-            <p className="text-meta text-ink-3">Average of public answers on a 1 to 10 scale; the line under each pillar is the editors’ summary. The black tick marks {previous ? monthOf(previous.period) : "the previous month"}.</p>
+            <p className="text-meta text-ink-3">
+              Average of public answers on a 1 to {current.pillarMax} scale; the line under each pillar is the editors’
+              summary.{samePillarScale ? ` The black tick marks ${monthOf(previous!.period)}.` : null}
+            </p>
           </div>
           <PillarTable
             pillars={current.pillars}
-            previous={previous?.pillars}
-            previousLabel={previous ? monthOf(previous.period) : undefined}
-            caption={`Pillar scores for ${current.period}, out of 10`}
+            max={current.pillarMax}
+            previous={samePillarScale ? previous!.pillars : undefined}
+            previousLabel={samePillarScale ? monthOf(previous!.period) : undefined}
+            caption={`Pillar scores for ${current.period}, out of ${current.pillarMax}`}
           />
         </div>
       ) : null}

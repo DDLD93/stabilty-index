@@ -3,9 +3,21 @@
 /**
  * Survey answers are whole numbers from 1 (least stable) to 10 (most stable).
  * Each pillar score is the average of its answers; the overall index is the average
- * of each person's five answers. Everything is out of 10.
- * (Editions collected before the switch used 1–5 and were rescaled ×2.)
+ * of each person's reading, out of 10.
+ *
+ * Editions up to September 2026 were collected on a 1–5 scale and are kept exactly as
+ * published: their answers and pillar scores are out of 5, their overall out of 10.
+ * The 1–10 scale applies from the October 2026 edition onward.
  */
+export const TEN_POINT_FROM = "October 2026";
+
+/** Pillar (and answer) scale for the edition or cycle covering `period`: 5 before October 2026, 10 from then on. */
+export function pillarScaleFor(period: string | null | undefined): 5 | 10 {
+  const m = monthNumber(period);
+  const from = monthNumber(TEN_POINT_FROM);
+  return m !== null && from !== null && m < from ? 5 : 10;
+}
+
 export const SCALE_MIN = 1;
 export const SCALE_MAX = 10;
 export const SCALE_VALUES: readonly number[] = Array.from({ length: SCALE_MAX - SCALE_MIN + 1 }, (_, i) => SCALE_MIN + i);
@@ -18,10 +30,20 @@ export function isScaleAnswer(v: unknown): v is number {
   return typeof v === "number" && Number.isInteger(v) && v >= SCALE_MIN && v <= SCALE_MAX;
 }
 
-/** One person's overall reading: the plain mean of their pillar answers (null unless every key is answered). */
-export function overallFromPillars(responses: Record<string, unknown>, keys: readonly string[]): number | null {
-  const vals = keys.map((k) => responses[k]).filter(isScaleAnswer);
-  return keys.length > 0 && vals.length === keys.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+/**
+ * One person's overall reading out of 10: the mean of their pillar answers, scaled to /10
+ * (on the old 1–5 scale that is mean × 2, as it always was). Null unless every key is answered.
+ */
+export function overallFromPillars(
+  responses: Record<string, unknown>,
+  keys: readonly string[],
+  scaleMax: 5 | 10 = 10
+): number | null {
+  const vals = keys
+    .map((k) => responses[k])
+    .filter((v): v is number => typeof v === "number" && Number.isInteger(v) && v >= SCALE_MIN && v <= scaleMax);
+  if (keys.length === 0 || vals.length !== keys.length) return null;
+  return (vals.reduce((a, b) => a + b, 0) / vals.length) * (OVERALL_MAX / scaleMax);
 }
 
 export type PillarScore = { title: string; score: number | null; summary: string };

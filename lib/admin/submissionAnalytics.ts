@@ -1,8 +1,10 @@
 import { db } from "@/lib/db";
 import { PILLAR_KEYS } from "@/lib/constants";
-import { overallFromPillars } from "@/lib/reportFormat";
+import { overallFromPillars, pillarScaleFor } from "@/lib/reportFormat";
 
 export type SubmissionAnalyticsResult = {
+  /** Scale of this cycle's answers and pillar averages: 5 up to September 2026, 10 from October 2026. */
+  pillarMax: 5 | 10;
   overallAvgScore: number | null;
   avgPerPillar: Record<string, number>;
   moodDistribution: Record<string, number>;
@@ -24,6 +26,8 @@ function scoreToBucket(score: number): string {
 export async function getSubmissionAnalytics(
   cycleId: string
 ): Promise<SubmissionAnalyticsResult> {
+  const cycle = await db.cycle.findUnique({ where: { id: cycleId }, select: { monthYear: true } });
+  const pillarMax = pillarScaleFor(cycle?.monthYear);
   const submissions = await db.submission.findMany({
     where: { cycleId, isFlagged: false },
     select: {
@@ -38,10 +42,12 @@ export async function getSubmissionAnalytics(
 
   const submissionCount = submissions.length;
 
-  // Each person's reading out of 10: the unrounded mean of their five 1–10 answers.
-  // Legacy check-ins (no pillar answers) fall back to their stored 1–10 score.
+  // Each person's reading out of 10, unrounded: the mean of their five answers on this cycle's scale
+  // (×2 for the old 1–5 cycles, as before). Legacy check-ins fall back to their stored 1–10 score.
   const personal = (s: (typeof submissions)[number]): number | null =>
-    overallFromPillars((s.pillarResponses ?? {}) as Record<string, unknown>, PILLAR_KEYS) ?? s.stabilityScore ?? null;
+    overallFromPillars((s.pillarResponses ?? {}) as Record<string, unknown>, PILLAR_KEYS, pillarMax) ??
+    s.stabilityScore ??
+    null;
   const scores = submissions.map(personal).filter((n): n is number => n != null);
   const overallAvgScore =
     scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : null;
@@ -151,6 +157,7 @@ export async function getSubmissionAnalytics(
   }
 
   return {
+    pillarMax,
     overallAvgScore,
     avgPerPillar,
     moodDistribution,

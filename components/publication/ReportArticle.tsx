@@ -38,6 +38,8 @@ function Section({ id, title, children }: { id: string; title: string; children:
  */
 export function ReportArticle({ report, preview = false }: { report: Report; preview?: boolean }) {
   const prev = report.previous;
+  // Pillar changes are only shown between editions on the same scale (1–5 until September 2026, then 1–10).
+  const samePillarScale = !!prev && prev.pillarMax === report.pillarMax;
   const overallChange = change(report.overallScore, prev?.overallScore ?? null);
   const narrative = report.narrative;
   const narrativeIsWord = narrative.length > 0 && !/\s/.test(narrative.trim());
@@ -134,9 +136,9 @@ export function ReportArticle({ report, preview = false }: { report: Report; pre
           <div className="flex min-w-0 max-w-4xl flex-col gap-14">
             <Section id="pillars" title="The five pillars">
               <p className="mb-4 max-w-2xl text-body text-ink-2">
-                Each pillar is the average of public answers on a scale of 1 to 10; the line under each pillar is the
-                editors’ summary.
-                {prev ? ` The black tick shows ${prev.period}.` : null}{" "}
+                Each pillar is the average of public answers on a scale of 1 to {report.pillarMax}; the line under each
+                pillar is the editors’ summary.
+                {samePillarScale ? ` The black tick shows ${prev!.period}.` : null}{" "}
                 <Link href="/methodology#pillars" className="text-brand underline underline-offset-[0.22em]">
                   What each pillar measures
                 </Link>
@@ -144,9 +146,10 @@ export function ReportArticle({ report, preview = false }: { report: Report; pre
               {report.pillars.length ? (
                 <PillarTable
                   pillars={report.pillars}
-                  previous={prev?.pillars}
-                  previousLabel={prev ? monthOf(prev.period) : undefined}
-                  caption={`Pillar scores for ${report.period}, out of 10`}
+                  max={report.pillarMax}
+                  previous={samePillarScale ? prev!.pillars : undefined}
+                  previousLabel={samePillarScale ? monthOf(prev!.period) : undefined}
+                  caption={`Pillar scores for ${report.period}, out of ${report.pillarMax}`}
                 />
               ) : (
                 <p className="text-body text-ink-2">Pillar scores were not published for this edition.</p>

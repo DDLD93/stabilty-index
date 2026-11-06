@@ -6,7 +6,10 @@ export const revalidate = 3600;
 
 const cell = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
 
-/** Every published edition as CSV, all scores out of 10. "Period" is the month the edition covers. */
+/**
+ * Every published edition as CSV. The overall is out of 10; pillar scores use the edition's own scale
+ * (out of 5 up to September 2026, out of 10 from October 2026), given in "Pillar scale".
+ */
 export async function GET() {
   const reports = await listPublishedReports();
   const header = [
@@ -15,7 +18,8 @@ export async function GET() {
     "Survey taken",
     "Published",
     "Overall (out of 10)",
-    ...PILLARS.map((p) => `${p.label} (out of 10)`),
+    "Pillar scale",
+    ...PILLARS.map((p) => p.label),
     "Report",
   ];
   const rows = reports.map((r) => {
@@ -26,6 +30,7 @@ export async function GET() {
       r.surveyWindow ?? "",
       new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Lagos" }).format(r.publishedAt),
       r.overallScore.toFixed(2),
+      `out of ${r.pillarMax}`,
       ...PILLARS.map((p) => {
         const v = byTitle.get(p.label.toLowerCase());
         return v === null || v === undefined ? "" : v.toFixed(2);

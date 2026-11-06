@@ -119,6 +119,10 @@ export default function MethodologyPage() {
                   report.
                 </p>
                 <p>
+                  <strong className="text-ink">Editions up to September 2026.</strong> These used a 1 to 5 scale for
+                  answers and pillar scores; the overall reading has always been out of 10.
+                </p>
+                <p>
                   <strong className="text-ink">Spotlights.</strong> One state and one institution each month, chosen by
                   the editors and described using published evidence. A spotlight is not an endorsement.
                 </p>
@@ -148,7 +152,8 @@ export default function MethodologyPage() {
               <h2 className="text-h2">Using NSI figures</h2>
               <p className="mt-4 text-body text-ink-2">
                 You are welcome to quote the index. Please name the month the edition covers, link to the report, and say
-                that scores are out of 10. Each report has a ready-made citation
+                that the overall reading is out of 10 and which scale the pillar scores use (out of 10, or out of 5 for
+                editions up to September 2026). Each report has a ready-made citation
                 at the end.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">

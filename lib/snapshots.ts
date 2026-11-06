@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { db } from "@/lib/db";
 import { getKeyPointsHtml } from "@/lib/spotlight";
-import { cleanPeriod, hasText, monthNumber, type PillarScore } from "@/lib/reportFormat";
+import { cleanPeriod, hasText, monthNumber, pillarScaleFor, type PillarScore } from "@/lib/reportFormat";
 
 export * from "@/lib/reportFormat";
 
@@ -13,6 +13,8 @@ export type ReportSummary = {
   surveyWindow: string | null;
   overallScore: number;
   publishedAt: Date;
+  /** Scale of this edition's pillar scores: 5 for editions up to September 2026, 10 from October 2026. */
+  pillarMax: 5 | 10;
   /** 1-based count of published editions, in the order of the months they cover. */
   edition: number;
   pillars: PillarScore[];
@@ -166,6 +168,7 @@ export const listPublishedReports = cache(async (): Promise<ReportSummary[]> => 
       id: r.id,
       period: r.period,
       surveyWindow: r.cycleId ? (windows.get(r.cycleId) ?? null) : null,
+      pillarMax: pillarScaleFor(r.period),
       overallScore: r.overallScore,
       publishedAt: r.publishedAt,
       edition: i + 1,
@@ -194,6 +197,7 @@ export const getReport = cache(async (id: string, allowDraft = false): Promise<R
     id: row.id,
     period,
     surveyWindow: row.cycleId ? (windows.get(row.cycleId) ?? null) : null,
+    pillarMax: pillarScaleFor(period),
     overallScore: row.overallScore,
     publishedAt: row.publishedAt ?? row.updatedAt,
     edition: index >= 0 ? index + 1 : all.length + 1,
